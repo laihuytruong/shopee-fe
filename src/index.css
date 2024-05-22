@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Helvetica';
+    src: url('./assets/fonts/helvetica-255/helvetica-light-587ebe5a59211.ttf');
+}
+
+@font-face {
+    font-family: 'Helvetica-Neue';
+    src: url('./assets/fonts/helvetica-neue-55-cdnfonts/HelveticaNeue-Thin.otf');
+}
+
+@font-face {
+    font-family: 'Arial';
+    src: url('./assets/fonts/arial/ARIALI.TTF');
+}
+
+body {
+    @apply font-custom text-base font-base text-primary font-normal;
+}
+
+.custom-border {
+    position: relative;
+    padding-left: 12px;
+}
+
+.custom-border::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 2px solid #ccc;
+    height: 14px;
+}
+
+.custom-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffffff66;
+}
+
+.slick-dots li.slick-active .custom-dot {
+    background: #ee4d2d;
+}
