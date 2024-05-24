@@ -1,8 +1,9 @@
 import React, { useRef } from 'react'
 import { Carousel } from 'antd'
-import sliderImages from '~/assets/image/sliderImages'
 import icons from '~/utils/icons'
 import { CarouselRef } from 'antd/es/carousel'
+import { sliderImages } from '~/utils/constants'
+
 const { MdOutlineNavigateBefore, MdOutlineNavigateNext } = icons
 
 const Banner: React.FC = () => {

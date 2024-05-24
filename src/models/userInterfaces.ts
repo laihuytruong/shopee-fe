@@ -1,4 +1,4 @@
-import { ProductCart } from "./productInterface"
+import { ProductCart } from "./productInterfaces"
 
 export interface UserCart {
     _id: string

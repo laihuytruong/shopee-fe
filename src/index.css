@@ -18,7 +18,7 @@
 }
 
 body {
-    @apply font-custom text-base font-base text-primary font-normal;
+    @apply font-custom text-base font-base text-primary font-normal bg-body;
 }
 
 .custom-border {
@@ -45,4 +45,20 @@ body {
 
 .slick-dots li.slick-active .custom-dot {
     background: #ee4d2d;
+}
+
+.custom-pagination .ant-pagination-item-active a {
+    color: #ee4d2d;
+}
+
+.custom-pagination .ant-pagination-item-active {
+    border-color: #ee4d2d;
+}
+
+.custom-pagination .ant-pagination-item-active a:hover {
+    color: #ee4d2d;
+}
+
+.custom-pagination .ant-pagination-item:hover {
+    border-color: #ee4d2d;
 }

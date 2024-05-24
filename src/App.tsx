@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import routes from './config/routes'
 import { Home, Login, Public } from './pages/public'
+import DailyDiscover from './pages/public/DailyDiscover'
 
 function App() {
     return (
@@ -9,6 +10,10 @@ function App() {
                 <Route path={routes.PUBLIC} element={<Public />}>
                     <Route path={routes.HOME} element={<Home />} />
                     <Route path={routes.Login} element={<Login />} />
+                    <Route
+                        path={routes.DAILY_DISCOVER}
+                        element={<DailyDiscover />}
+                    />
 
                     <Route path={routes.ALL} element={<Home />} />
                 </Route>

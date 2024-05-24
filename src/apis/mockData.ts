@@ -1,5 +1,5 @@
-import { ProductCart } from '~/models/productInterface'
-import { UserCart } from '~/models/userInterface'
+import { ProductCart } from '~/models/productInterfaces'
+import { UserCart } from '~/models/userInterfaces'
 
 const product1: ProductCart = {
     _id: '1',

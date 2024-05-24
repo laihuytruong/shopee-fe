@@ -1,5 +1,5 @@
 import { Empty, MenuProps } from 'antd'
-import { UserCart } from '~/models/userInterface'
+import { UserCart } from '~/models/userInterfaces'
 
 interface MenuItem {
     key: string | number
