@@ -23,7 +23,7 @@ const MenuItems = (props: Props): MenuProps['items'] => {
         if (typeof item === 'string') {
             return {
                 key: index,
-                label: <div>{item}</div>,
+                label: <div className="hover:text-main">{item}</div>,
             }
         }
         return {

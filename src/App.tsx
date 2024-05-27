@@ -1,7 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
 import routes from './config/routes'
-import { Home, Login, Public } from './pages/public'
-import DailyDiscover from './pages/public/DailyDiscover'
+import { Home, Login, Public } from './pages/user'
+import DailyDiscover from './pages/user/DailyDiscover'
+import ProductCategory from './pages/user/ProductCategory'
+import ProductDetail from './pages/user/ProductDetail'
 
 function App() {
     return (
@@ -13,6 +15,14 @@ function App() {
                     <Route
                         path={routes.DAILY_DISCOVER}
                         element={<DailyDiscover />}
+                    />
+                    <Route
+                        path={routes.PRODUCT_CATEGORY}
+                        element={<ProductCategory />}
+                    />
+                    <Route
+                        path={routes.PRODUCT_DETAIL}
+                        element={<ProductDetail />}
                     />
 
                     <Route path={routes.ALL} element={<Home />} />

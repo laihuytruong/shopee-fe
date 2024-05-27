@@ -6,7 +6,11 @@ import { sliderImages } from '~/utils/constants'
 
 const { MdOutlineNavigateBefore, MdOutlineNavigateNext } = icons
 
-const Banner: React.FC = () => {
+interface Props {
+    height: string
+}
+
+const Banner: React.FC<Props> = ({ height }) => {
     const refCarousel = useRef<CarouselRef>(null)
     const handlePrevSlider = () => {
         if (refCarousel.current) {
@@ -38,9 +42,11 @@ const Banner: React.FC = () => {
         <div className="relative group cursor-pointer">
             <div
                 onClick={handlePrevSlider}
-                className="absolute invisible group-hover:visible text-white transform -translate-y-1/2 left-0 z-30 top-1/2 py-4 bg-[#00000052] opacity-[0.8] hover:opacity-[1]"
+                className={`${
+                    height !== '235px' && 'px-2'
+                } absolute invisible group-hover:visible text-white transform -translate-y-1/2 left-0 z-30 top-1/2 py-4 bg-[#00000052] opacity-[0.8] hover:opacity-[1]`}
             >
-                <MdOutlineNavigateBefore size={20} />
+                <MdOutlineNavigateBefore size={26} />
             </div>
             <Carousel {...settings} ref={refCarousel}>
                 {sliderImages.map((item, index) => (
@@ -48,7 +54,7 @@ const Banner: React.FC = () => {
                         <img
                             src={`${item}`}
                             alt={`slider${index}`}
-                            className="h-[235px] w-full object-cover rounded-sm"
+                            className={`h-[${height}] w-full object-cover rounded-sm`}
                         />
                     </div>
                 ))}
@@ -56,9 +62,11 @@ const Banner: React.FC = () => {
 
             <div
                 onClick={handleNextSlider}
-                className="absolute invisible group-hover:visible text-white transform -translate-y-1/2 right-0 z-30 top-1/2 py-4 bg-[#00000052] opacity-[0.8] hover:opacity-[1]"
+                className={`${
+                    height !== '235px' && 'px-2'
+                } absolute invisible group-hover:visible text-white transform -translate-y-1/2 right-0 z-30 top-1/2 py-4 bg-[#00000052] opacity-[0.8] hover:opacity-[1]`}
             >
-                <MdOutlineNavigateNext size={20} />
+                <MdOutlineNavigateNext size={26} />
             </div>
         </div>
     )

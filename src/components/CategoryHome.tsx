@@ -1,15 +1,18 @@
 import { Empty } from 'antd'
-import React, { useEffect, useState } from 'react'
-import homeApi from '~/apis/homeApi'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import categoryApi from '~/apis/categoryApi'
 import { Category } from '~/models/categoryInterfaces'
 
 const CategoryHome = () => {
     const [categories, setCategories] = useState<Category[]>([])
 
+    const nav = useNavigate()
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await homeApi.getCategories()
+                const response = await categoryApi.getCategories()
                 if (response.data && response.err === 0) {
                     setCategories(response.data)
                 }
@@ -28,6 +31,7 @@ const CategoryHome = () => {
                 categories.map((category) => (
                     <div
                         key={category._id}
+                        onClick={() => nav(`category/${category.slug}`)}
                         className={`flex flex-col items-center border-b border-b-[rgba(0, 0, 0, .05)] border-solid border-r border-r-[rgba(0, 0, 0, .05)] hover:cursor-pointer hover:border-[rgba(0, 0, 0, .12)] hover:shadow-category`}
                     >
                         <img

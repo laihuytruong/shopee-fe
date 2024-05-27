@@ -1,15 +1,46 @@
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import productApi from '~/apis/productApi'
 import { Banner, CategoryHome } from '~/components'
-import ProductsHome from '~/components/ProductsHome'
+import Products from '~/components/Products'
+import { PaginationInfo } from '~/models/generalInterface'
+import { Product } from '~/models/productInterfaces'
 import { listCodeDiscount } from '~/utils/constants'
 
 const Home = () => {
+    const [searchParams] = useSearchParams()
+    const page = searchParams.get('page')
+    const [products, setProducts] = useState<Product[]>([])
+    const [count, setCount] = useState<number>(0)
+    const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
+        page: searchParams ? +searchParams : 1,
+        pageSize: 10,
+        totalCount: 0,
+    })
+
+    useEffect(() => {
+        const fetchProductHome = async () => {
+            const response = await productApi.getProducts()
+            if (response.err === 0) {
+                if (response.data) {
+                    setProducts(response.data.data)
+                    setPaginationInfo({
+                        page: +response.data?.page ?? 1,
+                        pageSize: +response.data?.pageSize ?? 10,
+                        totalCount: response.count ? +response.count : 0
+                    })
+                }
+            }
+        }
+        fetchProductHome()
+    }, [page, count])
+
     return (
         <>
             <div className="w-full pt-[149px] flex flex-col items-center bg-white">
                 <div className="w-main flex gap-2">
                     <div className="w-3/5 h-full">
-                        <Banner />
+                        <Banner height="235px" />
                     </div>
                     <div className="w-2/5 h-full flex flex-col gap-[5px]">
                         <img
@@ -55,7 +86,13 @@ const Home = () => {
                     GỢI Ý HÔM NAY
                 </div>
                 <div className="pt-[5px]">
-                    <ProductsHome isShowBtn={true} />
+                    <Products
+                        isShowBtn={true}
+                        products={products}
+                        paginationInfo={paginationInfo}
+                        setCount={setCount}
+                        setPaginationInfo={setPaginationInfo}
+                    />
                 </div>
             </div>
         </>

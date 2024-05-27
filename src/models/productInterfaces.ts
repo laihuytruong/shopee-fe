@@ -8,9 +8,10 @@ export interface ProductCart {
     image: string[]
 }
 
-export interface ProductHome {
+export interface Product {
     _id: string
     productName: string
+    slug: string
     brand: Brand
     price: number
     categoryItem: Category

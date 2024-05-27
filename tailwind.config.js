@@ -27,7 +27,10 @@ export default {
             boxShadow: {
                 cart: '0 1px 50px 0 rgba(0, 0, 0, .2)',
                 category: '0 0 13px 0 rgba(0, 0, 0, .05)',
-                buttonHome: 'b0 1px 1px 0 rgba(0, 0, 0, .03)',
+                buttonHome: '0 1px 1px 0 rgba(0, 0, 0, .03)',
+                input: 'inset 0 1px 0 0 rgba(0, 0, 0, .05)',
+                buttonCategory: '0 1px 1px 0 rgba(0, 0, 0, .05)',
+                productCard: '0 1px 20px 0 rgba(0, 0, 0, .05)',
             },
             borderColor: {
                 hover: '#ee4d2d',
