@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import productApi from '~/apis/productApi'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { Banner, CategoryHome } from '~/components'
-import Products from '~/components/Products'
-import { PaginationInfo } from '~/models/generalInterface'
-import { Product } from '~/models/productInterfaces'
+import { PaginationInfo, Product } from '~/models'
+import { productApi } from '~/apis'
+import { Products } from '~/components'
 import { listCodeDiscount } from '~/utils/constants'
 
 const Home = () => {
@@ -15,8 +14,10 @@ const Home = () => {
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
         page: searchParams ? +searchParams : 1,
         pageSize: 10,
+        totalPage: 1,
         totalCount: 0,
     })
+    const { pathname, search } = useLocation()
 
     useEffect(() => {
         const fetchProductHome = async () => {
@@ -27,7 +28,8 @@ const Home = () => {
                     setPaginationInfo({
                         page: +response.data?.page ?? 1,
                         pageSize: +response.data?.pageSize ?? 10,
-                        totalCount: response.count ? +response.count : 0
+                        totalPage: +response.data?.totalPage ?? 1,
+                        totalCount: response.count ? +response.count : 0,
                     })
                 }
             }
@@ -92,6 +94,8 @@ const Home = () => {
                         paginationInfo={paginationInfo}
                         setCount={setCount}
                         setPaginationInfo={setPaginationInfo}
+                        pageShow={pathname}
+                        search={search}
                     />
                 </div>
             </div>

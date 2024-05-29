@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import icons from '~/utils/icons'
 import logo from '~/assets/image/logo.png'
 import { Dropdown } from 'antd'
-import { MenuItemsOrNull, Search } from '~/components'
+import { MenuList, Search } from '~/components'
 import userCartItems from '~/apis/mockData'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import routes from '~/config/routes'
+import { MenuItem } from '~/models'
 const {
     IoIosNotificationsOutline,
     CiCircleQuestion,
@@ -17,6 +18,21 @@ const {
 
 const Header = () => {
     const [count, setCount] = useState<number>(5)
+    const menuLanguageList: MenuItem[] = [
+        { children: 'Tiếng Việt' },
+        { children: 'English' },
+    ]
+    const menuAccountList: MenuItem[] = [
+        { children: 'Tài khoản của tôi' },
+        { children: 'Đơn mua' },
+        { children: 'Đăng xuất' },
+    ]
+
+    const { pathname, search } = useLocation()
+
+    const handleSelect = () => {
+        console.log('select')
+    }
 
     return (
         <div className="w-main flex flex-col text-[14px]">
@@ -49,26 +65,18 @@ const Header = () => {
                         <CiCircleQuestion size={18} />
                         <span>Hỗ trợ</span>
                     </div>
-                    <Dropdown
-                        menu={{
-                            items: MenuItemsOrNull(['Tiếng Việt', 'English']),
-                        }}
-                        placement="bottomRight"
+                    <MenuList
+                        menuList={menuLanguageList}
+                        handleSelect={handleSelect}
                     >
                         <div className="flex items-center gap-1 hover:text-hover hover:cursor-pointer">
                             <GrLanguage size={16} />
                             <span>Ngôn ngữ</span>
                         </div>
-                    </Dropdown>
-                    <Dropdown
-                        menu={{
-                            items: MenuItemsOrNull([
-                                'Tài khoản của tôi',
-                                'Đơn mua',
-                                'Đăng xuất',
-                            ]),
-                        }}
-                        placement="bottomRight"
+                    </MenuList>
+                    <MenuList
+                        menuList={menuAccountList}
+                        handleSelect={handleSelect}
                     >
                         <div className="flex items-center gap-[6px]">
                             <img
@@ -80,7 +88,7 @@ const Header = () => {
                                 tendangnhap
                             </span>
                         </div>
-                    </Dropdown>
+                    </MenuList>
                 </div>
             </div>
             <div className="flex h-[85px] items-center justify-between">

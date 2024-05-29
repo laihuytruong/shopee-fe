@@ -1,8 +1,9 @@
 import { Empty, Pagination } from 'antd'
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { PaginationInfo } from '~/models/generalInterface'
-import { Product } from '~/models/productInterfaces'
+import { PaginationInfo, Product } from '~/models'
+import { updateURLParams } from '~/utils/constants'
+import StarRating from './StarRating'
 
 interface Props {
     isShowBtn: boolean
@@ -12,12 +13,10 @@ interface Props {
     setCount: React.Dispatch<React.SetStateAction<number>>
     setPaginationInfo: React.Dispatch<React.SetStateAction<PaginationInfo>>
     pageShow: string
-    search?: string
+    search: string
 }
 
 const Products = (props: Props) => {
-    const nav = useNavigate()
-
     const {
         isShowBtn,
         paginationInfo,
@@ -29,21 +28,16 @@ const Products = (props: Props) => {
         search,
     } = props
 
+    const nav = useNavigate()
+
     const handleChangePage = (page: number) => {
         setCount((prev) => prev + 1)
         setPaginationInfo({
             ...paginationInfo,
             page,
         })
-        nav(
-            `/${pageShow}${
-                search && !search.includes('page=')
-                    ? `${search}&page=${page}`
-                    : search && search.includes('page=')
-                    ? search.replace(/page=\d+/, `page=${page}`)
-                    : `?page=${page}`
-            }`
-        )
+        const newSearch = updateURLParams(search, 'page', page.toString())
+        nav(`${pageShow}?${newSearch}`)
     }
 
     return (
@@ -56,7 +50,7 @@ const Products = (props: Props) => {
                             key={product._id}
                             className={`p-[5px] ${
                                 !show ? 'w-1/6' : 'w-1/5'
-                            } h-[294px]`}
+                            } h-[310px]`}
                         >
                             <div
                                 className={`${
@@ -82,11 +76,22 @@ const Products = (props: Props) => {
                                         {`-${product.discount}%`}
                                     </div>
                                 </div>
-                                <div className="p-2 w-full h-[98px] flex flex-col justify-between border-t border-solid border-[rgba(5, 5, 5, 0.06)]">
+                                <div className="p-2 w-full h-[124px] flex flex-col justify-between border-t border-solid border-[rgba(5, 5, 5, 0.06)]">
                                     <span className="line-clamp-2 text-ellipsis break-words overflow-hidden">
                                         {product.productName}
                                     </span>
-                                    <div className="flex justify-between items-center text-main">
+                                    <div>
+                                        {product.totalRating === 0 ? (
+                                            <span className="text-xs text-[rgba(0, 0, 0, .65)]">
+                                                Chưa có đánh giá
+                                            </span>
+                                        ) : (
+                                            <StarRating
+                                                rating={product.totalRating}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="flex justify-between items-center text-main pb-2">
                                         <div className="flex items-center">
                                             <span className="text-xs underline mr-[1px]">
                                                 đ
@@ -126,11 +131,7 @@ const Products = (props: Props) => {
                             setCount((prev) => prev + 1)
                             nav(
                                 `daily_discover?page=${
-                                    paginationInfo.totalCount /
-                                        paginationInfo.pageSize >=
-                                    2
-                                        ? 2
-                                        : 1
+                                    paginationInfo.totalPage >= 2 ? 2 : 1
                                 }`
                             )
                         }}
@@ -144,6 +145,7 @@ const Products = (props: Props) => {
                         onChange={handleChangePage}
                         pageSize={paginationInfo.pageSize}
                         total={paginationInfo.totalCount}
+                        current={paginationInfo.page}
                         className="mt-8 custom-pagination"
                     />
                 ) : (

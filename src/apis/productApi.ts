@@ -9,6 +9,7 @@ interface ProductResponse {
     data?: {
         page: number
         pageSize: number
+        totalPage: number
         data: Product[]
     }
 }
@@ -22,20 +23,25 @@ const productApi = {
         const param = `/?page=${page}&limit=${limit ? limit : 10}`
         return instance.get(url + param)
     },
-    async getProductBySlug(
+    async filterProduct(
         slug: string | undefined,
         page: number = 1,
-        limit: number = 2,
+        limit: number = 10,
         sort?: string,
-        minPrice?: number,
-        maxPrice?: number,
-        totalRating?: number
+        totalRating?: number,
+        price?: string,
+        brand?: string,
+        categoryItem?: string
     ): Promise<ProductResponse> {
-        console.log('sort: ', sort)
-        const url = '/products/category-item'
+        console.log('categoryItem: ', categoryItem)
+        const url = '/products/category'
         const param = `/${slug}?page=${page}&limit=${
-            limit ? limit : 2
-        }&sort=${sort}`
+            limit ? limit : 10
+        }&sort=${sort}${
+            totalRating && totalRating > 0 ? `&totalRating=${totalRating}` : ''
+        }${price ? `&price=${price}` : ''}${brand ? `&brand=${brand}` : ''}${
+            categoryItem ? `&categoryItem=${categoryItem}` : ''
+        }`
         return instance.get(url + param)
     },
 }

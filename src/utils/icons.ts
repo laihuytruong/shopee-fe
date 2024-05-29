@@ -16,6 +16,7 @@ import {
 } from 'react-icons/md'
 import { FaList } from 'react-icons/fa'
 import { RiArrowDownSLine } from 'react-icons/ri'
+import { FaCheck } from 'react-icons/fa6'
 
 const icons = {
     IoIosNotificationsOutline,
@@ -33,6 +34,7 @@ const icons = {
     IoMdStarOutline,
     MdOutlineStar,
     RiArrowDownSLine,
+    FaCheck,
 }
 
 export default icons

@@ -54,7 +54,7 @@ const Banner: React.FC<Props> = ({ height }) => {
                         <img
                             src={`${item}`}
                             alt={`slider${index}`}
-                            className={`h-[${height}] w-full object-cover rounded-sm`}
+                            className={`h-[235px] w-full object-cover rounded-sm`}
                         />
                     </div>
                 ))}

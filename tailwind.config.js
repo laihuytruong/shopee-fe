@@ -41,6 +41,9 @@ export default {
             top: {
                 header: '119px',
             },
+            outlineColor: {
+                main: '#ee4d2d',
+            },
         },
     },
     plugins: [],

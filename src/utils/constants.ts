@@ -61,3 +61,21 @@ export const listCodeDiscount: CodeDisCount[] = [
         text: 'Nạp Thẻ, Dịch Vụ & Học Phí',
     },
 ]
+
+export const updateURLParams = (
+    search: string,
+    key: string,
+    value: string | number | string[]
+): string => {
+    const params = new URLSearchParams(search)
+
+    if (Array.isArray(value)) {
+        params.set(key, value.join(','))
+    } else if (value) {
+        params.set(key, `${value}`)
+    } else {
+        params.delete(key)
+    }
+
+    return params.toString()
+}

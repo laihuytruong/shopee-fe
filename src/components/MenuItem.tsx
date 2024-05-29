@@ -1,10 +1,5 @@
 import { Empty, MenuProps } from 'antd'
-import { UserCart } from '~/models/userInterfaces'
-
-interface MenuItem {
-    key: string | number
-    label: JSX.Element | string
-}
+import { UserCart, MenuItem } from '~/models'
 
 interface Props {
     menuData: (UserCart | string)[] | undefined
@@ -12,6 +7,7 @@ interface Props {
 
 const MenuItems = (props: Props): MenuProps['items'] => {
     const { menuData } = props
+
     if (menuData === undefined || menuData.length === 0) {
         const emptyItem: MenuItem = {
             key: 'empty',

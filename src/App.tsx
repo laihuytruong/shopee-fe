@@ -4,6 +4,7 @@ import { Home, Login, Public } from './pages/user'
 import DailyDiscover from './pages/user/DailyDiscover'
 import ProductCategory from './pages/user/ProductCategory'
 import ProductDetail from './pages/user/ProductDetail'
+import AllCategories from './pages/user/AllCategories'
 
 function App() {
     return (
@@ -23,6 +24,10 @@ function App() {
                     <Route
                         path={routes.PRODUCT_DETAIL}
                         element={<ProductDetail />}
+                    />
+                    <Route
+                        path={routes.ALL_CATEGORIES}
+                        element={<AllCategories />}
                     />
 
                     <Route path={routes.ALL} element={<Home />} />
