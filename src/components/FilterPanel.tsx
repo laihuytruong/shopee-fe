@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Brand, PriceInput } from '~/models'
+import { Brand, CategoryItem, PriceInput } from '~/models'
 import { updateURLParams } from '~/utils/constants'
 import icons from '~/utils/icons'
 
 interface Props {
     brands: Brand[]
+    categoryItems?: CategoryItem[]
     pathname: string
     search: string
     setCount: React.Dispatch<React.SetStateAction<number>>
@@ -15,6 +16,7 @@ const { MdFilterAlt, MdOutlineStar, IoMdStarOutline } = icons
 
 const FilterPanel: React.FC<Props> = ({
     brands,
+    categoryItems,
     setCount,
     pathname,
     search,
@@ -98,6 +100,48 @@ const FilterPanel: React.FC<Props> = ({
             <div className="flex items-center mb-[10px] mt-[30px] gap-[10px] font-bold text-[16px]">
                 <MdFilterAlt className="text-gray-400" />
                 <h1>BỘ LỌC TÌM KIẾM</h1>
+            </div>
+            {pathname.includes('search') && (
+                <div>
+                    <div className="border-b border-solid border-b-[rgba(0, 0, 0, .09)] py-5">
+                        <h3 className="mb-[10px]">Theo Danh Mục</h3>
+                        {categoryItems &&
+                            categoryItems.map((categoryItem) => (
+                                <div
+                                    key={categoryItem._id}
+                                    className="flex items-center py-2"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        className="mr-[10px] cursor-pointer"
+                                        checked={
+                                            checkedItems[categoryItem._id] ||
+                                            false
+                                        }
+                                    />
+                                    <span>{categoryItem.categoryItemName}</span>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+            )}
+            <div>
+                <div className="border-b border-solid border-b-[rgba(0, 0, 0, .09)] py-5">
+                    <h3 className="mb-[10px]">Theo Thương Hiệu</h3>
+                    {brands.map((brand) => (
+                        <div key={brand._id} className="flex items-center py-2">
+                            <input
+                                type="checkbox"
+                                className="mr-[10px] cursor-pointer"
+                                checked={checkedItems[brand._id] || false}
+                                onChange={(event) =>
+                                    handleCheckboxChange(event, brand)
+                                }
+                            />
+                            <span>{brand.brandName}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
             <div>
                 <div className="border-b border-solid border-b-[rgba(0, 0, 0, .09)] py-5">

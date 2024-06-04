@@ -1,21 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import routes from '~/config/routes'
 import logo_login from '~/assets/image/logo_login.png'
-import { ShowPassword } from '~/utils/svgIcons'
 import { useState } from 'react'
 import icons from '~/utils/icons'
 
 const { FcGoogle } = icons
 
-const Login = () => {
-    const [formInput, setFormInput] = useState<{
-        username: string
-        password: string
-    }>({
-        username: '',
-        password: '',
-    })
-    const [showPassword, setShowPassword] = useState<boolean>(false)
+const Register = () => {
+    const [username, setUsername] = useState<string>('')
 
     return (
         <div className="w-full">
@@ -32,7 +24,7 @@ const Login = () => {
                             </NavLink>
                         </div>
                         <h1 className="text-3xl text-[#222222] pt-4 ml-4">
-                            Đăng nhập
+                            Đăng ký
                         </h1>
                     </div>
                     <span className="text-main text-[14px] pt-4">
@@ -45,62 +37,28 @@ const Login = () => {
                     <div className="w-full h-[452px]">
                         <div className="bg-white h-full rounded shadow-form_auth w-[400px] float-right">
                             <h2 className="w-full px-[30px] py-[22px] text-xl text-[#222]">
-                                Đăng nhập
+                                Đăng ký
                             </h2>
                             <div className="px-[30px] pb-[30px]">
                                 <input
                                     type="text"
                                     placeholder="Email/Tên đăng nhập"
                                     className="focus:border-black outline-none rounded-sm border border-solid border-[rgba(0, 0, 0, .14)] p-3 shadow-input_auth w-full mb-5"
-                                    value={formInput.username}
+                                    value={username}
                                     onChange={(e) =>
-                                        setFormInput({
-                                            ...formInput,
-                                            username: e.target.value,
-                                        })
+                                        setUsername(e.target.value)
                                     }
                                 />
-                                <div className="focus-within:border-black flex items-center rounded-sm shadow-input_auth border border-solid border-[rgba(0, 0, 0, .14)] mb-5">
-                                    <input
-                                        type={
-                                            showPassword ? 'text' : 'password'
-                                        }
-                                        placeholder="Mật khẩu"
-                                        className=" p-3 w-full outline-none"
-                                        value={formInput.password}
-                                        onChange={(e) =>
-                                            setFormInput({
-                                                ...formInput,
-                                                password: e.target.value,
-                                            })
-                                        }
-                                    />
-                                    <button
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        className="pl-3 pr-4 bg-transparent outline-none border-none"
-                                    >
-                                        <ShowPassword />
-                                    </button>
-                                </div>
                                 <button
                                     disabled
                                     className={`px-[10px] mb-[10px] rounded-sm w-full bg-main ${
-                                        formInput.username !== '' &&
-                                        formInput.password !== ''
+                                        username !== ''
                                             ? 'cursor-pointer opacity-[1]'
                                             : 'cursor-not-allowed opacity-[0.7]'
                                     } text-white py-[10px]`}
                                 >
-                                    Đăng nhập
+                                    Tiếp theo
                                 </button>
-                                <NavLink
-                                    to={routes.FORGOT_PASSWORD}
-                                    className="text-[#05a] text-xs"
-                                >
-                                    Quên mật khẩu
-                                </NavLink>
                                 <div className="w-full flex items-center mt-1">
                                     <div className="bg-[#dbdbdb] flex-1 h-[1px]"></div>
                                     <span className="text-xs text-[#ccc] px-4 w-1/5 text-center">
@@ -112,13 +70,27 @@ const Login = () => {
                                     <FcGoogle size={24} />
                                     <span className="pt-[3px]">Google</span>
                                 </button>
+                                <div className="mt-[25px] text-[12px] flex flex-col items-center">
+                                    <span>
+                                        Bằng việc đăng kí, bạn đã đồng ý với
+                                        Shopee về
+                                    </span>
+                                    <span className="text-main">
+                                        Điều khoản dịch vụ
+                                        <span className="text-black">
+                                            {' '}
+                                            &{' '}
+                                        </span>
+                                        Chính sách bảo mật
+                                    </span>
+                                </div>
                                 <div className="mt-[30px] text-[14px] text-[rgba(0, 0, 0, .26)] text-center">
-                                    Bạn mới biết đến Shopee?
+                                    Bạn đã có tài khoản?
                                     <NavLink
-                                        to={routes.REGISTER}
+                                        to={routes.LOGIN}
                                         className="text-main ml-1"
                                     >
-                                        Đăng ký
+                                        Đăng nhập
                                     </NavLink>
                                 </div>
                             </div>
@@ -130,4 +102,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Register

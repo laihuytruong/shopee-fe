@@ -1,5 +1,5 @@
 import { Brand } from './brandInterfaces'
-import { Category } from './categoryInterfaces'
+import { CategoryItem } from './categoryItemInterfaces'
 
 export interface ProductCart {
     _id: string
@@ -14,7 +14,7 @@ export interface Product {
     slug: string
     brand: Brand
     price: number
-    categoryItem: Category
+    categoryItem: CategoryItem
     quantity: number
     sold: number
     image: string[]

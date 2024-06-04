@@ -1,10 +1,16 @@
 import { Routes, Route } from 'react-router-dom'
 import routes from './config/routes'
-import { Home, Login, Public } from './pages/user'
-import DailyDiscover from './pages/user/DailyDiscover'
-import ProductCategory from './pages/user/ProductCategory'
-import ProductDetail from './pages/user/ProductDetail'
-import AllCategories from './pages/user/AllCategories'
+import {
+    Home,
+    Login,
+    Public,
+    DailyDiscover,
+    ProductFilter,
+    ProductDetail,
+    Search,
+    Auth,
+    Register,
+} from '~/pages/user'
 
 function App() {
     return (
@@ -12,25 +18,26 @@ function App() {
             <Routes>
                 <Route path={routes.PUBLIC} element={<Public />}>
                     <Route path={routes.HOME} element={<Home />} />
-                    <Route path={routes.Login} element={<Login />} />
                     <Route
                         path={routes.DAILY_DISCOVER}
                         element={<DailyDiscover />}
                     />
                     <Route
                         path={routes.PRODUCT_CATEGORY}
-                        element={<ProductCategory />}
+                        element={<ProductFilter />}
                     />
                     <Route
                         path={routes.PRODUCT_DETAIL}
                         element={<ProductDetail />}
                     />
-                    <Route
-                        path={routes.ALL_CATEGORIES}
-                        element={<AllCategories />}
-                    />
+                    <Route path={routes.SEARCH} element={<Search />} />
 
                     <Route path={routes.ALL} element={<Home />} />
+                </Route>
+
+                <Route element={<Auth />}>
+                    <Route path={routes.LOGIN} element={<Login />} />
+                    <Route path={routes.REGISTER} element={<Register />} />
                 </Route>
             </Routes>
         </div>

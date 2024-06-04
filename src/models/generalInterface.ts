@@ -14,3 +14,10 @@ export interface PriceInput {
     minPrice: string
     maxPrice: string
 }
+
+export interface SearchHistory {
+    _id: string
+    name: string
+    slug: string
+    clickAt: number
+}

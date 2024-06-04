@@ -3,7 +3,7 @@ import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { PaginationInfo, Product } from '~/models'
 import { updateURLParams } from '~/utils/constants'
-import StarRating from './StarRating'
+import { StarRating } from '~/components'
 
 interface Props {
     isShowBtn: boolean

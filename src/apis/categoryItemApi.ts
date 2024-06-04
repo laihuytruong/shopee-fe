@@ -1,5 +1,5 @@
 import instance from '~/apiService'
-import { CategoryItem } from '~/models/categoryInterfaces'
+import { CategoryItem } from '~/models'
 
 interface CategoryResponse {
     err: number

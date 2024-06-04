@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
 import icons from '~/utils/icons'
 import logo from '~/assets/image/logo.png'
-import { Dropdown } from 'antd'
 import { MenuList, Search } from '~/components'
 import userCartItems from '~/apis/mockData'
 import { Link, useLocation } from 'react-router-dom'
 import routes from '~/config/routes'
-import { MenuItem } from '~/models'
+import { Dropdown } from 'antd'
 const {
     IoIosNotificationsOutline,
     CiCircleQuestion,
@@ -17,18 +15,7 @@ const {
 } = icons
 
 const Header = () => {
-    const [count, setCount] = useState<number>(5)
-    const menuLanguageList: MenuItem[] = [
-        { children: 'Tiếng Việt' },
-        { children: 'English' },
-    ]
-    const menuAccountList: MenuItem[] = [
-        { children: 'Tài khoản của tôi' },
-        { children: 'Đơn mua' },
-        { children: 'Đăng xuất' },
-    ]
-
-    const { pathname, search } = useLocation()
+    // const { pathname, search } = useLocation()
 
     const handleSelect = () => {
         console.log('select')
@@ -66,7 +53,10 @@ const Header = () => {
                         <span>Hỗ trợ</span>
                     </div>
                     <MenuList
-                        menuList={menuLanguageList}
+                        menuList={[
+                            { children: 'Tiếng Việt' },
+                            { children: 'English' },
+                        ]}
                         handleSelect={handleSelect}
                     >
                         <div className="flex items-center gap-1 hover:text-hover hover:cursor-pointer">
@@ -75,7 +65,11 @@ const Header = () => {
                         </div>
                     </MenuList>
                     <MenuList
-                        menuList={menuAccountList}
+                        menuList={[
+                            { children: 'Tài khoản của tôi' },
+                            { children: 'Đơn mua' },
+                            { children: 'Đăng xuất' },
+                        ]}
                         handleSelect={handleSelect}
                     >
                         <div className="flex items-center gap-[6px]">
@@ -141,7 +135,7 @@ const Header = () => {
                             <FiShoppingCart size={28} />
 
                             <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
-                                {count}
+                                1
                             </div>
                         </div>
                     </Dropdown>

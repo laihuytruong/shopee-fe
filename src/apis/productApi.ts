@@ -1,7 +1,7 @@
 import instance from '~/apiService'
 import { Product } from '~/models/productInterfaces'
 
-interface ProductResponse {
+interface ProductsResponse {
     err: number
     msg?: string
     count?: number
@@ -14,15 +14,33 @@ interface ProductResponse {
     }
 }
 
+interface ProductResponse {
+    err: number
+    msg?: string
+    count?: number
+    accessToken?: string
+    data?: Product
+}
+
 const productApi = {
     async getProducts(
         page: number = 1,
-        limit?: number
-    ): Promise<ProductResponse> {
+        limit?: number,
+        productName?: string
+    ): Promise<ProductsResponse> {
         const url = '/products'
-        const param = `/?page=${page}&limit=${limit ? limit : 10}`
+        const param = `?page=${page}&limit=${limit ? limit : 10}${
+            productName ? `&productName=${productName}` : ''
+        }`
         return instance.get(url + param)
     },
+
+    async getProduct(slug: string): Promise<ProductResponse> {
+        const url = '/products'
+        const param = `/${slug}`
+        return instance.get(url + param)
+    },
+
     async filterProduct(
         slug: string | undefined,
         page: number = 1,
@@ -32,8 +50,7 @@ const productApi = {
         price?: string,
         brand?: string,
         categoryItem?: string
-    ): Promise<ProductResponse> {
-        console.log('categoryItem: ', categoryItem)
+    ): Promise<ProductsResponse> {
         const url = '/products/category'
         const param = `/${slug}?page=${page}&limit=${
             limit ? limit : 10

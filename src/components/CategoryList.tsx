@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom'
-import routes from '~/config/routes'
 import { CategoryItem } from '~/models'
 import icons from '~/utils/icons'
 
@@ -22,13 +21,10 @@ const CategoryList: React.FC<Props> = ({
 }) => {
     return (
         <div>
-            <NavLink
-                to={`http://localhost:5173/${routes.ALL_CATEGORIES}`}
-                className="hover:cursor-pointer flex items-center border-b border-solid border-b-[rgba(0, 0, 0, .05)] mb-[10px] h-[50px] gap-[10px] font-bold text-[16px]"
-            >
+            <div className="hover:cursor-pointer flex items-center border-b border-solid border-b-[rgba(0, 0, 0, .05)] mb-[10px] h-[50px] gap-[10px] font-bold text-[16px]">
                 <FaList />
                 <h1>Tất Cả Danh Mục</h1>
-            </NavLink>
+            </div>
             {categoryItems.length > 0 &&
                 categoryItems.map((categoryItem, index) => (
                     <NavLink

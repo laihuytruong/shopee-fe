@@ -6,7 +6,8 @@ import {
     useSearchParams,
 } from 'react-router-dom'
 import { brandApi, categoryItemApi, productApi } from '~/apis'
-import { CategoryList, FilterPanel, Products, MenuList } from '~/components'
+import { CategoryList, FilterPanel, Products } from '~/components'
+import ButtonControl from '~/components/ButtonControl'
 import {
     Brand,
     CategoryItem,
@@ -17,10 +18,9 @@ import {
 import { updateURLParams } from '~/utils/constants'
 import icons from '~/utils/icons'
 
-const { MdOutlineNavigateNext, MdOutlineNavigateBefore, RiArrowDownSLine } =
-    icons
+const { MdOutlineNavigateNext, MdOutlineNavigateBefore, GrInfo } = icons
 
-const ProductCategory = () => {
+const ProductFilter = () => {
     const [searchParams] = useSearchParams()
     const pageNumber = searchParams.get('page')
     const sort = searchParams.get('sort')
@@ -28,6 +28,7 @@ const ProductCategory = () => {
     const price = searchParams.get('price')
     const brandSearch = searchParams.get('brand')
     const categoryItemSearch = searchParams.get('categoryItem')
+    const keywordSearch = searchParams.get('keyword')
 
     const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([])
     const [brands, setBrands] = useState<Brand[]>([])
@@ -52,32 +53,62 @@ const ProductCategory = () => {
     const nonActiveStyle =
         'hover:cursor-default p-2 rounded-sm border border-solid border-[rgba(0, 0, 0, .09)] bg-[#f9f9f9]'
 
-    const menuList: MenuItem[] = [
-        { children: 'Giá: Thấp đến Cao', sort: 'price' },
-        { children: 'Giá: Cao đến Thấp', sort: '-price' },
-    ]
-
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [responseCategory, responseBrand] = await Promise.all([
-                    categoryItemApi.getCategoryItemBySlug(slugCategory),
-                    brandApi.getBrand(slugCategory),
-                ])
-                if (responseBrand.data && responseCategory.data) {
-                    setCategoryItems([
-                        {
-                            _id: 'category',
-                            categoryItemName: responseCategory.data[0].category
-                                ? responseCategory.data[0].category.categoryName
-                                : '',
-                            slug: responseCategory.data[0].category
-                                ? responseCategory.data[0].category.slug
-                                : '',
-                        },
-                        ...responseCategory.data,
-                    ])
-                    setBrands(responseBrand.data)
+                const product = await productApi.getProduct(
+                    keywordSearch ? keywordSearch : ''
+                )
+                if (!product) {
+                    const [responseCategory, responseBrand] = await Promise.all(
+                        [
+                            categoryItemApi.getCategoryItemBySlug(slugCategory),
+                            brandApi.getBrand(slugCategory),
+                        ]
+                    )
+
+                    if (responseBrand.data && responseCategory.data) {
+                        setCategoryItems([
+                            {
+                                _id: 'category',
+                                categoryItemName: responseCategory.data[0]
+                                    .category
+                                    ? responseCategory.data[0].category
+                                          .categoryName
+                                    : '',
+                                slug: responseCategory.data[0].category
+                                    ? responseCategory.data[0].category.slug
+                                    : '',
+                            },
+                            ...responseCategory.data,
+                        ])
+                        setBrands(responseBrand.data)
+                    }
+                } else {
+                    const responseCategory =
+                        await categoryItemApi.getCategoryItemBySlug(
+                            product.data?.categoryItem.category?.slug
+                        )
+                    const responseBrand = await brandApi.getBrand(
+                        product.data?.brand.slug
+                    )
+                    if (responseBrand.data && responseCategory.data) {
+                        setCategoryItems([
+                            {
+                                _id: 'category',
+                                categoryItemName: responseCategory.data[0]
+                                    .category
+                                    ? responseCategory.data[0].category
+                                          .categoryName
+                                    : '',
+                                slug: responseCategory.data[0].category
+                                    ? responseCategory.data[0].category.slug
+                                    : '',
+                            },
+                            ...responseCategory.data,
+                        ])
+                        setBrands(responseBrand.data)
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
@@ -136,15 +167,17 @@ const ProductCategory = () => {
     return (
         <div className="mt-[149px] w-main flex">
             <div className="w-[190px] mr-5">
-                <div>
-                    <CategoryList
-                        categoryItems={categoryItems}
-                        search={search}
-                        active={active}
-                        setActive={setActive}
-                        setCount={setCount}
-                    />
-                </div>
+                {!pathname.includes('search') && (
+                    <div>
+                        <CategoryList
+                            categoryItems={categoryItems}
+                            search={search}
+                            active={active}
+                            setActive={setActive}
+                            setCount={setCount}
+                        />
+                    </div>
+                )}
                 <div>
                     <FilterPanel
                         brands={brands}
@@ -155,95 +188,28 @@ const ProductCategory = () => {
                 </div>
             </div>
             <div className="flex-1">
-                <div className="bg-[rgba(0, 0, 0, .03)] px-5 py-[13px] flex items-center justify-between">
-                    <div className="flex h-[34px] items-center w-4/5">
-                        <span className="text-[#555]">Sắp xếp theo</span>
-                        <div className="ml-8 flex gap-2">
-                            <button
-                                onClick={() => {
-                                    if (buttonActive !== 'Phổ biến') {
-                                        setButtonActive('Phổ biến')
-                                        setCount((prev) => prev + 1)
-                                        const newSearch = updateURLParams(
-                                            search,
-                                            'sort',
-                                            'pop'
-                                        )
-                                        nav(`${pathname}?${newSearch}`)
-                                    }
-                                }}
-                                className={`${
-                                    buttonActive === 'Phổ biến'
-                                        ? 'bg-main text-white'
-                                        : 'bg-white'
-                                } px-4 py-2 rounded`}
-                            >
-                                Phổ biến
-                            </button>
-                            <button
-                                onClick={() => {
-                                    if (buttonActive !== 'Mới nhất') {
-                                        setButtonActive('Mới nhất')
-                                        setCount((prev) => prev + 1)
-                                        const newSearch = updateURLParams(
-                                            search,
-                                            'sort',
-                                            'ctime'
-                                        )
-                                        nav(`${pathname}?${newSearch}`)
-                                    }
-                                }}
-                                className={`${
-                                    buttonActive === 'Mới nhất'
-                                        ? 'bg-main text-white'
-                                        : 'bg-white'
-                                } px-4 py-2 rounded`}
-                            >
-                                Mới nhất
-                            </button>
-                            <button
-                                onClick={() => {
-                                    if (buttonActive !== 'Bán chạy') {
-                                        setButtonActive('Bán chạy')
-                                        setCount((prev) => prev + 1)
-                                        const newSearch = updateURLParams(
-                                            search,
-                                            'sort',
-                                            'sales'
-                                        )
-                                        nav(`${pathname}?${newSearch}`)
-                                    }
-                                }}
-                                className={`${
-                                    buttonActive === 'Bán chạy'
-                                        ? 'bg-main text-white'
-                                        : 'bg-white'
-                                } px-4 py-2 rounded`}
-                            >
-                                Bán chạy
-                            </button>
-                            <MenuList
-                                menuList={menuList}
-                                handleSelect={handleSelect}
-                                selectMenuItem={selectMenuItem}
-                            >
-                                <div className="flex items-center justify-between w-[180px] bg-white px-2 py-2 rounded cursor-pointer">
-                                    <span
-                                        className={`w-80% ${
-                                            selectMenuItem !== 'Giá' &&
-                                            'text-main'
-                                        }`}
-                                    >
-                                        {selectMenuItem}
-                                    </span>
-                                    <div className="w-20%">
-                                        <RiArrowDownSLine />
-                                    </div>
-                                </div>
-                            </MenuList>
-                        </div>
+                {pathname.includes('search') && (
+                    <div className="flex px-5">
+                        <GrInfo size={20} />
+                        <h1 className="text-[#555] text-[16px] ml-2 mb-6">
+                            Kết quả tìm kiếm cho từ khoá
+                            <span className="text-main ml-1 text-[14px]">{`'${keywordSearch}'`}</span>
+                        </h1>
                     </div>
-                    <div className="flex gap-[18px] items-center w-1/5">
+                )}
+                <div className="bg-[rgba(0, 0, 0, .03)] px-5 py-[13px] flex items-center justify-between">
+                    <div className="w-4/5">
+                        <ButtonControl
+                            buttonActive={buttonActive}
+                            setButtonActive={setButtonActive}
+                            setCount={setCount}
+                            search={search}
+                            pathname={pathname}
+                            selectMenuItem={selectMenuItem}
+                            handleSelect={handleSelect}
+                        />
+                    </div>
+                    <div className="flex gap-[18px] items-center w-1/5 justify-end">
                         <span>
                             <span className="text-main">
                                 {paginationInfo.page}
@@ -316,4 +282,4 @@ const ProductCategory = () => {
     )
 }
 
-export default ProductCategory
+export default ProductFilter

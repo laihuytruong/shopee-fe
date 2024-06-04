@@ -28,6 +28,7 @@ const MenuList: React.FC<Props> = ({
                             return handleSelect(item)
                         }
                     }}
+                    className="bg-white"
                 >
                     <div className="flex justify-between items-center">
                         <span className="hover:text-main">{item.children}</span>

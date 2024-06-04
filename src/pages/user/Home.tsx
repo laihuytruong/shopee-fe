@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
-import { Banner, CategoryHome } from '~/components'
+import { Banner, ListCategory } from '~/components'
 import { PaginationInfo, Product } from '~/models'
 import { productApi } from '~/apis'
 import { Products } from '~/components'
@@ -81,7 +81,7 @@ const Home = () => {
                 <div className="h-[38px] px-5 text-[#0000008a] text-[18px] border-b border-solid border-[rgba(0, 0, 0, .05)]">
                     DANH MỤC
                 </div>
-                <CategoryHome />
+                <ListCategory />
             </div>
             <div className="mt-5 w-main">
                 <div className="sticky top-[119px] z-30 text-main text-[16px] bg-white px-[46px] py-[15px] text-center border-b-4 border-solid border-b-main">

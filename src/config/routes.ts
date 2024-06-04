@@ -2,11 +2,13 @@ const routes = {
     PUBLIC: '/',
     HOME: '',
     ALL: '*',
-    Login: 'login',
+    LOGIN: '/login',
+    REGISTER: '/register',
     DAILY_DISCOVER: 'daily_discover',
     PRODUCT_CATEGORY: 'category/:slugCategory',
     PRODUCT_DETAIL: 'product-detail/:slugProduct',
-    ALL_CATEGORIES: 'all_categories',
+    SEARCH: 'search',
+    FORGOT_PASSWORD: '/password/forgot',
 }
 
 export default routes

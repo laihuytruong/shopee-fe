@@ -6,13 +6,22 @@ interface CategoryResponse {
     msg?: string
     count?: number
     accessToken?: string
-    data?: Category[]
+    data?: {
+        page: number
+        pageSize: number
+        totalPage: number
+        data: Category[]
+    }
 }
 
 const categoryApi = {
-    async getCategories(): Promise<CategoryResponse> {
+    async getCategories(
+        page: number = 1,
+        limit?: number
+    ): Promise<CategoryResponse> {
         const url = '/categories'
-        return instance.get(url)
+        const param = `?page=${page}&limit=${limit ? limit : 20}`
+        return instance.get(url + param)
     },
 }
 
