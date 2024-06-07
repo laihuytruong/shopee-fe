@@ -10,6 +10,7 @@ import {
     Search,
     Auth,
     Register,
+    RegisterFinal,
 } from '~/pages/user'
 
 function App() {
@@ -38,6 +39,10 @@ function App() {
                 <Route element={<Auth />}>
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route path={routes.REGISTER} element={<Register />} />
+                    <Route
+                        path={routes.REGISTER_FINAL}
+                        element={<RegisterFinal />}
+                    />
                 </Route>
             </Routes>
         </div>

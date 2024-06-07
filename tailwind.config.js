@@ -37,6 +37,8 @@ export default {
                 form_auth_focus: '0 0 4px 0 rgba(0, 0, 0, .14)',
                 input_auth: 'inset 0 2px 0 rgba(0, 0, 0, .02)',
                 button_auth: '0 1px 1px rgba(0, 0, 0, .09)',
+                header: '0 6px 6px rgba(0, 0, 0, .06)',
+                form_verify: '0 3px 10px 0 rgba(0, 0, 0, .14)',
             },
             borderColor: {
                 hover: '#ee4d2d',

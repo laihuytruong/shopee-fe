@@ -15,6 +15,11 @@ interface Props {
     handleSelect: (item?: MenuItem) => void
 }
 
+enum MenuItemEnum {
+    AscPrice = 'Giá: Từ Thấp Đến Cao',
+    DescPrice = 'Giá: Từ Cao Đến Thấp',
+}
+
 const { RiArrowDownSLine } = icons
 
 const ButtonControl: React.FC<Props> = ({
@@ -29,8 +34,8 @@ const ButtonControl: React.FC<Props> = ({
     const nav = useNavigate()
 
     const menuList: MenuItem[] = [
-        { children: 'Giá: Thấp đến Cao', sort: 'price' },
-        { children: 'Giá: Cao đến Thấp', sort: '-price' },
+        { children: MenuItemEnum.AscPrice, sort: 'price' },
+        { children: MenuItemEnum.DescPrice, sort: '-price' },
     ]
 
     return (

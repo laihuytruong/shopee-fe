@@ -1,3 +1,5 @@
+import { MenuItemEnum } from "./enums"
+
 export interface PaginationInfo {
     page: number
     pageSize: number
@@ -6,7 +8,7 @@ export interface PaginationInfo {
 }
 
 export interface MenuItem {
-    children: React.ReactNode
+    children: MenuItemEnum
     sort?: string
 }
 

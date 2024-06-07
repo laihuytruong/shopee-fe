@@ -5,6 +5,8 @@ import { PaginationInfo, Product } from '~/models'
 import { productApi } from '~/apis'
 import { Products } from '~/components'
 import { listCodeDiscount } from '~/utils/constants'
+import { useAppSelector } from '~/app/hooks'
+import { selectAccessToken } from '~/features/UserSlice'
 
 const Home = () => {
     const [searchParams] = useSearchParams()
@@ -18,6 +20,8 @@ const Home = () => {
         totalCount: 0,
     })
     const { pathname, search } = useLocation()
+
+    const accessToken = useAppSelector(selectAccessToken)
 
     useEffect(() => {
         const fetchProductHome = async () => {

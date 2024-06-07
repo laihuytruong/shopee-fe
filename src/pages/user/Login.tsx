@@ -1,94 +1,136 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
-import logo_login from '~/assets/image/logo_login.png'
-import { ShowPassword } from '~/utils/svgIcons'
-import { useState } from 'react'
+import { ShowPassword, HidePassword } from '~/utils/svgIcons'
+import { useCallback, useState } from 'react'
 import icons from '~/utils/icons'
+import { authApi } from '~/apis'
+import { useAppDispatch } from '~/app/hooks'
+import { auth } from '~/features/UserSlice'
+import { useForm } from 'react-hook-form'
+import { useCookies } from 'react-cookie'
 
 const { FcGoogle } = icons
 
 const Login = () => {
-    const [formInput, setFormInput] = useState<{
-        username: string
-        password: string
-    }>({
-        username: '',
-        password: '',
-    })
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+    } = useForm<{ email: string; password: string }>({ mode: 'onChange' })
+    const [cookies, setCookie] = useCookies()
     const [showPassword, setShowPassword] = useState<boolean>(false)
+
+    const dispatch = useAppDispatch()
+
+    const email = watch('email', '')
+    const password = watch('password', '')
+    const nav = useNavigate()
+
+    const onSubmit = useCallback(async () => {
+        const response = await authApi.login({ email, password })
+        if (response.err === 0) {
+            dispatch(auth(response))
+            setCookie(
+                'user',
+                { userId: response.data?._id, token: response.accessToken },
+                { path: '/' }
+            )
+            nav('/')
+        }
+    }, [email, password])
 
     return (
         <div className="w-full">
-            <div className="h-[84px] bg-white flex justify-center">
-                <div className="w-main flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div>
-                            <NavLink className="w-[18%]" to={`${routes.HOME}`}>
-                                <img
-                                    src={logo_login}
-                                    alt="Logo_login"
-                                    className="w-40 h-auto cursor-pointer"
-                                />
-                            </NavLink>
-                        </div>
-                        <h1 className="text-3xl text-[#222222] pt-4 ml-4">
-                            Đăng nhập
-                        </h1>
-                    </div>
-                    <span className="text-main text-[14px] pt-4">
-                        Bạn cần giúp đỡ?
-                    </span>
-                </div>
-            </div>
             <div className="bg-[#ed4d2d] h-[600px] flex justify-center">
                 <div className=" w-[1040px] bg-custom h-full flex items-center">
                     <div className="w-full h-[452px]">
-                        <div className="bg-white h-full rounded shadow-form_auth w-[400px] float-right">
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="bg-white h-full rounded shadow-form_auth w-[400px] float-right"
+                        >
                             <h2 className="w-full px-[30px] py-[22px] text-xl text-[#222]">
                                 Đăng nhập
                             </h2>
                             <div className="px-[30px] pb-[30px]">
                                 <input
                                     type="text"
-                                    placeholder="Email/Tên đăng nhập"
-                                    className="focus:border-black outline-none rounded-sm border border-solid border-[rgba(0, 0, 0, .14)] p-3 shadow-input_auth w-full mb-5"
-                                    value={formInput.username}
-                                    onChange={(e) =>
-                                        setFormInput({
-                                            ...formInput,
-                                            username: e.target.value,
-                                        })
-                                    }
+                                    placeholder="Email"
+                                    className={`${
+                                        errors.email
+                                            ? 'bg-[#fff6f7] border-[#ff424f] focus:border-[#ff424f] mb-1'
+                                            : 'focus:border-black mb-5 border-[rgba(0, 0, 0, .14)]'
+                                    } outline-none rounded-sm border border-solid  p-3 shadow-input_auth w-full`}
+                                    {...register('email', {
+                                        required: 'Vui lòng điền trường này',
+                                        pattern: {
+                                            value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/,
+                                            message:
+                                                'Email không đúng định dạng',
+                                        },
+                                    })}
                                 />
-                                <div className="focus-within:border-black flex items-center rounded-sm shadow-input_auth border border-solid border-[rgba(0, 0, 0, .14)] mb-5">
+                                {errors.email && (
+                                    <span className="text-[#ff424f] text-xs">
+                                        {String(errors.email.message)}
+                                    </span>
+                                )}
+                                <div
+                                    className={`${
+                                        errors.password
+                                            ? 'bg-[#fff6f7] border-[#ff424f] focus:border-[#ff424f] mb-1 mt-3'
+                                            : 'focus:border-black mb-5 border-[rgba(0, 0, 0, .14)]'
+                                    } flex items-center rounded-sm shadow-input_auth border border-solid`}
+                                >
                                     <input
                                         type={
                                             showPassword ? 'text' : 'password'
                                         }
                                         placeholder="Mật khẩu"
                                         className=" p-3 w-full outline-none"
-                                        value={formInput.password}
-                                        onChange={(e) =>
-                                            setFormInput({
-                                                ...formInput,
-                                                password: e.target.value,
-                                            })
-                                        }
+                                        {...register('password', {
+                                            required:
+                                                'Vui lòng điền trường này',
+                                            minLength: {
+                                                value: 8,
+                                                message:
+                                                    'Mật khẩu chứa ít nhất 8 kí tự',
+                                            },
+                                            maxLength: {
+                                                value: 16,
+                                                message:
+                                                    'Mật khẩu chứa tối đa 16 kí tự',
+                                            },
+                                            pattern: {
+                                                value: /^(?=.*[a-z])(?=.*[A-Z]).{8,16}$/,
+                                                message:
+                                                    'Mật khẩu phải chứa ít nhất 1 ký tự viết thường và 1 ký tự viết hoa',
+                                            },
+                                        })}
                                     />
                                     <button
+                                        type="button"
                                         onClick={() =>
                                             setShowPassword(!showPassword)
                                         }
                                         className="pl-3 pr-4 bg-transparent outline-none border-none"
                                     >
-                                        <ShowPassword />
+                                        {showPassword ? (
+                                            <HidePassword />
+                                        ) : (
+                                            <ShowPassword />
+                                        )}
                                     </button>
                                 </div>
+                                {errors.password && (
+                                    <span className="text-[#ff424f] text-xs mb-2 block">
+                                        {String(errors.password.message)}
+                                    </span>
+                                )}
                                 <button
-                                    disabled
+                                    type="submit"
                                     className={`px-[10px] mb-[10px] rounded-sm w-full bg-main ${
-                                        formInput.username !== '' &&
-                                        formInput.password !== ''
+                                        email !== '' && password !== ''
                                             ? 'cursor-pointer opacity-[1]'
                                             : 'cursor-not-allowed opacity-[0.7]'
                                     } text-white py-[10px]`}
@@ -122,7 +164,7 @@ const Login = () => {
                                     </NavLink>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ instance.interceptors.response.use(
         return response.data
     },
     function (error) {
-        return error.data
+        return error.response.data
     }
 )
 

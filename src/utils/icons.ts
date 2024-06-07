@@ -6,7 +6,11 @@ import {
 } from 'react-icons/io'
 import { CiCircleQuestion } from 'react-icons/ci'
 import { GrLanguage } from 'react-icons/gr'
-import { IoLogoFacebook, IoLogoInstagram } from 'react-icons/io5'
+import {
+    IoLogoFacebook,
+    IoLogoInstagram,
+    IoCloseCircleOutline,
+} from 'react-icons/io5'
 import { FiShoppingCart } from 'react-icons/fi'
 import {
     MdOutlineNavigateNext,
@@ -16,7 +20,7 @@ import {
 } from 'react-icons/md'
 import { FaList } from 'react-icons/fa'
 import { RiArrowDownSLine } from 'react-icons/ri'
-import { FaCheck } from 'react-icons/fa6'
+import { FaCheck, FaArrowLeftLong } from 'react-icons/fa6'
 import { GrInfo } from 'react-icons/gr'
 import { FcGoogle } from 'react-icons/fc'
 
@@ -39,6 +43,8 @@ const icons = {
     FaCheck,
     GrInfo,
     FcGoogle,
+    FaArrowLeftLong,
+    IoCloseCircleOutline,
 }
 
 export default icons

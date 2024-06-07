@@ -1,10 +1,13 @@
 import icons from '~/utils/icons'
 import logo from '~/assets/image/logo.png'
 import { MenuList, Search } from '~/components'
-import userCartItems from '~/apis/mockData'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
-import { Dropdown } from 'antd'
+import { Dropdown, Empty } from 'antd'
+import { useCookies } from 'react-cookie'
+import { useEffect, useState } from 'react'
+import { userApi } from '~/apis'
+import { MenuItem, User } from '~/models'
 const {
     IoIosNotificationsOutline,
     CiCircleQuestion,
@@ -14,12 +17,46 @@ const {
     FiShoppingCart,
 } = icons
 
+enum MenuItemEnum {
+    Vietnamese = 'Tiếng Việt',
+    English = 'English',
+    MyAccount = 'Tài khoản của tôi',
+    Order = 'Đơn mua',
+    Logout = 'Đăng xuất',
+}
+
 const Header = () => {
     // const { pathname, search } = useLocation()
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
+    const [user, setUser] = useState<User>()
+    const nav = useNavigate()
+    useEffect(() => {
+        const fetchUser = async () => {
+            const response = await userApi.getUser({ ...cookies.user })
+            console.log('response: ', response.data)
+            if (response.err === 0) {
+                setUser(response.data)
+            }
+        }
+        fetchUser()
+    }, [])
 
-    const handleSelect = () => {
-        console.log('select')
+    const handleSelect = (item?: MenuItem) => {
+        if (item) {
+            const { children } = item
+            switch (children) {
+                case MenuItemEnum.Logout:
+                    removeCookie('user', { path: '/' })
+                    nav('/login')
+                    break
+                default:
+                    break
+            }
+        }
     }
+
+    const showCartElements =
+        user && user.cart.length > 5 ? user.cart.slice(0, 5) : user?.cart
 
     return (
         <div className="w-main flex flex-col text-[14px]">
@@ -54,8 +91,8 @@ const Header = () => {
                     </div>
                     <MenuList
                         menuList={[
-                            { children: 'Tiếng Việt' },
-                            { children: 'English' },
+                            { children: MenuItemEnum.Vietnamese },
+                            { children: MenuItemEnum.English },
                         ]}
                         handleSelect={handleSelect}
                     >
@@ -64,25 +101,46 @@ const Header = () => {
                             <span>Ngôn ngữ</span>
                         </div>
                     </MenuList>
-                    <MenuList
-                        menuList={[
-                            { children: 'Tài khoản của tôi' },
-                            { children: 'Đơn mua' },
-                            { children: 'Đăng xuất' },
-                        ]}
-                        handleSelect={handleSelect}
-                    >
-                        <div className="flex items-center gap-[6px]">
-                            <img
-                                className="w-[22px] h-[22px] rounded-full"
-                                src="https://res.cloudinary.com/dqhkmhosw/image/upload/v1715915939/shopee/c7koj4q5kk8ey2n9fwrn.jpg"
-                                alt=""
-                            />
-                            <span className="hover:text-hover hover:cursor-pointer">
-                                tendangnhap
-                            </span>
+                    {cookies.user ? (
+                        <MenuList
+                            menuList={[
+                                { children: MenuItemEnum.MyAccount },
+                                { children: MenuItemEnum.Order },
+                                { children: MenuItemEnum.Logout },
+                            ]}
+                            handleSelect={handleSelect}
+                        >
+                            <div className="flex items-center gap-[6px] hover:cursor-pointer">
+                                <img
+                                    className="w-[22px] h-[22px] rounded-full"
+                                    src={
+                                        user
+                                            ? user.avatar
+                                            : 'https://bit.ly/3ycA2mE'
+                                    }
+                                    alt="avartar"
+                                />
+                                <span className="hover:text-hover">
+                                    {user?.username}
+                                </span>
+                            </div>
+                        </MenuList>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <NavLink
+                                to={`${routes.REGISTER}`}
+                                className="hover:text-hover"
+                            >
+                                Đăng ký
+                            </NavLink>
+                            <NavLink
+                                to={`${routes.LOGIN}`}
+                                className="hover:text-hover"
+                            >
+                                Đăng nhập
+                            </NavLink>
                         </div>
-                    </MenuList>
+                    )}
                 </div>
             </div>
             <div className="flex h-[85px] items-center justify-between">
@@ -100,43 +158,64 @@ const Header = () => {
                     <Dropdown
                         placement="bottomRight"
                         dropdownRender={() => (
-                            <div className="flex flex-col w-[400px] h-auto bg-white rounded shadow-cart">
-                                <div className="text-[#00000042] p-[10px]">
-                                    Sản Phẩm Mới Thêm
-                                </div>
-                                {userCartItems.map((item) => (
-                                    <div className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer">
-                                        <img
-                                            src={`${item.product.image}`}
-                                            alt="image"
-                                            className="w-10 h-10 rounded-sm"
-                                        />
-                                        <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
-                                            {item.product.productName}
-                                        </span>
-                                        <span className="text-main ml-3">
-                                            đ
-                                            {item.product.price.toLocaleString()}
-                                        </span>
+                            <div
+                                className={`flex flex-col w-[400px] h-auto bg-white rounded shadow-cart`}
+                            >
+                                {user && user.cart && user.cart.length > 0 ? (
+                                    <div>
+                                        <div className="text-[#00000042] p-[10px]">
+                                            Sản Phẩm Mới Thêm
+                                        </div>
+                                        {showCartElements &&
+                                            showCartElements.map((item) => (
+                                                <div className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer">
+                                                    <img
+                                                        src={`${item.product.image}`}
+                                                        alt="image"
+                                                        className="w-10 h-10 rounded-sm"
+                                                    />
+                                                    <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
+                                                        {
+                                                            item.product
+                                                                .productName
+                                                        }
+                                                    </span>
+                                                    <span className="text-main ml-3">
+                                                        đ
+                                                        {item.product.price.toLocaleString()}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        <div className="flex items-center justify-between p-[10px] bg-[#fdfdfd] ">
+                                            <span className="text-xs">
+                                                {user.cart.length > 5
+                                                    ? `${
+                                                          user.cart.length - 1
+                                                      } Thêm Hàng Vào Giỏ`
+                                                    : '0 Thêm Hàng Vào Giỏ'}
+                                            </span>
+                                            <button className="bg-main p-2 text-white hover:opacity-[0.9] rounded-sm flex items-center justify-center">
+                                                Xem Giỏ Hàng
+                                            </button>
+                                        </div>
                                     </div>
-                                ))}
-                                <div className="flex items-center justify-between p-[10px] bg-[#fdfdfd] ">
-                                    <span className="text-xs">
-                                        15 Thêm Hàng Vào Giỏ
-                                    </span>
-                                    <button className="bg-main p-2 text-white hover:opacity-[0.9] rounded-sm flex items-center justify-center">
-                                        Xem Giỏ Hàng
-                                    </button>
-                                </div>
+                                ) : (
+                                    <Empty
+                                        description="Không có sản phẩm nào trong giỏ hàng"
+                                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    />
+                                )}
                             </div>
                         )}
                     >
                         <div className="relative cursor-pointer">
                             <FiShoppingCart size={28} />
 
-                            <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
-                                1
-                            </div>
+                            {user && user.cart && user.cart.length > 0 && (
+                                <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
+                                    {user.cart.length}
+                                </div>
+                            )}
                         </div>
                     </Dropdown>
                 </div>
