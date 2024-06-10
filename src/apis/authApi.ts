@@ -13,6 +13,7 @@ interface AuthResponse {
     msg?: string
     accessToken?: string
     data?: User
+    resetToken?: string
 }
 
 interface DataAuth {
@@ -26,14 +27,36 @@ const authApi = {
         const url = '/auth/register/verify'
         return instance.post(url, data)
     },
+
     async register(data: DataAuth): Promise<AuthResponse> {
         const url = '/auth/register'
-        console.log();
+        console.log()
         return instance.post(url, data)
     },
+
     async login(data: DataAuth): Promise<AuthResponse> {
         const url = '/auth/login'
         return instance.post(url, data)
+    },
+
+    async logout(): Promise<AuthResponse> {
+        const url = '/auth/logout'
+        return instance.post(url)
+    },
+
+    async forgotPassword(data: { email: string }): Promise<AuthResponse> {
+        const url = '/auth/forgot-password'
+        return instance.post(url, data)
+    },
+
+    async resetPassword(data: {
+        resetToken: string
+        password: string
+    }): Promise<AuthResponse> {
+        console.log('data: ', data.resetToken)
+        const url = '/auth/reset-password'
+        const param = `/${data.resetToken}`
+        return instance.put(url + param, { password: data.password })
     },
 }
 

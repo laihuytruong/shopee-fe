@@ -9,7 +9,12 @@ const routes = {
     PRODUCT_CATEGORY: 'category/:slugCategory',
     PRODUCT_DETAIL: 'product-detail/:slugProduct',
     SEARCH: 'search',
-    FORGOT_PASSWORD: '/password/forgot',
+    RESET_PASSWORD: '/reset-password',
+    FORGOT_PASSWORD: '/forgot-password',
+    ME: '/user',
+    MY_ACCOUNT: '/user/account/profile',
+    CHANGE_PASSWORD: '/user/account/change-password',
+    ORDER: '/user/purchase',
 }
 
 export default routes

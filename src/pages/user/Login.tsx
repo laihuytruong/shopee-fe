@@ -8,8 +8,9 @@ import { useAppDispatch } from '~/app/hooks'
 import { auth } from '~/features/UserSlice'
 import { useForm } from 'react-hook-form'
 import { useCookies } from 'react-cookie'
+import Swal from 'sweetalert2'
 
-const { FcGoogle } = icons
+const { FcGoogle, IoCloseCircleOutline } = icons
 
 const Login = () => {
     const {
@@ -20,6 +21,7 @@ const Login = () => {
     } = useForm<{ email: string; password: string }>({ mode: 'onChange' })
     const [cookies, setCookie] = useCookies()
     const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [isError, setIsError] = useState<boolean>(false)
 
     const dispatch = useAppDispatch()
 
@@ -28,6 +30,7 @@ const Login = () => {
     const nav = useNavigate()
 
     const onSubmit = useCallback(async () => {
+        setIsError(false)
         const response = await authApi.login({ email, password })
         if (response.err === 0) {
             dispatch(auth(response))
@@ -36,7 +39,25 @@ const Login = () => {
                 { userId: response.data?._id, token: response.accessToken },
                 { path: '/' }
             )
-            nav('/')
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Đăng nhập thành công',
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() => {
+                nav(`/${routes.HOME}`)
+            })
+        } else {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Đăng nhập thất bại',
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() => {
+                setIsError(true)
+            })
         }
     }, [email, password])
 
@@ -44,7 +65,7 @@ const Login = () => {
         <div className="w-full">
             <div className="bg-[#ed4d2d] h-[600px] flex justify-center">
                 <div className=" w-[1040px] bg-custom h-full flex items-center">
-                    <div className="w-full h-[452px]">
+                    <div className="w-full h-[482px]">
                         <form
                             onSubmit={handleSubmit(onSubmit)}
                             className="bg-white h-full rounded shadow-form_auth w-[400px] float-right"
@@ -53,6 +74,15 @@ const Login = () => {
                                 Đăng nhập
                             </h2>
                             <div className="px-[30px] pb-[30px]">
+                                {isError && (
+                                    <div className="text-[#ff424f] text-xs flex gap-2 p-2 bg-[#fff6f7] border-[#ff424f] focus:border-[#ff424f] mb-3">
+                                        <IoCloseCircleOutline size={20} />
+                                        <span>
+                                            Tên tài khoản của bạn hoặc Mật khẩu
+                                            không đúng, vui lòng thử lại
+                                        </span>
+                                    </div>
+                                )}
                                 <input
                                     type="text"
                                     placeholder="Email"

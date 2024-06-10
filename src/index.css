@@ -69,3 +69,23 @@ body {
     background-repeat: no-repeat;
     background-position: center center;
 }
+
+.border-inline-end {
+    border-inline-end: none !important;
+}
+
+.custom-ok-button {
+    background-color: #ee4d2d !important;
+    border-color: #ee4d2d !important;
+    color: white !important;
+}
+
+.custom-ok-button:hover,
+.custom-cancel-button:hover {
+    opacity: 0.9 !important;
+}
+
+.custom-cancel-button {
+    border-color: #ee4d2d !important;
+    color: #ee4d2d !important;
+}

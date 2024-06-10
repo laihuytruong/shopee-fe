@@ -39,6 +39,9 @@ export default {
                 button_auth: '0 1px 1px rgba(0, 0, 0, .09)',
                 header: '0 6px 6px rgba(0, 0, 0, .06)',
                 form_verify: '0 3px 10px 0 rgba(0, 0, 0, .14)',
+                form_reset: '0 3px 10px 0 rgba(0, 0, 0, .14)',
+                me: '0 1px 2px 0 rgba(0, 0, 0, .13)',
+                input_me: 'inset 0 2px 0 rgba(0,0,0,.02)',
             },
             borderColor: {
                 hover: '#ee4d2d',

@@ -47,7 +47,6 @@ const ProductFilter = () => {
     const { slugCategory } = useParams()
     const { pathname, search } = useLocation()
     const nav = useNavigate()
-
     const activeStyle =
         'p-2 shadow-buttonCategory bg-transparent rounded-sm border border-solid border-[rgba(0, 0, 0, .09)] bg-[#f9f9f9]'
     const nonActiveStyle =
@@ -57,9 +56,10 @@ const ProductFilter = () => {
         const fetchData = async () => {
             try {
                 const product = await productApi.getProduct(
-                    keywordSearch ? keywordSearch : ''
+                    keywordSearch ? keywordSearch : undefined
                 )
-                if (!product) {
+                console.log('product: ', product)
+                if (product.err === 1) {
                     const [responseCategory, responseBrand] = await Promise.all(
                         [
                             categoryItemApi.getCategoryItemBySlug(slugCategory),

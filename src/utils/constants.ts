@@ -65,7 +65,7 @@ export const listCodeDiscount: CodeDisCount[] = [
 export const updateURLParams = (
     search: string,
     key: string,
-    value: string | number | string[]
+    value: string | number | string[] | boolean
 ): string => {
     const params = new URLSearchParams(search)
 
@@ -78,4 +78,16 @@ export const updateURLParams = (
     }
 
     return params.toString()
+}
+
+export const maskEmail = (email: string) => {
+    const [name, domain] = email.split('@')
+    const maskedName = name.slice(0, 2) + '*'.repeat(name.length - 2)
+    return `${maskedName}@${domain}`
+}
+
+export const maskPhoneNumber = (phoneNumber: string) => {
+    const maskedNumber =
+        '*'.repeat(phoneNumber.length - 2) + phoneNumber.slice(-2)
+    return maskedNumber
 }

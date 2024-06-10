@@ -3,15 +3,19 @@ import routes from './config/routes'
 import {
     Home,
     Login,
-    Public,
     DailyDiscover,
     ProductFilter,
     ProductDetail,
     Search,
-    Auth,
     Register,
     RegisterFinal,
+    ForgotPassword,
+    ResetPassword,
 } from '~/pages/user'
+
+import { ChangePassword, MyAccount, Purchase } from '~/components'
+
+import { AuthLayout, Public, MeLayout } from '~/layouts'
 
 function App() {
     return (
@@ -32,16 +36,35 @@ function App() {
                         element={<ProductDetail />}
                     />
                     <Route path={routes.SEARCH} element={<Search />} />
+                    <Route path={routes.ME} element={<MeLayout />}>
+                        <Route
+                            path={routes.MY_ACCOUNT}
+                            element={<MyAccount />}
+                        />
+                        <Route
+                            path={routes.CHANGE_PASSWORD}
+                            element={<ChangePassword />}
+                        />
+                        <Route path={routes.ORDER} element={<Purchase />} />
+                    </Route>
 
                     <Route path={routes.ALL} element={<Home />} />
                 </Route>
 
-                <Route element={<Auth />}>
+                <Route element={<AuthLayout />}>
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route path={routes.REGISTER} element={<Register />} />
                     <Route
                         path={routes.REGISTER_FINAL}
                         element={<RegisterFinal />}
+                    />
+                    <Route
+                        path={routes.FORGOT_PASSWORD}
+                        element={<ForgotPassword />}
+                    />
+                    <Route
+                        path={routes.RESET_PASSWORD}
+                        element={<ResetPassword />}
                     />
                 </Route>
             </Routes>

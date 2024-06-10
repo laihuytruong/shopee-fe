@@ -5,9 +5,10 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
 import { Dropdown, Empty } from 'antd'
 import { useCookies } from 'react-cookie'
-import { useEffect, useState } from 'react'
-import { userApi } from '~/apis'
+import { authApi } from '~/apis'
 import { MenuItem, User } from '~/models'
+import { useAppSelector } from '~/app/hooks'
+import { selectUser } from '~/features/UserSlice'
 const {
     IoIosNotificationsOutline,
     CiCircleQuestion,
@@ -28,30 +29,31 @@ enum MenuItemEnum {
 const Header = () => {
     // const { pathname, search } = useLocation()
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
-    const [user, setUser] = useState<User>()
     const nav = useNavigate()
-    useEffect(() => {
-        const fetchUser = async () => {
-            const response = await userApi.getUser({ ...cookies.user })
-            console.log('response: ', response.data)
-            if (response.err === 0) {
-                setUser(response.data)
-            }
-        }
-        fetchUser()
-    }, [])
 
-    const handleSelect = (item?: MenuItem) => {
-        if (item) {
-            const { children } = item
-            switch (children) {
-                case MenuItemEnum.Logout:
-                    removeCookie('user', { path: '/' })
-                    nav('/login')
-                    break
-                default:
-                    break
+    const user: User = useAppSelector(selectUser)
+
+    const handleSelect = async (item?: MenuItem) => {
+        try {
+            if (item) {
+                const { children } = item
+                if (children === MenuItemEnum.Logout) {
+                    await authApi.logout()
+                }
+                switch (children) {
+                    case MenuItemEnum.Logout:
+                        removeCookie('user', { path: '/' })
+                        nav(routes.LOGIN)
+                        break
+                    case MenuItemEnum.MyAccount:
+                        nav(routes.MY_ACCOUNT)
+                        break
+                    default:
+                        break
+                }
             }
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -167,33 +169,36 @@ const Header = () => {
                                             Sản Phẩm Mới Thêm
                                         </div>
                                         {showCartElements &&
-                                            showCartElements.map((item) => (
-                                                <div className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer">
-                                                    <img
-                                                        src={`${item.product.image}`}
-                                                        alt="image"
-                                                        className="w-10 h-10 rounded-sm"
-                                                    />
-                                                    <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
-                                                        {
-                                                            item.product
-                                                                .productName
-                                                        }
-                                                    </span>
-                                                    <span className="text-main ml-3">
-                                                        đ
-                                                        {item.product.price.toLocaleString()}
-                                                    </span>
-                                                </div>
-                                            ))}
+                                            showCartElements.map((item) => {
+                                                console.log('item', item)
+                                                return (
+                                                    <div className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer">
+                                                        <img
+                                                            src={`${item.product.image}`}
+                                                            alt="image"
+                                                            className="w-10 h-10 rounded-sm"
+                                                        />
+                                                        <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
+                                                            {
+                                                                item.product
+                                                                    .productName
+                                                            }
+                                                        </span>
+                                                        <span className="text-main ml-3">
+                                                            đ
+                                                            {item.product.price.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                )
+                                            })}
                                         <div className="flex items-center justify-between p-[10px] bg-[#fdfdfd] ">
-                                            <span className="text-xs">
-                                                {user.cart.length > 5
-                                                    ? `${
-                                                          user.cart.length - 1
-                                                      } Thêm Hàng Vào Giỏ`
-                                                    : '0 Thêm Hàng Vào Giỏ'}
-                                            </span>
+                                            {user.cart.length > 5 && (
+                                                <span className="text-xs">
+                                                    {`${
+                                                        user.cart.length - 5
+                                                    } Thêm Hàng Vào Giỏ`}
+                                                </span>
+                                            )}
                                             <button className="bg-main p-2 text-white hover:opacity-[0.9] rounded-sm flex items-center justify-center">
                                                 Xem Giỏ Hàng
                                             </button>

@@ -1,10 +1,11 @@
-import { NavLink, Outlet, useParams } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
 import { Footer } from '~/components'
 import routes from '~/config/routes'
 import logo_login from '~/assets/image/logo_login.png'
 
 const AuthLayout = () => {
     const params = useParams()
+    const { pathname } = useLocation()
 
     return (
         <div className="w-full flex flex-col items-center">
@@ -29,7 +30,11 @@ const AuthLayout = () => {
                                 </NavLink>
                             </div>
                             <h1 className="text-3xl text-[#222222] pt-4 ml-4">
-                                Đăng ký
+                                {pathname.includes('register')
+                                    ? 'Đăng ký'
+                                    : pathname.includes('login')
+                                    ? 'Đăng nhập'
+                                    : 'Đặt lại mật khẩu'}
                             </h1>
                         </div>
                         <span className="text-main text-[14px] pt-4">

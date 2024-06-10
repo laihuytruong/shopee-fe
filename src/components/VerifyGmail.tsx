@@ -9,8 +9,8 @@ import icons from '~/utils/icons'
 interface Props {
     onSubmit: (data: { code: string }) => void
     email: string
-    errorMsg: string
-    setErrorMsg: React.Dispatch<React.SetStateAction<string>>
+    errorMsg?: string
+    setErrorMsg?: React.Dispatch<React.SetStateAction<string>>
     setCode: React.Dispatch<React.SetStateAction<string>>
 }
 
@@ -32,7 +32,9 @@ const VerifyGmail: React.FC<Props> = ({
     }, [code])
 
     const handleReCode = async () => {
-        setErrorMsg('')
+        if (setErrorMsg) {
+            setErrorMsg('')
+        }
         const response = await authApi.verify({ email })
         if (response.err === 0) {
             dispatch(

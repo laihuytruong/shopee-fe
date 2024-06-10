@@ -1,10 +1,16 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Header, Footer } from '~/components'
 
 const Public = () => {
+    const { pathname } = useLocation()
+
     return (
         <div className="w-full flex flex-col items-center">
-            <div className="w-full flex justify-center bg-main text-white text-[13px] h-[119px] fixed top-0 z-50">
+            <div
+                className={`w-full flex justify-center bg-main text-white text-[13px] h-[119px] ${
+                    pathname === '/' && 'fixed top-0 z-50'
+                }`}
+            >
                 <Header />
             </div>
             <Outlet />

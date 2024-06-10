@@ -36,10 +36,9 @@ const Register = () => {
                 })
             )
             setIsLoading(false)
-            nav('/register/1')
+            nav(`${routes.REGISTER}/1`)
         }
     }, [email])
-    console.log('errors: ', errors)
 
     return (
         <div className="w-full">
