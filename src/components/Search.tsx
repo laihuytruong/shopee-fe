@@ -29,8 +29,10 @@ const Search = () => {
     const debouncedSetSearchText = useCallback(
         debounce(async (text: string) => {
             const response = await productApi.getProducts(1, 10, text)
+            console.log('text', text)
+            console.log('response', response)
             setSearchData(response.data ? response.data.data : [])
-        }, 1000),
+        }, 500),
         []
     )
 
@@ -55,7 +57,6 @@ const Search = () => {
         }
         const newSearch = updateURLParams(search, 'keyword', item.name)
         nav(`${pathname === '/search' ? pathname : '/search'}?${newSearch}`)
-        console.log('Search history: ', searchHistory)
     }
 
     return (

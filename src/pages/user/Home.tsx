@@ -26,6 +26,7 @@ const Home = () => {
     useEffect(() => {
         const fetchProductHome = async () => {
             const response = await productApi.getProducts()
+            console.log('response: ', response.data?.data)
             if (response.err === 0) {
                 if (response.data) {
                     setProducts(response.data.data)

@@ -44,23 +44,24 @@ const ButtonControl: React.FC<Props> = ({
             <div className="ml-8 flex gap-2">
                 <button
                     onClick={() => {
-                        if (buttonActive !== 'Phổ biến') {
+                        if (search.includes('search')) {
+                            if (buttonActive !== 'Liên quan') {
+                                setButtonActive('Liên quan')
+                                setCount((prev) => prev + 1)
+                                const newSearch = updateURLParams(
+                                    search,
+                                    'sort',
+                                    'relevancy'
+                                )
+                                nav(`${pathname}?${newSearch}`)
+                            }
+                        } else if (buttonActive !== 'Phổ biến') {
                             setButtonActive('Phổ biến')
                             setCount((prev) => prev + 1)
                             const newSearch = updateURLParams(
                                 search,
                                 'sort',
                                 'pop'
-                            )
-                            nav(`${pathname}?${newSearch}`)
-                        }
-                        if (buttonActive !== 'Liên quan') {
-                            setButtonActive('Liên quan')
-                            setCount((prev) => prev + 1)
-                            const newSearch = updateURLParams(
-                                search,
-                                'sort',
-                                'relevancy'
                             )
                             nav(`${pathname}?${newSearch}`)
                         }

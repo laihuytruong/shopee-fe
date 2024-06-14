@@ -27,7 +27,6 @@ const ResetPassword = () => {
 
     const errorsInput = errors.password?.type
     const nav = useNavigate()
-    console.log(resetToken)
     const onSubmit = useCallback(async () => {
         try {
             if (!errors.password) {

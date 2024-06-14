@@ -60,53 +60,41 @@ const ProductFilter = () => {
                 )
                 console.log('product: ', product)
                 if (product.err === 1) {
-                    const [responseCategory, responseBrand] = await Promise.all(
-                        [
+                    const [responseCategoryItem, responseBrand] =
+                        await Promise.all([
                             categoryItemApi.getCategoryItemBySlug(slugCategory),
                             brandApi.getBrand(slugCategory),
-                        ]
-                    )
-
-                    if (responseBrand.data && responseCategory.data) {
+                        ])
+                    if (responseBrand.data && responseCategoryItem.data) {
                         setCategoryItems([
                             {
                                 _id: 'category',
-                                categoryItemName: responseCategory.data[0]
+                                categoryItemName: responseCategoryItem.data[0]
                                     .category
-                                    ? responseCategory.data[0].category
+                                    ? responseCategoryItem.data[0].category
                                           .categoryName
                                     : '',
-                                slug: responseCategory.data[0].category
-                                    ? responseCategory.data[0].category.slug
+                                slug: responseCategoryItem.data[0].category
+                                    ? responseCategoryItem.data[0].category.slug
                                     : '',
                             },
-                            ...responseCategory.data,
+                            ...responseCategoryItem.data,
                         ])
                         setBrands(responseBrand.data)
                     }
                 } else {
-                    const responseCategory =
+                    const responseCategoryItem =
                         await categoryItemApi.getCategoryItemBySlug(
-                            product.data?.categoryItem.category?.slug
+                            product.data?.categoryItem.category &&
+                                product.data?.categoryItem.category.slug
                         )
+                    console.log()
                     const responseBrand = await brandApi.getBrand(
-                        product.data?.brand.slug
+                        product.data?.categoryItem.category &&
+                            product.data?.categoryItem.category.slug
                     )
-                    if (responseBrand.data && responseCategory.data) {
-                        setCategoryItems([
-                            {
-                                _id: 'category',
-                                categoryItemName: responseCategory.data[0]
-                                    .category
-                                    ? responseCategory.data[0].category
-                                          .categoryName
-                                    : '',
-                                slug: responseCategory.data[0].category
-                                    ? responseCategory.data[0].category.slug
-                                    : '',
-                            },
-                            ...responseCategory.data,
-                        ])
+                    if (responseBrand.data && responseCategoryItem.data) {
+                        setCategoryItems(responseCategoryItem.data)
                         setBrands(responseBrand.data)
                     }
                 }
@@ -116,6 +104,7 @@ const ProductFilter = () => {
         }
         fetchData()
     }, [])
+    console.log('category items: ', categoryItems)
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -165,7 +154,7 @@ const ProductFilter = () => {
     }
 
     return (
-        <div className="mt-[149px] w-main flex">
+        <div className="mt-[30px] w-main flex">
             <div className="w-[190px] mr-5">
                 {!pathname.includes('search') && (
                     <div>
@@ -181,6 +170,7 @@ const ProductFilter = () => {
                 <div>
                     <FilterPanel
                         brands={brands}
+                        categoryItems={categoryItems}
                         setCount={setCount}
                         pathname={pathname}
                         search={search}

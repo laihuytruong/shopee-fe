@@ -32,7 +32,7 @@ const Login = () => {
     const onSubmit = useCallback(async () => {
         setIsError(false)
         const response = await authApi.login({ email, password })
-        if (response.err === 0) {
+        if (response.err === 0 && response.data) {
             dispatch(auth(response))
             setCookie(
                 'user',

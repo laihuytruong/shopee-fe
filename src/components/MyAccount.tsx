@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import { selectAccessToken, selectUser, setUser } from '~/features/UserSlice'
 import { User } from '~/models'
-import type { DatePickerProps } from 'antd'
+import type { DatePickerProps, UploadFile } from 'antd'
 import { DatePicker, Space, Modal } from 'antd'
 import dayjs from 'dayjs'
 import { maskEmail, maskPhoneNumber, updateURLParams } from '~/utils/constants'
@@ -16,7 +16,7 @@ const MyAccount = () => {
     const user: User = useAppSelector(selectUser)
     const token = useAppSelector(selectAccessToken)
     const dispatch = useAppDispatch()
-
+    console.log('user: ', user)
     const [formValue, setFormValue] = useState<{
         email: string
         sex: string
@@ -40,6 +40,12 @@ const MyAccount = () => {
     )
     const [type, setType] = useState<string | undefined>()
 
+    const initialFileList: UploadFile[] = user.avatar
+        ? [{ uid: '-1', name: 'avatar.png', status: 'done', url: user.avatar }]
+        : []
+
+    const [fileList, setFileList] = useState<UploadFile[]>(initialFileList)
+
     const { handleSubmit } = useForm<{
         username: string
         name: string
@@ -48,6 +54,7 @@ const MyAccount = () => {
         email: string
         sex: string
         dateOFBirth: Date
+        avatar: File
     }>({ mode: 'onChange' })
 
     const { pathname, search } = useLocation()
@@ -75,7 +82,7 @@ const MyAccount = () => {
         try {
             const dateOfBirth = user.dateOfBirth
                 ? new Date(user.dateOfBirth).toLocaleDateString()
-                : new Date('2000-01-01')
+                : new Date('2001-01-01')
             const userData = {
                 ...user,
                 phoneNumber,
@@ -91,7 +98,7 @@ const MyAccount = () => {
                 })
             )
             setIsModalOpen(false)
-            setPhoneNumber('')
+            // setPhoneNumber('')
         } catch (error) {
             console.log(error)
         }
@@ -119,20 +126,34 @@ const MyAccount = () => {
                 email: formValue.email,
                 sex: formValue.sex,
                 dateOfBirth: formValue.dateOfBirth
-                    ? new Date(formValue.dateOfBirth).toLocaleDateString()
-                    : new Date('2001-01-01'),
+                    ? new Date(formValue.dateOfBirth)
+                    : new Date('01/01/2001'),
             }
             const response = await userApi.updateUser({
                 user: userData as User,
                 token,
             })
-            dispatch(
-                setUser({
-                    user: response.data ? response.data : ({} as User),
-                })
-            )
+            const file = fileList && (fileList[0].originFileObj as File)
+            const responseUpload = await userApi.uploadAvatar({
+                token: token,
+                avatar: file,
+            })
+            if (response.err === 0 && responseUpload.err === 0) {
+                dispatch(
+                    setUser({
+                        user: response.data
+                            ? {
+                                  ...response.data,
+                                  avatar: responseUpload.data
+                                      ? responseUpload.data.avatar
+                                      : response.data.avatar,
+                              }
+                            : ({} as User),
+                    })
+                )
+            }
         })
-    }, [formValue, username, name, address, phoneNumber])
+    }, [formValue, username, name, address, phoneNumber, fileList])
 
     return (
         <div className="px-[30px] pb-[10px] min-h-[500px]">
@@ -346,7 +367,7 @@ const MyAccount = () => {
                                             <Space direction="vertical">
                                                 <DatePicker
                                                     format={{
-                                                        format: 'DD-MM-YYYY',
+                                                        format: 'DD/MM/YYYY',
                                                         type: 'mask',
                                                     }}
                                                     value={
@@ -383,8 +404,13 @@ const MyAccount = () => {
                                 </table>
                             </form>
                         </div>
-                        <div className="w-[232px] h-auto border-l border-solid border-l-[#efefef] flex justify-center items-center">
-                            <UploadAvatar />
+                        <div className="w-[232px] h-auto">
+                            <div className="h-1/2 w-full border-l border-solid border-l-[#efefef] flex justify-center items-center">
+                                <UploadAvatar
+                                    fileList={fileList}
+                                    setFileList={setFileList}
+                                />
+                            </div>
                         </div>
                     </>
                 ) : (

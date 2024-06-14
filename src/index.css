@@ -89,3 +89,8 @@ body {
     border-color: #ee4d2d !important;
     color: #ee4d2d !important;
 }
+
+.ant-upload-wrapper.ant-upload-picture-circle-wrapper
+    .ant-upload.ant-upload-select:not(.ant-upload-disabled):hover {
+    border-color: #ee4d2d;
+}

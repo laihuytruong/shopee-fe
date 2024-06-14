@@ -35,9 +35,11 @@ const productApi = {
         return instance.get(url + param)
     },
 
-    async getProduct(slug: string | undefined): Promise<ProductResponse> {
+    async getProduct(
+        productName: string | undefined
+    ): Promise<ProductResponse> {
         const url = '/products'
-        const param = `/${slug}`
+        const param = `/${productName}`
         return instance.get(url + param)
     },
 

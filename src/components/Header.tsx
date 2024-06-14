@@ -5,10 +5,11 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
 import { Dropdown, Empty } from 'antd'
 import { useCookies } from 'react-cookie'
-import { authApi } from '~/apis'
+import { authApi, userApi } from '~/apis'
 import { MenuItem, User } from '~/models'
-import { useAppSelector } from '~/app/hooks'
-import { selectUser } from '~/features/UserSlice'
+import { useAppDispatch } from '~/app/hooks'
+import { setUser } from '~/features/UserSlice'
+import { useEffect, useState } from 'react'
 const {
     IoIosNotificationsOutline,
     CiCircleQuestion,
@@ -30,8 +31,23 @@ const Header = () => {
     // const { pathname, search } = useLocation()
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const nav = useNavigate()
+    const dispatch = useAppDispatch()
+    const [userData, setUserData] = useState<User>({} as User)
 
-    const user: User = useAppSelector(selectUser)
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await userApi.getUser({ ...cookies.user })
+            if (response.err === 0) {
+                setUserData(response.data ? response.data : ({} as User))
+                if (response.data) {
+                    dispatch(setUser({ user: response.data }))
+                }
+            } else {
+                nav(routes.LOGIN)
+            }
+        }
+        fetchData()
+    }, [cookies.user])
 
     const handleSelect = async (item?: MenuItem) => {
         try {
@@ -42,6 +58,7 @@ const Header = () => {
                 }
                 switch (children) {
                     case MenuItemEnum.Logout:
+                        dispatch(setUser({ user: {} as User }))
                         removeCookie('user', { path: '/' })
                         nav(routes.LOGIN)
                         break
@@ -58,7 +75,9 @@ const Header = () => {
     }
 
     const showCartElements =
-        user && user.cart.length > 5 ? user.cart.slice(0, 5) : user?.cart
+        userData && userData.cart && userData.cart.length > 5
+            ? userData.cart.slice(0, 5)
+            : userData?.cart
 
     return (
         <div className="w-main flex flex-col text-[14px]">
@@ -103,7 +122,7 @@ const Header = () => {
                             <span>Ngôn ngữ</span>
                         </div>
                     </MenuList>
-                    {cookies.user ? (
+                    {userData ? (
                         <MenuList
                             menuList={[
                                 { children: MenuItemEnum.MyAccount },
@@ -116,14 +135,14 @@ const Header = () => {
                                 <img
                                     className="w-[22px] h-[22px] rounded-full"
                                     src={
-                                        user
-                                            ? user.avatar
+                                        userData
+                                            ? userData.avatar
                                             : 'https://bit.ly/3ycA2mE'
                                     }
-                                    alt="avartar"
+                                    alt="avatar"
                                 />
                                 <span className="hover:text-hover">
-                                    {user?.username}
+                                    {userData?.username}
                                 </span>
                             </div>
                         </MenuList>
@@ -163,7 +182,9 @@ const Header = () => {
                             <div
                                 className={`flex flex-col w-[400px] h-auto bg-white rounded shadow-cart`}
                             >
-                                {user && user.cart && user.cart.length > 0 ? (
+                                {userData &&
+                                userData.cart &&
+                                userData.cart.length > 0 ? (
                                     <div>
                                         <div className="text-[#00000042] p-[10px]">
                                             Sản Phẩm Mới Thêm
@@ -192,10 +213,10 @@ const Header = () => {
                                                 )
                                             })}
                                         <div className="flex items-center justify-between p-[10px] bg-[#fdfdfd] ">
-                                            {user.cart.length > 5 && (
+                                            {userData.cart.length > 5 && (
                                                 <span className="text-xs">
                                                     {`${
-                                                        user.cart.length - 5
+                                                        userData.cart.length - 5
                                                     } Thêm Hàng Vào Giỏ`}
                                                 </span>
                                             )}
@@ -216,11 +237,13 @@ const Header = () => {
                         <div className="relative cursor-pointer">
                             <FiShoppingCart size={28} />
 
-                            {user && user.cart && user.cart.length > 0 && (
-                                <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
-                                    {user.cart.length}
-                                </div>
-                            )}
+                            {userData &&
+                                userData.cart &&
+                                userData.cart.length > 0 && (
+                                    <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
+                                        {userData.cart.length}
+                                    </div>
+                                )}
                         </div>
                     </Dropdown>
                 </div>

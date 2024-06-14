@@ -13,7 +13,7 @@ interface Props {
     setCount: React.Dispatch<React.SetStateAction<number>>
     setPaginationInfo: React.Dispatch<React.SetStateAction<PaginationInfo>>
     pageShow: string
-    search: string
+    search?: string
 }
 
 const Products = (props: Props) => {
@@ -36,8 +36,10 @@ const Products = (props: Props) => {
             ...paginationInfo,
             page,
         })
-        const newSearch = updateURLParams(search, 'page', page.toString())
-        nav(`${pageShow}?${newSearch}`)
+        if (search) {
+            const newSearch = updateURLParams(search, 'page', page.toString())
+            nav(`${pageShow}?${newSearch}`)
+        }
     }
 
     return (
@@ -62,7 +64,11 @@ const Products = (props: Props) => {
                                 <div className="relative w-full h-[186px]">
                                     <img
                                         className="w-full h-full object-cover"
-                                        src={`${product.image[0]}`}
+                                        src={`${
+                                            product.image.length > 1
+                                                ? `${product.image[1]}`
+                                                : `${product.image[0]}`
+                                        }`}
                                         alt="thumbnail"
                                     />
                                     <div

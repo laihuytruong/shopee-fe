@@ -40,9 +40,10 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         auth: (state, action: PayloadAction<UserResponse>) => {
-            state.user = action.payload.data
-                ? action.payload.data
-                : ({} as User)
+            state.user =
+                action.payload.err === 0 && action.payload.data
+                    ? action.payload.data
+                    : ({} as User)
             state.token = action.payload.accessToken
                 ? action.payload.accessToken
                 : ''

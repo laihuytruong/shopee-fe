@@ -14,6 +14,7 @@ const DailyDiscover = () => {
         page: page ? +page : 1,
         pageSize: 1,
         totalCount: 0,
+        totalPage: 0,
     })
 
     useEffect(() => {
@@ -26,6 +27,9 @@ const DailyDiscover = () => {
                         page: +response.data?.page ?? 1,
                         pageSize: +response.data?.pageSize ?? 10,
                         totalCount: response.count ? +response.count : 0,
+                        totalPage: response.data.totalPage
+                            ? +response.data.totalPage
+                            : 0,
                     })
                 }
             }
@@ -34,7 +38,7 @@ const DailyDiscover = () => {
     }, [count])
 
     return (
-        <div className="pt-[159px] w-main">
+        <div className="pt-10 w-main">
             <div className="mb-8 w-full relative flex justify-center h-14">
                 <h1 className="px-5 flex items-center justify-center py-[18px] text-xl bg-main text-white z-10 rounded-lg">
                     GỢI Ý HÔM NAY

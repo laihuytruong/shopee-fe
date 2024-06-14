@@ -1,33 +1,38 @@
 import instance from '~/apiService'
 import { User } from '~/models'
 
-interface VerifyResponse {
+interface Response {
     err: number
     msg?: string
     data?: User
 }
 
 const userApi = {
-    async getUser(data: {
-        userId: string
-        token: string
-    }): Promise<VerifyResponse> {
+    async getUser(data: { userId: string; token: string }): Promise<Response> {
         const url = '/users/current'
         const headers = {
             Authorization: data.token,
         }
         return instance.get(url, { headers })
     },
-    async updateUser(data: {
-        user: User
-        token: string
-    }): Promise<VerifyResponse> {
+    async updateUser(data: { user: User; token: string }): Promise<Response> {
         const url = '/users/current'
         const headers = {
             Authorization: data.token,
         }
-        const param = `/${data.user._id}`
-        return instance.put(url + param, { ...data.user }, { headers })
+        const params = `/${data.user._id}`
+        return instance.put(url + params, { ...data.user }, { headers })
+    },
+    async uploadAvatar(data: {
+        token: string
+        avatar: File
+    }): Promise<Response> {
+        const url = '/users/upload'
+        const headers = {
+            Authorization: data.token,
+            'Content-Type': 'multipart/form-data',
+        }
+        return instance.put(url, { avatar: data.avatar }, { headers })
     },
 }
 
