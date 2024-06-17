@@ -1,13 +1,6 @@
 import { Brand } from './brandInterfaces'
 import { CategoryItem } from './categoryItemInterfaces'
 
-export interface ProductCart {
-    _id: string
-    productName: string
-    price: number
-    image: string[]
-}
-
 export interface Product {
     _id: string
     productName: string

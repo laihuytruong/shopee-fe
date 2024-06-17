@@ -15,6 +15,7 @@ const routes = {
     MY_ACCOUNT: '/user/account/profile',
     CHANGE_PASSWORD: '/user/account/change-password',
     ORDER: '/user/purchase',
+    CART: '/cart',
 }
 
 export default routes

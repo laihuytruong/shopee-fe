@@ -11,6 +11,7 @@ import {
     RegisterFinal,
     ForgotPassword,
     ResetPassword,
+    CartList,
 } from '~/pages/user'
 
 import { ChangePassword, MyAccount, Purchase } from '~/components'
@@ -47,6 +48,7 @@ function App() {
                         />
                         <Route path={routes.ORDER} element={<Purchase />} />
                     </Route>
+                    <Route path={routes.CART} element={<CartList />} />
 
                     <Route path={routes.ALL} element={<Home />} />
                 </Route>

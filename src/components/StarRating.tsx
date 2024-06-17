@@ -5,9 +5,11 @@ const { MdOutlineStar, IoMdStarOutline } = icons
 
 interface Props {
     rating: number
+    color: string
 }
+// rgb(255, 167, 39)
 
-const StarRating: React.FC<Props> = ({ rating }) => {
+const StarRating: React.FC<Props> = ({ rating, color }) => {
     const stars = []
 
     for (let i = 1; i <= 5; i++) {
@@ -15,7 +17,7 @@ const StarRating: React.FC<Props> = ({ rating }) => {
             stars.push(
                 <MdOutlineStar
                     size={16}
-                    color="rgb(255, 167, 39)"
+                    color={color}
                     className="cursor-pointer"
                     key={i}
                 />
@@ -24,7 +26,7 @@ const StarRating: React.FC<Props> = ({ rating }) => {
             stars.push(
                 <IoMdStarOutline
                     size={16}
-                    color="rgb(255, 167, 39)"
+                    color={color}
                     className="cursor-pointer"
                     key={i}
                 />

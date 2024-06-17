@@ -34,6 +34,19 @@ const userApi = {
         }
         return instance.put(url, { avatar: data.avatar }, { headers })
     },
+    async updateCart(data: {
+        token: string
+        pdId: string
+        quantity: number
+        variationOption: string
+    }): Promise<Response> {
+        const url = '/users/cart'
+        const { token, ...rest } = data
+        const headers = {
+            Authorization: token,
+        }
+        return instance.put(url, { ...rest }, { headers })
+    },
 }
 
 export default userApi

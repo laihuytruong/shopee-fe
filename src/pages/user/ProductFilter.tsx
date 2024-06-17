@@ -117,7 +117,7 @@ const ProductFilter = () => {
                 price ? price : undefined,
                 brandSearch ? brandSearch : undefined,
                 categoryItemSearch ? categoryItemSearch : undefined
-            )
+            ) 
             if (responseProduct.data) {
                 setProducts(responseProduct.data.data)
                 setPaginationInfo({

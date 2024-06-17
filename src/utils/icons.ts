@@ -21,7 +21,7 @@ import {
 } from 'react-icons/md'
 import { FaList, FaRegUser } from 'react-icons/fa'
 import { RiArrowDownSLine } from 'react-icons/ri'
-import { FaCheck, FaArrowLeftLong } from 'react-icons/fa6'
+import { FaCheck, FaArrowLeftLong, FaCartPlus } from 'react-icons/fa6'
 import { GrInfo } from 'react-icons/gr'
 import { FcGoogle } from 'react-icons/fc'
 import { TiClipboard } from 'react-icons/ti'
@@ -50,6 +50,7 @@ const icons = {
     MdModeEdit,
     FaRegUser,
     TiClipboard,
+    FaCartPlus,
 }
 
 export default icons

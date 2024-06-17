@@ -35,7 +35,6 @@ enum VerifyStep {
 
 const RegisterFinal = () => {
     const [cookies, setCookie] = useCookies()
-    console.log('cookies: ', cookies)
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [code, setCode] = useState<string>('')
     const [password, setPassword] = useState<string>('')

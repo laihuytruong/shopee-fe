@@ -11,12 +11,12 @@ import { ChangeGmail, InputCustom, UploadAvatar } from '~/components'
 import { userApi } from '~/apis'
 import { useForm } from 'react-hook-form'
 import Swal from 'sweetalert2'
+import { increment } from '~/features/CounterSlice'
 
 const MyAccount = () => {
     const user: User = useAppSelector(selectUser)
     const token = useAppSelector(selectAccessToken)
     const dispatch = useAppDispatch()
-    console.log('user: ', user)
     const [formValue, setFormValue] = useState<{
         email: string
         sex: string
@@ -98,7 +98,6 @@ const MyAccount = () => {
                 })
             )
             setIsModalOpen(false)
-            // setPhoneNumber('')
         } catch (error) {
             console.log(error)
         }
@@ -108,6 +107,8 @@ const MyAccount = () => {
         setIsModalOpen(false)
         setPhoneNumber('')
     }
+
+    console.log('phoneNumber: ', phoneNumber)
 
     const onSubmit = useCallback(() => {
         Swal.fire({
@@ -138,19 +139,22 @@ const MyAccount = () => {
                 token: token,
                 avatar: file,
             })
-            if (response.err === 0 && responseUpload.err === 0) {
-                dispatch(
-                    setUser({
-                        user: response.data
-                            ? {
-                                  ...response.data,
-                                  avatar: responseUpload.data
-                                      ? responseUpload.data.avatar
-                                      : response.data.avatar,
-                              }
-                            : ({} as User),
-                    })
-                )
+            if (response.err === 0 || responseUpload.err === 0) {
+                if (response.data) {
+                    dispatch(
+                        setUser({
+                            user: response.data
+                                ? {
+                                      ...response.data,
+                                      avatar: responseUpload.data
+                                          ? responseUpload.data.avatar
+                                          : response.data.avatar,
+                                  }
+                                : ({} as User),
+                        })
+                    )
+                    dispatch(increment())
+                }
             }
         })
     }, [formValue, username, name, address, phoneNumber, fileList])

@@ -5,7 +5,7 @@ import icons from '~/utils/icons'
 import { authApi } from '~/apis'
 import { useForm } from 'react-hook-form'
 import { useAppDispatch } from '~/app/hooks'
-import { setDataRegister } from '~/features/UserSlice'
+import { setDataRegister, setIsRegistered } from '~/features/UserSlice'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
 
@@ -19,6 +19,7 @@ const Register = () => {
         watch,
     } = useForm<{ email: string }>({ mode: 'onChange' })
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [errMsg, setErrMsg] = useState<string>('')
 
     const email = watch('email', '')
     const nav = useNavigate()
@@ -35,8 +36,13 @@ const Register = () => {
                     email,
                 })
             )
+            setErrMsg('')
             setIsLoading(false)
+            dispatch(setIsRegistered({ isRegistered: true }))
             nav(`${routes.REGISTER}/1`)
+        } else {
+            setIsLoading(false)
+            setErrMsg('Email đã tồn tại!')
         }
     }, [email])
 
@@ -70,9 +76,13 @@ const Register = () => {
                                         },
                                     })}
                                 />
-                                {errors.email && (
+                                {errMsg === '' && errors.email ? (
                                     <span className="text-[#ff424f] text-xs">
                                         {errors.email.message}
+                                    </span>
+                                ) : (
+                                    <span className="text-[#ff424f] text-xs">
+                                        {errMsg}
                                     </span>
                                 )}
                                 <button

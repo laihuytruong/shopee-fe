@@ -1,8 +1,8 @@
-import { Product } from './productInterfaces'
+import { ProductDetailData, VariationOption } from '~/models'
 
 export interface Cart {
     _id: string
-    product: Product[]
+    productDetail: ProductDetailData
     quantity: number
-    color: string
+    variationOption: VariationOption
 }
