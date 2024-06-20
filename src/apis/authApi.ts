@@ -58,6 +58,10 @@ const authApi = {
         const param = `/${data.resetToken}`
         return instance.put(url + param, { password: data.password })
     },
+    async generateNewToken(): Promise<AuthResponse> {
+        const url = '/auth/refresh-token'
+        return instance.post(url)
+    },
 }
 
 export default authApi

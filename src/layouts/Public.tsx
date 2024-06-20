@@ -7,7 +7,7 @@ const Public = () => {
     return (
         <div className="w-full flex flex-col items-center">
             <div
-                className={`w-full flex justify-center bg-main text-white text-[13px] h-[119px] ${
+                className={`w-full flex justify-center text-white text-[13px] h-[119px] ${
                     pathname === '/' && 'fixed top-0 z-50'
                 }`}
             >

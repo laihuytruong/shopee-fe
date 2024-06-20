@@ -94,3 +94,7 @@ body {
     .ant-upload.ant-upload-select:not(.ant-upload-disabled):hover {
     border-color: #ee4d2d;
 }
+
+.checkbox-orange {
+    accent-color: #ee4d2d;
+}

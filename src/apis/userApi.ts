@@ -47,6 +47,40 @@ const userApi = {
         }
         return instance.put(url, { ...rest }, { headers })
     },
+    async deleteItemCart(data: {
+        token: string
+        pdId: string
+        variationOption: string
+    }): Promise<Response> {
+        const url = '/users/delete-item'
+        const headers = {
+            Authorization: data.token,
+        }
+        return instance.delete(url, {
+            headers,
+            data: {
+                pdId: data.pdId,
+                variationOption: data.variationOption,
+            },
+        })
+    },
+    async deleteAllItemCart(data: {
+        token: string
+        checkAll: boolean
+        items: Array<{ pdId: string; variationOption: string }> | null
+    }): Promise<Response> {
+        const url = '/users/delete-all'
+        const headers = {
+            Authorization: data.token,
+        }
+        return instance.delete(url, {
+            headers,
+            data: {
+                items: data.items,
+                checkAll: data.checkAll,
+            },
+        })
+    },
 }
 
 export default userApi

@@ -1,5 +1,6 @@
 import icons from '~/utils/icons'
 import logo from '~/assets/image/logo.png'
+import logo_login from '~/assets/image/logo_login.png'
 import { MenuList, Search } from '~/components'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
@@ -30,7 +31,7 @@ enum MenuItemEnum {
 }
 
 const Header = () => {
-    // const { pathname, search } = useLocation()
+    const { pathname, search } = useLocation()
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const nav = useNavigate()
     const dispatch = useAppDispatch()
@@ -48,7 +49,13 @@ const Header = () => {
                     dispatch(setUser({ user: response.data }))
                 }
             } else {
-                nav(routes.LOGIN)
+                const generateToken = await authApi.generateNewToken()
+                if (generateToken.err === 0) {
+                    const data = { ...cookies.user, token: generateToken.msg }
+                    setCookie('user', data, { path: '/' })
+                } else {
+                    nav(routes.LOGIN)
+                }
             }
         }
         fetchData()
@@ -88,8 +95,8 @@ const Header = () => {
     }
 
     return (
-        <div className="w-main flex flex-col text-[14px]">
-            <div className="flex justify-between items-center h-[34px]">
+        <div className="flex items-center flex-col text-[14px] w-full bg-main">
+            <div className="flex justify-between items-center h-[34px] w-main">
                 <div className="flex items-center justify-center gap-3">
                     <div>
                         <span>Kênh Người Bán</span>
@@ -172,108 +179,157 @@ const Header = () => {
                     )}
                 </div>
             </div>
-            <div className="flex h-[85px] items-center justify-between">
-                <Link className="w-[18%]" to={`${routes.HOME}`}>
-                    <img
-                        src={logo}
-                        alt="Logo"
-                        className="w-40 h-auto cursor-pointer"
-                    />
-                </Link>
-                <div className="flex-1">
-                    <Search />
-                </div>
-                <div className="w-[10%] flex justify-center">
-                    <Dropdown
-                        placement="bottomRight"
-                        dropdownRender={() => (
-                            <div
-                                className={`flex flex-col w-[400px] h-auto bg-white rounded shadow-cart`}
-                            >
-                                {userData &&
-                                userData.cart &&
-                                userData.cart.length > 0 ? (
-                                    <div>
-                                        <div className="text-[#00000042] p-[10px]">
-                                            Sản Phẩm Mới Thêm
-                                        </div>
-                                        {cart &&
-                                            cart.map((item) => {
-                                                console.log('item', item)
-                                                return (
-                                                    <>
-                                                        <div
-                                                            key={item._id}
-                                                            onClick={() => {
-                                                                nav(
-                                                                    `/product-detail/${item.productDetail.product.slug}`
-                                                                )
-                                                            }}
-                                                            className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer"
-                                                        >
-                                                            <img
-                                                                src={`${item.productDetail.image}`}
-                                                                alt="image"
-                                                                className="w-10 h-10 rounded-sm"
-                                                            />
-                                                            <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
-                                                                {
-                                                                    item
-                                                                        .productDetail
-                                                                        .product
-                                                                        .productName
-                                                                }
-                                                            </span>
-                                                            <span className="text-main ml-3 flex items-start">
-                                                                <span className="underline text-[10px]">
-                                                                    đ
-                                                                </span>
-                                                                {item.productDetail.price.toLocaleString()}
-                                                            </span>
-                                                        </div>
-                                                    </>
-                                                )
-                                            })}
-                                        <div
-                                            className={`flex items-center ${
-                                                userData.cart.length > 5
-                                                    ? 'justify-between'
-                                                    : 'justify-end'
-                                            } p-[10px] bg-[#fdfdfd]`}
-                                        >
-                                            {userData.cart.length > 5 && (
-                                                <span className="text-xs">
-                                                    {`${
-                                                        userData.cart.length - 5
-                                                    } Thêm Hàng Vào Giỏ`}
-                                                </span>
-                                            )}
-                                            <button className="bg-main p-2 text-white hover:opacity-[0.9] rounded-sm flex items-center justify-center">
-                                                Xem Giỏ Hàng
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <Empty
-                                        description="Không có sản phẩm nào trong giỏ hàng"
-                                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                    />
-                                )}
-                            </div>
-                        )}
+            <div
+                className={`h-[85px] w-full flex justify-center items-center ${
+                    pathname.includes('/cart') && 'bg-white'
+                }`}
+            >
+                <div className="w-main flex items-center justify-between">
+                    <Link
+                        className={`${
+                            pathname.includes('/cart') ? 'w-full' : 'w-[18%]'
+                        }`}
+                        to={`${routes.HOME}`}
                     >
-                        <div className="relative cursor-pointer">
-                            <FiShoppingCart size={28} />
+                        {pathname.includes('/cart') ? (
+                            <div className="flex items-end w-full">
+                                <img
+                                    src={logo_login}
+                                    alt="Logo"
+                                    className="w-40 h-auto cursor-pointer"
+                                />
+                                <div className="flex-1 h-10 leading-10 text-main text-xl pl-5 ml-5 border-l border-solid border-l-[#ee4d2d]">
+                                    <span>Giỏ Hàng</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                className="w-40 h-auto cursor-pointer"
+                            />
+                        )}
+                    </Link>
+                    {pathname.includes('/cart') ? (
+                        <>
+                            <div>Cart</div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="flex-1">
+                                <Search />
+                            </div>
+                            <div className="w-[10%] flex justify-center">
+                                <Dropdown
+                                    placement="bottomRight"
+                                    dropdownRender={() => (
+                                        <div
+                                            className={`flex flex-col w-[400px] h-auto bg-white rounded shadow-cart`}
+                                        >
+                                            {userData &&
+                                            userData.cart &&
+                                            userData.cart.length > 0 ? (
+                                                <div>
+                                                    <div className="text-[#00000042] p-[10px]">
+                                                        Sản Phẩm Mới Thêm
+                                                    </div>
+                                                    {cart &&
+                                                        cart.map((item) => {
+                                                            console.log(
+                                                                'item',
+                                                                item
+                                                            )
+                                                            return (
+                                                                <>
+                                                                    <div
+                                                                        key={
+                                                                            item._id
+                                                                        }
+                                                                        onClick={() => {
+                                                                            nav(
+                                                                                `/product-detail/${item.productDetail.product.slug}`
+                                                                            )
+                                                                        }}
+                                                                        className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer"
+                                                                    >
+                                                                        <img
+                                                                            src={`${item.productDetail.image}`}
+                                                                            alt="image"
+                                                                            className="w-10 h-10 rounded-sm"
+                                                                        />
+                                                                        <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
+                                                                            {
+                                                                                item
+                                                                                    .productDetail
+                                                                                    .product
+                                                                                    .productName
+                                                                            }
+                                                                        </span>
+                                                                        <span className="text-main ml-3 flex items-start">
+                                                                            <span className="underline text-[10px]">
+                                                                                đ
+                                                                            </span>
+                                                                            {item.productDetail.price.toLocaleString()}
+                                                                        </span>
+                                                                    </div>
+                                                                </>
+                                                            )
+                                                        })}
+                                                    <div
+                                                        className={`flex items-center ${
+                                                            userData.cart
+                                                                .length > 5
+                                                                ? 'justify-between'
+                                                                : 'justify-end'
+                                                        } p-[10px] bg-[#fdfdfd]`}
+                                                    >
+                                                        {userData.cart.length >
+                                                            5 && (
+                                                            <span className="text-xs">
+                                                                {`${
+                                                                    userData
+                                                                        .cart
+                                                                        .length -
+                                                                    5
+                                                                } Thêm Hàng Vào Giỏ`}
+                                                            </span>
+                                                        )}
+                                                        <button
+                                                            onClick={() =>
+                                                                nav(routes.CART)
+                                                            }
+                                                            className="bg-main p-2 text-white hover:opacity-[0.9] rounded-sm flex items-center justify-center"
+                                                        >
+                                                            Xem Giỏ Hàng
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <Empty
+                                                    description="Không có sản phẩm nào trong giỏ hàng"
+                                                    image={
+                                                        Empty.PRESENTED_IMAGE_SIMPLE
+                                                    }
+                                                />
+                                            )}
+                                        </div>
+                                    )}
+                                >
+                                    <div className="relative cursor-pointer">
+                                        <FiShoppingCart size={28} />
 
-                            {userData &&
-                                userData.cart &&
-                                userData.cart.length > 0 && (
-                                    <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
-                                        {userData.cart.length}
+                                        {userData &&
+                                            userData.cart &&
+                                            userData.cart.length > 0 && (
+                                                <div className="bg-white h-4 w-6 rounded-full absolute left-3.5 -top-[6px] text-main flex items-center justify-center">
+                                                    {userData.cart.length}
+                                                </div>
+                                            )}
                                     </div>
-                                )}
-                        </div>
-                    </Dropdown>
+                                </Dropdown>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
