@@ -53,6 +53,9 @@ export const userSlice = createSlice({
                 ? action.payload.user
                 : ({} as User)
         },
+        setAccessToken: (state, action: PayloadAction<string>) => {
+            state.token = action.payload
+        },
         setDataRegister: (state, action: PayloadAction<ActionCode>) => {
             state.code = action.payload.code
             state.time = action.payload.time
@@ -79,6 +82,7 @@ export const userSlice = createSlice({
 export const {
     auth,
     setUser,
+    setAccessToken,
     setDataRegister,
     setResetToken,
     setEmail,

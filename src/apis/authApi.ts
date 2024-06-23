@@ -53,7 +53,6 @@ const authApi = {
         resetToken: string
         password: string
     }): Promise<AuthResponse> {
-        console.log('data: ', data.resetToken)
         const url = '/auth/reset-password'
         const param = `/${data.resetToken}`
         return instance.put(url + param, { password: data.password })

@@ -94,6 +94,7 @@ const Products = (props: Props) => {
                                         ) : (
                                             <StarRating
                                                 rating={product.totalRating}
+                                                color="rgb(255, 167, 39)"
                                             />
                                         )}
                                     </div>

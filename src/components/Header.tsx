@@ -9,10 +9,11 @@ import { useCookies } from 'react-cookie'
 import { authApi, userApi } from '~/apis'
 import { MenuItem, User } from '~/models'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
-import { setUser } from '~/features/UserSlice'
+import { setAccessToken, setUser } from '~/features/UserSlice'
 import { useEffect, useState } from 'react'
 import { selectCount } from '~/features/CounterSlice'
 import { Cart } from '~/models/cartInterface'
+
 const {
     IoIosNotificationsOutline,
     CiCircleQuestion,
@@ -50,8 +51,9 @@ const Header = () => {
                 }
             } else {
                 const generateToken = await authApi.generateNewToken()
-                if (generateToken.err === 0) {
+                if (generateToken.err === 0 && generateToken.msg) {
                     const data = { ...cookies.user, token: generateToken.msg }
+                    dispatch(setAccessToken(generateToken.msg))
                     setCookie('user', data, { path: '/' })
                 } else {
                     nav(routes.LOGIN)
@@ -181,25 +183,35 @@ const Header = () => {
             </div>
             <div
                 className={`h-[85px] w-full flex justify-center items-center ${
-                    pathname.includes('/cart') && 'bg-white'
+                    (pathname.includes('/cart') ||
+                        pathname.includes('/payment')) &&
+                    'bg-white'
                 }`}
             >
                 <div className="w-main flex items-center justify-between">
                     <Link
                         className={`${
-                            pathname.includes('/cart') ? 'w-full' : 'w-[18%]'
+                            pathname.includes('/cart') ||
+                            pathname.includes('/payment')
+                                ? 'w-[30%]'
+                                : 'w-[18%]'
                         }`}
                         to={`${routes.HOME}`}
                     >
-                        {pathname.includes('/cart') ? (
+                        {pathname.includes('/cart') ||
+                        pathname.includes('/payment') ? (
                             <div className="flex items-end w-full">
                                 <img
                                     src={logo_login}
                                     alt="Logo"
                                     className="w-40 h-auto cursor-pointer"
                                 />
-                                <div className="flex-1 h-10 leading-10 text-main text-xl pl-5 ml-5 border-l border-solid border-l-[#ee4d2d]">
-                                    <span>Giỏ Hàng</span>
+                                <div className="h-10 leading-10 text-main text-xl pl-5 ml-5 border-l border-solid border-l-[#ee4d2d]">
+                                    <span>
+                                        {pathname.includes('/cart')
+                                            ? 'Giỏ Hàng'
+                                            : 'Thanh Toán'}
+                                    </span>
                                 </div>
                             </div>
                         ) : (
@@ -210,10 +222,9 @@ const Header = () => {
                             />
                         )}
                     </Link>
-                    {pathname.includes('/cart') ? (
-                        <>
-                            <div>Cart</div>
-                        </>
+                    {pathname.includes('/cart') ||
+                    pathname.includes('/payment') ? (
+                        <></>
                     ) : (
                         <>
                             <div className="flex-1">
@@ -234,47 +245,41 @@ const Header = () => {
                                                         Sản Phẩm Mới Thêm
                                                     </div>
                                                     {cart &&
-                                                        cart.map((item) => {
-                                                            console.log(
-                                                                'item',
-                                                                item
-                                                            )
-                                                            return (
-                                                                <>
-                                                                    <div
-                                                                        key={
-                                                                            item._id
+                                                        cart.map((item) => (
+                                                            <>
+                                                                <div
+                                                                    key={
+                                                                        item._id
+                                                                    }
+                                                                    onClick={() => {
+                                                                        nav(
+                                                                            `/product-detail/${item.productDetail.product.slug}`
+                                                                        )
+                                                                    }}
+                                                                    className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer"
+                                                                >
+                                                                    <img
+                                                                        src={`${item.productDetail.image}`}
+                                                                        alt="image"
+                                                                        className="w-10 h-10 rounded-sm"
+                                                                    />
+                                                                    <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
+                                                                        {
+                                                                            item
+                                                                                .productDetail
+                                                                                .product
+                                                                                .productName
                                                                         }
-                                                                        onClick={() => {
-                                                                            nav(
-                                                                                `/product-detail/${item.productDetail.product.slug}`
-                                                                            )
-                                                                        }}
-                                                                        className="flex p-[10px] items-start text-sm hover:bg-[#f8f8f8] hover:cursor-pointer"
-                                                                    >
-                                                                        <img
-                                                                            src={`${item.productDetail.image}`}
-                                                                            alt="image"
-                                                                            className="w-10 h-10 rounded-sm"
-                                                                        />
-                                                                        <span className="ml-[10px] flex-1 w-32 truncate overflow-hidden whitespace-nowrap">
-                                                                            {
-                                                                                item
-                                                                                    .productDetail
-                                                                                    .product
-                                                                                    .productName
-                                                                            }
+                                                                    </span>
+                                                                    <span className="text-main ml-3 flex items-start">
+                                                                        <span className="underline text-[10px]">
+                                                                            đ
                                                                         </span>
-                                                                        <span className="text-main ml-3 flex items-start">
-                                                                            <span className="underline text-[10px]">
-                                                                                đ
-                                                                            </span>
-                                                                            {item.productDetail.price.toLocaleString()}
-                                                                        </span>
-                                                                    </div>
-                                                                </>
-                                                            )
-                                                        })}
+                                                                        {item.productDetail.price.toLocaleString()}
+                                                                    </span>
+                                                                </div>
+                                                            </>
+                                                        ))}
                                                     <div
                                                         className={`flex items-center ${
                                                             userData.cart

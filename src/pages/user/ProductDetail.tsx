@@ -43,7 +43,6 @@ const ProductDetail = () => {
                         slug: slugProduct ? slugProduct : '',
                         token,
                     })
-                console.log('response', response)
                 if (response.err === 0 && response.data) {
                     setListProductDetail(response.data.configurations)
                     setProduct(

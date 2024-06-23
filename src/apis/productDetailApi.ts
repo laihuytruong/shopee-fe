@@ -10,6 +10,10 @@ interface ProductResponse {
 }
 
 const productDetailApi = {
+    async getProductList(): Promise<ProductResponse> {
+        const url = '/product-detail'
+        return instance.get(url)
+    },
     async getProductDetail(slug: string): Promise<ProductResponse> {
         const url = '/product-detail'
         const param = `/${slug}`

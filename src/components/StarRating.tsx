@@ -7,7 +7,6 @@ interface Props {
     rating: number
     color: string
 }
-// rgb(255, 167, 39)
 
 const StarRating: React.FC<Props> = ({ rating, color }) => {
     const stars = []

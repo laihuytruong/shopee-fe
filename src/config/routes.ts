@@ -16,6 +16,8 @@ const routes = {
     CHANGE_PASSWORD: '/user/account/change-password',
     ORDER: '/user/purchase',
     CART: '/cart',
+    PAYMENT: '/payment',
+    PAYMENT_ANNOUNCE: '/payment/:type_payment',
 }
 
 export default routes

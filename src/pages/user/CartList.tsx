@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import { userApi } from '~/apis'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import routes from '~/config/routes'
+import { cartBuy, selectCheckItem, setCheckItem } from '~/features/CartSlice'
 import { increment } from '~/features/CounterSlice'
 import { selectAccessToken, selectUser } from '~/features/UserSlice'
 import { User } from '~/models'
@@ -13,12 +14,14 @@ import { Cart } from '~/models/cartInterface'
 const CartList = () => {
     const user: User = useAppSelector(selectUser)
     const token = useAppSelector(selectAccessToken)
+    const checkItem: { [key: string]: boolean } =
+        useAppSelector(selectCheckItem)
     const nav = useNavigate()
     const dispatch = useAppDispatch()
 
     const [checkedItems, setCheckedItems] = useState<{
         [key: string]: boolean
-    }>({})
+    }>(checkItem)
     const [checkAll, setCheckAll] = useState<boolean>(false)
     const [totalProductPay, setTotalProductPay] = useState<{
         count: number
@@ -27,10 +30,32 @@ const CartList = () => {
         count: 0,
         price: 0,
     })
+    const [quantities, setQuantities] = useState<{ [key: string]: number }>(
+        user.cart.reduce((acc, cart) => {
+            acc[cart._id] = cart.quantity
+            return acc
+        }, {} as { [key: string]: number })
+    )
 
     useEffect(() => {
-        handleProductPay()
-    }, [checkedItems])
+        let selectedItems = user.cart.filter((cart) => checkedItems[cart._id])
+        selectedItems = selectedItems.map((cart) => {
+            if (cart.productDetail.product.discount) {
+                return {
+                    ...cart,
+                    quantity: quantities[cart._id],
+                    productDetail: {
+                        ...cart.productDetail,
+                        price:
+                            cart.productDetail.price *
+                            (1 - cart.productDetail.product.discount / 100),
+                    },
+                }
+            }
+            return cart
+        })
+        handleProductPay(selectedItems)
+    }, [checkedItems, quantities])
 
     const handleCheckboxChange = (
         e: ChangeEvent<HTMLInputElement>,
@@ -60,13 +85,14 @@ const CartList = () => {
         setCheckedItems(newCheckItems)
     }
 
-    const handleProductPay = () => {
-        const selectedItems = user.cart.filter((cart) => checkedItems[cart._id])
-        const count = selectedItems.length
-        const price = selectedItems.reduce(
+    const handleProductPay = (selectedItems?: Cart[]) => {
+        const result: Cart[] = selectedItems ? selectedItems : []
+        const count = result.length
+        const price = result.reduce(
             (total, cart) => total + cart.productDetail.price * cart.quantity,
             0
         )
+        console.log(price)
         setTotalProductPay({ count, price })
     }
 
@@ -156,6 +182,56 @@ const CartList = () => {
         }
     }
 
+    const handleQuantity = (type: string, itemId: string, max: number) => {
+        setQuantities((prevQuantities) => {
+            const newQuantity = prevQuantities[itemId]
+            if (type === 'increase') {
+                return {
+                    ...prevQuantities,
+                    [itemId]: newQuantity === max ? max : newQuantity + 1,
+                }
+            } else if (type === 'decrease') {
+                return {
+                    ...prevQuantities,
+                    [itemId]: newQuantity > 1 ? newQuantity - 1 : 1,
+                }
+            }
+            return prevQuantities
+        })
+    }
+
+    const handleBuy = () => {
+        const filterItem = user.cart.filter(
+            (cartItem) => checkedItems[cartItem._id]
+        )
+        if (filterItem.length > 0) {
+            const itemsBuy = filterItem.map((cartItem: Cart) => ({
+                ...cartItem,
+                productDetail: {
+                    ...cartItem.productDetail,
+                    price:
+                        cartItem.productDetail.price *
+                        (1 - cartItem.productDetail.product.discount / 100),
+                },
+                quantity: quantities[cartItem._id],
+            }))
+            dispatch(setCheckItem(checkedItems))
+            dispatch(cartBuy(itemsBuy))
+            nav(routes.PAYMENT)
+        } else {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Vui lòng chọn sản phẩm để thanh toán',
+                showConfirmButton: false,
+                timer: 1000,
+            }).then(() => {
+                dispatch(setCheckItem(checkedItems))
+            })
+        }
+    }
+    console.log('checkItem: ', checkItem)
+
     return (
         <div className="w-main relative">
             {user.cart && user.cart.length > 0 ? (
@@ -235,9 +311,40 @@ const CartList = () => {
                                       ).toLocaleString()
                                     : cart.productDetail.price.toLocaleString()}
                             </span>
-                            <span className="w-[12%] text-center">
-                                {cart.quantity}
-                            </span>
+                            <div className="w-[12%] flex flex-col items-center justify-center">
+                                <div className="flex items-center justify-center">
+                                    <button
+                                        onClick={() =>
+                                            handleQuantity(
+                                                'decrease',
+                                                cart._id,
+                                                cart.productDetail.inventory
+                                            )
+                                        }
+                                        className="px-4 bg-transparent border border-solid border-[rgba(0, 0, 0, .09)] text-[rgba(0, 0, 0, .8)] font-light rounded-sm text-[16px]"
+                                    >
+                                        -
+                                    </button>
+                                    <div className="px-5 bg-transparent border-y border-solid border-y-[rgba(0, 0, 0, .09)] text-[rgba(0, 0, 0, .8)] text-[16px]">
+                                        {quantities[cart._id]}
+                                    </div>
+                                    <button
+                                        onClick={() =>
+                                            handleQuantity(
+                                                'increase',
+                                                cart._id,
+                                                cart.productDetail.inventory
+                                            )
+                                        }
+                                        className="px-4 bg-transparent border border-solid border-[rgba(0, 0, 0, .09)] text-[rgba(0, 0, 0, .8)] font-light rounded-sm text-[16px]"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                <p className="text-main text-xs mt-[2px]">
+                                    Còn {cart.productDetail.inventory} sản phẩm
+                                </p>
+                            </div>
                             <span className="w-[12%] text-center flex items-start justify-center text-main">
                                 <span className="text-xs underline">đ</span>
                                 {(
@@ -248,7 +355,7 @@ const CartList = () => {
                                                   .discount /
                                                   100)
                                         : cart.productDetail.price) *
-                                    cart.quantity
+                                    quantities[cart._id]
                                 ).toLocaleString()}
                             </span>
                             <span
@@ -309,7 +416,10 @@ const CartList = () => {
                                 <span className="underline text-sm">đ</span>
                                 {totalProductPay.price.toLocaleString()}
                             </span>
-                            <button className="bg-main text-white px-9 py-[13px] rounded-sm hover:opacity-[0.9]">
+                            <button
+                                onClick={handleBuy}
+                                className="bg-main text-white px-9 py-[13px] rounded-sm hover:opacity-[0.9]"
+                            >
                                 Mua Hàng
                             </button>
                         </div>

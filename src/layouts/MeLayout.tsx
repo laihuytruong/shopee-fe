@@ -8,7 +8,7 @@ import icons from '~/utils/icons'
 
 const { MdModeEdit, FaRegUser, TiClipboard } = icons
 
-const ProfileLayout = () => {
+const MeLayout = () => {
     const [isShowMenu, setIsShowMenu] = useState<boolean>(true)
 
     const user: User = useAppSelector(selectUser)
@@ -98,4 +98,4 @@ const ProfileLayout = () => {
     )
 }
 
-export default ProfileLayout
+export default MeLayout

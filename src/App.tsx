@@ -12,9 +12,15 @@ import {
     ForgotPassword,
     ResetPassword,
     CartList,
+    Payment,
 } from '~/pages/user'
 
-import { ChangePassword, MyAccount, Purchase } from '~/components'
+import {
+    ChangePassword,
+    MyAccount,
+    Payment_Announce,
+    Purchase,
+} from '~/components'
 
 import { AuthLayout, Public, MeLayout } from '~/layouts'
 
@@ -49,6 +55,11 @@ function App() {
                         <Route path={routes.ORDER} element={<Purchase />} />
                     </Route>
                     <Route path={routes.CART} element={<CartList />} />
+                    <Route path={routes.PAYMENT} element={<Payment />} />
+                    <Route
+                        path={routes.PAYMENT_ANNOUNCE}
+                        element={<Payment_Announce />}
+                    />
 
                     <Route path={routes.ALL} element={<Home />} />
                 </Route>

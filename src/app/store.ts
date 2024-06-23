@@ -5,6 +5,7 @@ import logger from 'redux-logger'
 import { counterSlice } from '~/features/CounterSlice'
 import { searchSlice } from '~/features/SearchSlice'
 import { userSlice } from '~/features/UserSlice'
+import { cartSlice } from '~/features/CartSlice'
 
 const persistConfig = {
     key: 'root',
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     counter: counterSlice.reducer,
     search: searchSlice.reducer,
     user: userSlice.reducer,
+    cart: cartSlice.reducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer as Reducer)
