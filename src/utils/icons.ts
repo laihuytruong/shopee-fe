@@ -19,7 +19,13 @@ import {
     MdOutlineStar,
     MdModeEdit,
 } from 'react-icons/md'
-import { FaList, FaRegUser } from 'react-icons/fa'
+import {
+    FaList,
+    FaRegUser,
+    FaFacebook,
+    FaInstagram,
+    FaLinkedin,
+} from 'react-icons/fa'
 import { RiArrowDownSLine } from 'react-icons/ri'
 import {
     FaCheck,
@@ -57,6 +63,9 @@ const icons = {
     TiClipboard,
     FaCartPlus,
     FaLocationDot,
+    FaFacebook,
+    FaInstagram,
+    FaLinkedin,
 }
 
 export default icons

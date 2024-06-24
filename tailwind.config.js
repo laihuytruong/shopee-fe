@@ -42,6 +42,7 @@ export default {
                 form_reset: '0 3px 10px 0 rgba(0, 0, 0, .14)',
                 me: '0 1px 2px 0 rgba(0, 0, 0, .13)',
                 input_me: 'inset 0 2px 0 rgba(0,0,0,.02)',
+                icon: '0 1px 1px 0 rgba(0, 0, 0, .2)',
             },
             borderColor: {
                 hover: '#ee4d2d',
