@@ -1,4 +1,5 @@
 import instance from '~/apiService'
+import { Cart } from '~/models/cartInterface'
 import { Product } from '~/models/productInterfaces'
 
 interface ProductsResponse {
@@ -62,6 +63,16 @@ const productApi = {
             categoryItem ? `&categoryItem=${categoryItem}` : ''
         }`
         return instance.get(url + param)
+    },
+    async updateQuantity(
+        cart: Cart[],
+        token: string
+    ): Promise<ProductsResponse> {
+        const url = '/products/update-quantity'
+        const headers = {
+            Authorization: token,
+        }
+        return instance.put(url, { cart }, { headers })
     },
 }
 

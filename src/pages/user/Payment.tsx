@@ -6,7 +6,7 @@ import { User } from '~/models'
 import { Cart } from '~/models/cartInterface'
 import icons from '~/utils/icons'
 import { loadStripe } from '@stripe/stripe-js'
-import { productDetailApi, stripeApi, userApi } from '~/apis'
+import { productApi, productDetailApi, stripeApi, userApi } from '~/apis'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
 import { increment } from '~/features/CounterSlice'
@@ -22,14 +22,6 @@ const Payment = () => {
 
     const [totalAmount, setTotalAmount] = useState<number>(0)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const response = await productDetailApi.getProductList()
-    //         console.log('response: ', response)
-    //     }
-    //     fetchData()
-    // }, [])
 
     useEffect(() => {
         const total = cartBuyList.reduce((acc, item) => {
@@ -54,8 +46,10 @@ const Payment = () => {
                 token,
                 checkAll: false,
             })
-            dispatch(increment())
+            await productApi.updateQuantity(cartBuyList, token)
+            await productDetailApi.updateInventory(cartBuyList, token)
             dispatch(deleteCart())
+            dispatch(increment())
             const result = await stripe?.redirectToCheckout({
                 sessionId: response.data.id,
             })
@@ -184,7 +178,7 @@ const Payment = () => {
                     <h1 className="text-xl font-medium">
                         Phương Thức Thanh Toán
                     </h1>
-                    <button className="bg-main p-3 rounded-sm hover:opacity-[0.9] text-white">
+                    <button className="bg-main p-3 rounded-sm hover:cursor-default text-white">
                         Thẻ Tín Dụng/Ghi Nợ
                     </button>
                 </div>

@@ -45,9 +45,9 @@ const Header = () => {
         const fetchData = async () => {
             const response = await userApi.getUser({ ...cookies.user })
             if (response.err === 0) {
-                setUserData(response.data ? response.data : ({} as User))
                 if (response.data) {
                     dispatch(setUser({ user: response.data }))
+                    setUserData(response.data)
                 }
             } else {
                 const generateToken = await authApi.generateNewToken()
@@ -86,6 +86,9 @@ const Header = () => {
                         break
                     case MenuItemEnum.MyAccount:
                         nav(routes.MY_ACCOUNT)
+                        break
+                    case MenuItemEnum.Order:
+                        nav(routes.ORDER)
                         break
                     default:
                         break

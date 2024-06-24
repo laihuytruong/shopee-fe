@@ -30,12 +30,17 @@ const CartList = () => {
         count: 0,
         price: 0,
     })
-    const [quantities, setQuantities] = useState<{ [key: string]: number }>(
-        user.cart.reduce((acc, cart) => {
-            acc[cart._id] = cart.quantity
-            return acc
-        }, {} as { [key: string]: number })
-    )
+    const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
+
+    useEffect(() => {
+        if (user.cart && user.cart.length > 0) {
+            const initialQuantities = user.cart.reduce((acc, cart) => {
+                acc[cart._id] = cart.quantity
+                return acc
+            }, {} as { [key: string]: number })
+            setQuantities(initialQuantities)
+        }
+    }, [user.cart])
 
     useEffect(() => {
         let selectedItems = user.cart.filter((cart) => checkedItems[cart._id])
@@ -92,7 +97,6 @@ const CartList = () => {
             (total, cart) => total + cart.productDetail.price * cart.quantity,
             0
         )
-        console.log(price)
         setTotalProductPay({ count, price })
     }
 
@@ -230,7 +234,6 @@ const CartList = () => {
             })
         }
     }
-    console.log('checkItem: ', checkItem)
 
     return (
         <div className="w-main relative">

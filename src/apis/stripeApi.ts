@@ -11,7 +11,6 @@ interface Response {
 
 const stripeApi = {
     async payment(data: { cart: Cart[]; token: string }): Promise<Response> {
-        console.log('data.cart: ', data.cart)
         const url = '/stripe/create-checkout-session'
         const headers = {
             Authorization: data.token,

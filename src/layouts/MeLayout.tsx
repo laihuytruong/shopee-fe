@@ -91,7 +91,12 @@ const MeLayout = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex-1 bg-white rounded-sm shadow-me ml-[27px] w-[980px]">
+            <div
+                className={`${
+                    !pathname.includes('purchase') &&
+                    'bg-white rounded-sm shadow-me'
+                } flex-1 ml-[27px] w-[980px]`}
+            >
                 <Outlet />
             </div>
         </div>
