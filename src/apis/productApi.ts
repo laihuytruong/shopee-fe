@@ -1,18 +1,17 @@
 import instance from '~/apiService'
+import { CategoryItem } from '~/models'
 import { Cart } from '~/models/cartInterface'
 import { Product } from '~/models/productInterfaces'
 
 interface ProductsResponse {
     err: number
     msg?: string
-    count?: number
     accessToken?: string
-    data?: {
-        page: number
-        pageSize: number
-        totalPage: number
-        data: Product[]
-    }
+    page?: number
+    pageSize?: number
+    totalPage?: number
+    totalCount?: number
+    data?: Product[]
 }
 
 interface ProductResponse {
@@ -23,14 +22,25 @@ interface ProductResponse {
     data?: Product
 }
 
+interface SearchResponse {
+    err: number
+    msg?: string
+    accessToken?: string
+    page?: number
+    pageSize?: number
+    totalPage?: number
+    totalCount?: number
+    data?: Product[] | CategoryItem[]
+}
+
 const productApi = {
     async getProducts(
         page: number = 1,
-        limit?: number,
+        pageSize?: number,
         productName?: string
     ): Promise<ProductsResponse> {
         const url = '/products'
-        const param = `?page=${page}&limit=${limit ? limit : 10}${
+        const param = `?page=${page}&pageSize=${pageSize ? pageSize : 10}${
             productName ? `&productName=${productName}` : ''
         }`
         return instance.get(url + param)
@@ -47,7 +57,8 @@ const productApi = {
     async filterProduct(
         slug: string | undefined,
         page: number = 1,
-        limit: number = 10,
+        pageSize: number = 10,
+        token: string,
         sort?: string,
         totalRating?: number,
         price?: string,
@@ -55,14 +66,18 @@ const productApi = {
         categoryItem?: string
     ): Promise<ProductsResponse> {
         const url = '/products/category'
-        const param = `/${slug}?page=${page}&limit=${
-            limit ? limit : 10
-        }&sort=${sort}${
-            totalRating && totalRating > 0 ? `&totalRating=${totalRating}` : ''
-        }${price ? `&price=${price}` : ''}${brand ? `&brand=${brand}` : ''}${
-            categoryItem ? `&categoryItem=${categoryItem}` : ''
-        }`
-        return instance.get(url + param)
+        // const param = `/${slug}?page=${page}&pageSize=${
+        //     pageSize ? pageSize : 10
+        // }&sort=${sort}${
+        //     totalRating && totalRating > 0 ? `&totalRating=${totalRating}` : ''
+        // }${price ? `&price=${price}` : ''}${brand ? `&brand=${brand}` : ''}${
+        //     categoryItem ? `&categoryItem=${categoryItem}` : ''
+        // }`
+        const param = `/${slug}?page=${page}&pageSize=${pageSize}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + param, { headers })
     },
     async updateQuantity(
         cart: Cart[],
@@ -73,6 +88,21 @@ const productApi = {
             Authorization: token,
         }
         return instance.put(url, { cart }, { headers })
+    },
+    async search(
+        keyword: string,
+        token: string,
+        page?: number,
+        pageSize?: number
+    ): Promise<SearchResponse> {
+        const url = '/products/search'
+        const param = `?page=${page ? +page : 1}&pageSize=${
+            pageSize ? pageSize : 10
+        }&keyword=${keyword}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + param, { headers })
     },
 }
 

@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { NavLink, useNavigate, useParams } from 'react-router-dom'
 import { authApi, userApi } from '~/apis'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
-import { CreatePassword, VerifyGmail } from '~/components'
+import { CreatePassword, VerifyGmail } from '~/components/user'
 import {
     selectAccessToken,
     selectCodeRegister,

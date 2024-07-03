@@ -1,7 +1,7 @@
 import icons from '~/utils/icons'
 import logo from '~/assets/image/logo.png'
 import logo_login from '~/assets/image/logo_login.png'
-import { MenuList, Search } from '~/components'
+import { MenuList, Search } from '~/components/user'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
 import { Dropdown, Empty } from 'antd'

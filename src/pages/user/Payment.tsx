@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '~/app/hooks'
-import { deleteCart, selectCart, setCheckItem } from '~/features/CartSlice'
+import { useAppSelector } from '~/app/hooks'
+import { selectCart } from '~/features/CartSlice'
 import { selectAccessToken, selectUser } from '~/features/UserSlice'
 import { User } from '~/models'
 import { Cart } from '~/models/cartInterface'
 import icons from '~/utils/icons'
 import { loadStripe } from '@stripe/stripe-js'
-import { productApi, productDetailApi, stripeApi, userApi } from '~/apis'
+import { stripeApi } from '~/apis'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
-import { increment } from '~/features/CounterSlice'
 
 const { FaLocationDot } = icons
 
@@ -17,8 +16,6 @@ const Payment = () => {
     const user: User = useAppSelector(selectUser)
     const token = useAppSelector(selectAccessToken)
     const cartBuyList: Cart[] = useAppSelector(selectCart)
-
-    const dispatch = useAppDispatch()
 
     const [totalAmount, setTotalAmount] = useState<number>(0)
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -33,23 +30,12 @@ const Payment = () => {
     const handlePayment = async () => {
         setIsLoading(true)
         const stripe = await loadStripe(`${import.meta.env.VITE_STRIPE_KEY}`)
-        const response = await stripeApi.payment({ token, cart: cartBuyList })
-
+        const response = await stripeApi.payment({
+            token,
+            cart: cartBuyList,
+        })
         if (response.err === 0 && response.data) {
             setIsLoading(false)
-            dispatch(setCheckItem({}))
-            await userApi.deleteAllItemCart({
-                items: cartBuyList.map((item) => ({
-                    pdId: item.productDetail._id,
-                    variationOption: item.variationOption._id,
-                })),
-                token,
-                checkAll: false,
-            })
-            await productApi.updateQuantity(cartBuyList, token)
-            await productDetailApi.updateInventory(cartBuyList, token)
-            dispatch(deleteCart())
-            dispatch(increment())
             const result = await stripe?.redirectToCheckout({
                 sessionId: response.data.id,
             })

@@ -5,7 +5,7 @@ const { FaFacebook, FaInstagram, FaLinkedin } = icons
 
 const Footer = () => {
     return (
-        <div className="w-main mt-10 flex justify-evenly pb-10">
+        <div className="w-main mt-10 flex justify-around pb-10">
             <div className="flex flex-col text-sm gap-1">
                 <h3 className="text-[#000000de] font-bold">SHOP</h3>
                 <span className="text-[#000000A6]">Thời Trang Nam Nữ</span>

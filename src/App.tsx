@@ -20,7 +20,7 @@ import {
     MyAccount,
     Payment_Announce,
     Purchase,
-} from '~/components'
+} from '~/components/user'
 
 import { AuthLayout, Public, MeLayout } from '~/layouts'
 

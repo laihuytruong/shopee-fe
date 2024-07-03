@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import productApi from '~/apis/productApi'
-import ProductsHome from '~/components/Products'
+import ProductsHome from '~/components/user/Products'
 import { PaginationInfo } from '~/models/generalInterface'
 import { Product } from '~/models/productInterfaces'
 
@@ -22,13 +22,15 @@ const DailyDiscover = () => {
             const response = await productApi.getProducts(paginationInfo.page)
             if (response.err === 0) {
                 if (response.data) {
-                    setProducts(response.data.data)
+                    setProducts(response.data)
                     setPaginationInfo({
-                        page: +response.data?.page ?? 1,
-                        pageSize: +response.data?.pageSize ?? 10,
-                        totalCount: response.count ? +response.count : 0,
-                        totalPage: response.data.totalPage
-                            ? +response.data.totalPage
+                        page: response.page ? +response.page : 1,
+                        pageSize: response.pageSize ? +response.pageSize : 10,
+                        totalPage: response?.totalPage
+                            ? +response.totalPage
+                            : 1,
+                        totalCount: response.totalCount
+                            ? +response.totalCount
                             : 0,
                     })
                 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
-import { Banner, ListCategory } from '~/components'
+import { Banner, ListCategory } from '~/components/user'
 import { PaginationInfo, Product } from '~/models'
 import { productApi } from '~/apis'
-import { Products } from '~/components'
+import { Products } from '~/components/user'
 import { listCodeDiscount } from '~/utils/constants'
 import { useAppSelector } from '~/app/hooks'
 import { selectAccessToken } from '~/features/UserSlice'
@@ -26,15 +26,18 @@ const Home = () => {
     useEffect(() => {
         const fetchProductHome = async () => {
             const response = await productApi.getProducts()
-            console.log('response: ', response.data?.data)
             if (response.err === 0) {
                 if (response.data) {
-                    setProducts(response.data.data)
+                    setProducts(response.data)
                     setPaginationInfo({
-                        page: +response.data?.page ?? 1,
-                        pageSize: +response.data?.pageSize ?? 10,
-                        totalPage: +response.data?.totalPage ?? 1,
-                        totalCount: response.count ? +response.count : 0,
+                        page: response.page ? +response.page : 1,
+                        pageSize: response.pageSize ? +response.pageSize : 10,
+                        totalPage: response?.totalPage
+                            ? +response.totalPage
+                            : 1,
+                        totalCount: response.totalCount
+                            ? +response.totalCount
+                            : 0,
                     })
                 }
             }

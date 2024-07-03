@@ -3,7 +3,7 @@ import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { PaginationInfo, Product } from '~/models'
 import { updateURLParams } from '~/utils/constants'
-import { StarRating } from '~/components'
+import { StarRating } from '~/components/user'
 
 interface Props {
     isShowBtn: boolean
@@ -41,6 +41,7 @@ const Products = (props: Props) => {
             nav(`${pageShow}?${newSearch}`)
         }
     }
+    console.log('products', products)
 
     return (
         <>

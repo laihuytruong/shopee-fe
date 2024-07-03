@@ -3,6 +3,7 @@ import {
     IoIosSearch,
     IoMdArrowDropright,
     IoMdStarOutline,
+    IoMdClose,
 } from 'react-icons/io'
 import { CiCircleQuestion } from 'react-icons/ci'
 import { GrLanguage } from 'react-icons/gr'
@@ -66,6 +67,7 @@ const icons = {
     FaFacebook,
     FaInstagram,
     FaLinkedin,
+    IoMdClose,
 }
 
 export default icons

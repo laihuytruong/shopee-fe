@@ -39,16 +39,19 @@ const CartList = () => {
                 return acc
             }, {} as { [key: string]: number })
             setQuantities(initialQuantities)
+            const allChecked = user.cart.every((cart) => checkItem[cart._id])
+            setCheckAll(allChecked)
+            setCheckedItems(checkItem)
         }
-    }, [user.cart])
+    }, [user.cart, checkItem])
 
     useEffect(() => {
         let selectedItems = user.cart.filter((cart) => checkedItems[cart._id])
         selectedItems = selectedItems.map((cart) => {
+            const cartItem = { ...cart, quantity: quantities[cart._id] }
             if (cart.productDetail.product.discount) {
                 return {
-                    ...cart,
-                    quantity: quantities[cart._id],
+                    ...cartItem,
                     productDetail: {
                         ...cart.productDetail,
                         price:
@@ -56,8 +59,11 @@ const CartList = () => {
                             (1 - cart.productDetail.product.discount / 100),
                     },
                 }
+            } else {
+                return {
+                    ...cartItem,
+                }
             }
-            return cart
         })
         handleProductPay(selectedItems)
     }, [checkedItems, quantities])

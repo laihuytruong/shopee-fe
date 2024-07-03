@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { updateURLParams } from '~/utils/constants'
-import MenuList from './MenuList'
+import { MenuList } from '~/components/user'
 import { MenuItem } from '~/models'
 import icons from '~/utils/icons'
 

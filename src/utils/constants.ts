@@ -1,3 +1,5 @@
+import { CategoryItem, Product } from '~/models'
+
 interface CodeDisCount {
     id: number
     image: string
@@ -90,4 +92,16 @@ export const maskPhoneNumber = (phoneNumber: string) => {
     const maskedNumber =
         '*'.repeat(phoneNumber.length - 2) + phoneNumber.slice(-2)
     return maskedNumber
+}
+
+export const isProductArray = (
+    data: Product[] | CategoryItem[]
+): data is Product[] => {
+    return (data as Product[])[0].productName !== undefined
+}
+
+export const isCategoryItemArray = (
+    data: Product[] | CategoryItem[]
+): data is CategoryItem[] => {
+    return (data as CategoryItem[])[0].categoryItemName !== undefined
 }

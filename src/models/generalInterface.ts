@@ -1,4 +1,4 @@
-import { MenuItemEnum } from "./enums"
+import { MenuItemEnum } from "../enums"
 
 export interface PaginationInfo {
     page: number

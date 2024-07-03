@@ -6,8 +6,14 @@ import {
     useSearchParams,
 } from 'react-router-dom'
 import { brandApi, categoryItemApi, productApi } from '~/apis'
-import { CategoryList, FilterPanel, Products } from '~/components'
-import ButtonControl from '~/components/ButtonControl'
+import { useAppSelector } from '~/app/hooks'
+import {
+    CategoryList,
+    FilterPanel,
+    Products,
+    ButtonControl,
+} from '~/components/user'
+import { selectAccessToken } from '~/features/UserSlice'
 import {
     Brand,
     CategoryItem,
@@ -21,6 +27,8 @@ import icons from '~/utils/icons'
 const { MdOutlineNavigateNext, MdOutlineNavigateBefore, GrInfo } = icons
 
 const ProductFilter = () => {
+    const token = useAppSelector(selectAccessToken)
+
     const [searchParams] = useSearchParams()
     const pageNumber = searchParams.get('page')
     const sort = searchParams.get('sort')
@@ -33,6 +41,7 @@ const ProductFilter = () => {
     const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([])
     const [brands, setBrands] = useState<Brand[]>([])
     const [products, setProducts] = useState<Product[]>([])
+    const [productSearch, setProductSearch] = useState<Product>({} as Product)
     const [active, setActive] = useState<number>(0)
     const [buttonActive, setButtonActive] = useState<string>('Phổ biến')
     const [selectMenuItem, setSelectMenuItem] = useState<React.ReactNode>('Giá')
@@ -58,7 +67,6 @@ const ProductFilter = () => {
                 const product = await productApi.getProduct(
                     keywordSearch ? keywordSearch : undefined
                 )
-                console.log('product: ', product)
                 if (product.err === 1) {
                     const [responseCategoryItem, responseBrand] =
                         await Promise.all([
@@ -83,12 +91,14 @@ const ProductFilter = () => {
                         setBrands(responseBrand.data)
                     }
                 } else {
+                    setProductSearch(
+                        product && product.data ? product.data : ({} as Product)
+                    )
                     const responseCategoryItem =
                         await categoryItemApi.getCategoryItemBySlug(
                             product.data?.categoryItem.category &&
                                 product.data?.categoryItem.category.slug
                         )
-                    console.log()
                     const responseBrand = await brandApi.getBrand(
                         product.data?.categoryItem.category &&
                             product.data?.categoryItem.category.slug
@@ -103,36 +113,42 @@ const ProductFilter = () => {
             }
         }
         fetchData()
-    }, [])
-    console.log('category items: ', categoryItems)
+    }, [keywordSearch])
 
     useEffect(() => {
         const fetchProductData = async () => {
             const responseProduct = await productApi.filterProduct(
-                slugCategory,
+                Object.keys(productSearch).length > 0
+                    ? productSearch.categoryItem.category?.slug
+                    : slugCategory,
                 paginationInfo.page,
                 paginationInfo.pageSize,
+                token,
                 sort ? sort : '',
                 totalRating ? +totalRating : 0,
                 price ? price : undefined,
                 brandSearch ? brandSearch : undefined,
                 categoryItemSearch ? categoryItemSearch : undefined
-            ) 
+            )
             if (responseProduct.data) {
-                setProducts(responseProduct.data.data)
+                setProducts(responseProduct.data)
                 setPaginationInfo({
-                    page: +responseProduct.data?.page ?? 1,
-                    pageSize: +responseProduct.data?.pageSize ?? 10,
-                    totalPage: +responseProduct.data?.totalPage ?? 1,
-                    totalCount: responseProduct.count
-                        ? +responseProduct.count
+                    page: responseProduct.page ? +responseProduct.page : 1,
+                    pageSize: responseProduct.pageSize
+                        ? +responseProduct.pageSize
+                        : 10,
+                    totalPage: responseProduct?.totalPage
+                        ? +responseProduct.totalPage
+                        : 1,
+                    totalCount: responseProduct.totalCount
+                        ? +responseProduct.totalCount
                         : 0,
                 })
             }
         }
 
         fetchProductData()
-    }, [count])
+    }, [count, keywordSearch])
 
     const handlePageChange = (newPage: number) => {
         setCount((prev) => prev + 1)
@@ -143,6 +159,7 @@ const ProductFilter = () => {
         const newSearch = updateURLParams(search, 'page', newPage.toString())
         nav(`${pathname}?${newSearch}`)
     }
+    console.log('products: ', products)
 
     const handleSelect = (item?: MenuItem) => {
         if (item && item.sort) {
