@@ -21,7 +21,7 @@ import {
     PaginationInfo,
     MenuItem,
 } from '~/models'
-import { updateURLParams } from '~/utils/constants'
+import { isProductArray, updateURLParams } from '~/utils/constants'
 import icons from '~/utils/icons'
 
 const { MdOutlineNavigateNext, MdOutlineNavigateBefore, GrInfo } = icons
@@ -35,13 +35,14 @@ const ProductFilter = () => {
     const totalRating = searchParams.get('totalRating')
     const price = searchParams.get('price')
     const brandSearch = searchParams.get('brand')
-    const categoryItemSearch = searchParams.get('categoryItem')
     const keywordSearch = searchParams.get('keyword')
 
     const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([])
     const [brands, setBrands] = useState<Brand[]>([])
     const [products, setProducts] = useState<Product[]>([])
     const [productSearch, setProductSearch] = useState<Product>({} as Product)
+    const [searchData, setSearchData] = useState<Product[]>([])
+    const [originalSearchData, setOriginalSearchData] = useState<Product[]>([])
     const [active, setActive] = useState<number>(0)
     const [buttonActive, setButtonActive] = useState<string>('Phổ biến')
     const [selectMenuItem, setSelectMenuItem] = useState<React.ReactNode>('Giá')
@@ -64,15 +65,17 @@ const ProductFilter = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const product = await productApi.getProduct(
-                    keywordSearch ? keywordSearch : undefined
+                const product = await productApi.search(
+                    keywordSearch ? keywordSearch : '',
+                    token
                 )
-                if (product.err === 1) {
+                if (product.err === 1 || product.data?.length === 0) {
                     const [responseCategoryItem, responseBrand] =
                         await Promise.all([
                             categoryItemApi.getCategoryItemBySlug(slugCategory),
                             brandApi.getBrand(slugCategory),
                         ])
+                    console.log({ responseCategoryItem, responseBrand })
                     if (responseBrand.data && responseCategoryItem.data) {
                         setCategoryItems([
                             {
@@ -90,22 +93,86 @@ const ProductFilter = () => {
                         ])
                         setBrands(responseBrand.data)
                     }
-                } else {
-                    setProductSearch(
-                        product && product.data ? product.data : ({} as Product)
-                    )
+                } else if (product.data && isProductArray(product.data)) {
+                    const responseProductSearch =
+                        await productApi.filterProduct(
+                            product.data[0].categoryItem.slug,
+                            token,
+                            paginationInfo.page,
+                            paginationInfo.pageSize
+                        )
                     const responseCategoryItem =
                         await categoryItemApi.getCategoryItemBySlug(
-                            product.data?.categoryItem.category &&
-                                product.data?.categoryItem.category.slug
+                            product.data[0].categoryItem.category &&
+                                product.data[0].categoryItem.category.slug
                         )
                     const responseBrand = await brandApi.getBrand(
-                        product.data?.categoryItem.category &&
-                            product.data?.categoryItem.category.slug
+                        product.data[0].categoryItem.category &&
+                            product.data[0].categoryItem.category.slug
                     )
-                    if (responseBrand.data && responseCategoryItem.data) {
+                    setProductSearch(product.data[0])
+                    if (
+                        responseBrand.data &&
+                        responseCategoryItem.data &&
+                        responseProductSearch.data
+                    ) {
                         setCategoryItems(responseCategoryItem.data)
                         setBrands(responseBrand.data)
+                        setSearchData(responseProductSearch.data)
+                        setOriginalSearchData(responseProductSearch.data)
+                        setPaginationInfo({
+                            page: responseProductSearch.page
+                                ? +responseProductSearch.page
+                                : 1,
+                            pageSize: responseProductSearch.pageSize
+                                ? +responseProductSearch.pageSize
+                                : 10,
+                            totalPage: responseProductSearch?.totalPage
+                                ? +responseProductSearch.totalPage
+                                : 1,
+                            totalCount: responseProductSearch.totalCount
+                                ? +responseProductSearch.totalCount
+                                : 0,
+                        })
+                    }
+                } else if (product.data) {
+                    const responseProductSearch =
+                        await productApi.filterProduct(
+                            product.data[0].slug,
+                            token,
+                            paginationInfo.page,
+                            paginationInfo.pageSize
+                        )
+                    const responseCategoryItem =
+                        await categoryItemApi.getCategoryItemBySlug(
+                            product.data[0].category?.slug
+                        )
+                    const responseBrand = await brandApi.getBrand(
+                        product.data[0].category?.slug
+                    )
+                    if (
+                        responseBrand.data &&
+                        responseCategoryItem.data &&
+                        responseProductSearch.data 
+                    ) {
+                        setCategoryItems(responseCategoryItem.data)
+                        setBrands(responseBrand.data)
+                        setSearchData(responseProductSearch.data)
+                        setOriginalSearchData(responseProductSearch.data)
+                        setPaginationInfo({
+                            page: responseProductSearch.page
+                                ? +responseProductSearch.page
+                                : 1,
+                            pageSize: responseProductSearch.pageSize
+                                ? +responseProductSearch.pageSize
+                                : 10,
+                            totalPage: responseProductSearch?.totalPage
+                                ? +responseProductSearch.totalPage
+                                : 1,
+                            totalCount: responseProductSearch.totalCount
+                                ? +responseProductSearch.totalCount
+                                : 0,
+                        })
                     }
                 }
             } catch (error) {
@@ -121,16 +188,40 @@ const ProductFilter = () => {
                 Object.keys(productSearch).length > 0
                     ? productSearch.categoryItem.category?.slug
                     : slugCategory,
+                token,
+                paginationInfo.page,
+                paginationInfo.pageSize
+            )
+            let productsToFilter: Product[] = []
+
+            if (responseProduct.data) {
+                productsToFilter = responseProduct.data
+            }
+            const filter = await productApi.filter(
+                token,
+                originalSearchData.length > 0
+                    ? originalSearchData
+                    : productsToFilter,
                 paginationInfo.page,
                 paginationInfo.pageSize,
-                token,
                 sort ? sort : '',
                 totalRating ? +totalRating : 0,
                 price ? price : undefined,
                 brandSearch ? brandSearch : undefined,
-                categoryItemSearch ? categoryItemSearch : undefined
             )
-            if (responseProduct.data) {
+            if (filter.err === 0 && filter.data) {
+                if (searchData.length > 0) {
+                    setSearchData(filter.data)
+                } else {
+                    setProducts(filter.data)
+                }
+                setPaginationInfo({
+                    page: filter.page ? +filter.page : 1,
+                    pageSize: filter.pageSize ? +filter.pageSize : 10,
+                    totalPage: filter?.totalPage ? +filter.totalPage : 1,
+                    totalCount: filter.totalCount ? +filter.totalCount : 0,
+                })
+            } else if (responseProduct.err === 0 && responseProduct.data) {
                 setProducts(responseProduct.data)
                 setPaginationInfo({
                     page: responseProduct.page ? +responseProduct.page : 1,
@@ -159,7 +250,6 @@ const ProductFilter = () => {
         const newSearch = updateURLParams(search, 'page', newPage.toString())
         nav(`${pathname}?${newSearch}`)
     }
-    console.log('products: ', products)
 
     const handleSelect = (item?: MenuItem) => {
         if (item && item.sort) {
@@ -187,7 +277,6 @@ const ProductFilter = () => {
                 <div>
                     <FilterPanel
                         brands={brands}
-                        categoryItems={categoryItems}
                         setCount={setCount}
                         pathname={pathname}
                         search={search}
@@ -278,7 +367,7 @@ const ProductFilter = () => {
                     isShowBtn={false}
                     show={true}
                     paginationInfo={paginationInfo}
-                    products={products}
+                    products={searchData.length > 0 ? searchData : products}
                     setCount={setCount}
                     setPaginationInfo={setPaginationInfo}
                     pageShow={pathname}

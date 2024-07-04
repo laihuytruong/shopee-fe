@@ -23,12 +23,15 @@ export const searchSlice = createSlice({
             const index = state.searchHistory.findIndex(
                 (item) => item._id === action.payload._id
             )
-            if (index === -1) {
+            if (index !== -1) {
                 state.searchHistory.splice(index, 1, action.payload)
             }
         },
         sortSearchHistory: (state) => {
-            state.searchHistory.sort((a, b) => b.clickAt - a.clickAt)
+            state.searchHistory.sort((a, b) => {
+                console.log(b.clickAt - a.clickAt)
+                return b.clickAt - a.clickAt
+            })
         },
         deleteItem: (state, action: PayloadAction<SearchHistory>) => {
             const index = state.searchHistory.findIndex(

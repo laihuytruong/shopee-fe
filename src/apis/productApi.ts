@@ -56,24 +56,14 @@ const productApi = {
 
     async filterProduct(
         slug: string | undefined,
-        page: number = 1,
-        pageSize: number = 10,
         token: string,
-        sort?: string,
-        totalRating?: number,
-        price?: string,
-        brand?: string,
-        categoryItem?: string
+        page?: number,
+        pageSize?: number
     ): Promise<ProductsResponse> {
         const url = '/products/category'
-        // const param = `/${slug}?page=${page}&pageSize=${
-        //     pageSize ? pageSize : 10
-        // }&sort=${sort}${
-        //     totalRating && totalRating > 0 ? `&totalRating=${totalRating}` : ''
-        // }${price ? `&price=${price}` : ''}${brand ? `&brand=${brand}` : ''}${
-        //     categoryItem ? `&categoryItem=${categoryItem}` : ''
-        // }`
-        const param = `/${slug}?page=${page}&pageSize=${pageSize}`
+        const param = `/${slug}?page=${page ? page : 1}&pageSize=${
+            pageSize ? pageSize : 10
+        }`
         const headers = {
             Authorization: token,
         }
@@ -103,6 +93,30 @@ const productApi = {
             Authorization: token,
         }
         return instance.get(url + param, { headers })
+    },
+    async filter(
+        token: string,
+        products: Product[],
+        page: number,
+        pageSize: number,
+        sort?: string,
+        totalRating?: number,
+        price?: string,
+        brand?: string
+    ): Promise<ProductsResponse> {
+        const url = '/products/filter'
+        const param = `?page=${+page}&pageSize=${+pageSize}${
+            sort && `&sort=${sort}`
+        }${
+            totalRating && totalRating > 0 ? `&totalRating=${totalRating}` : ''
+        }${price ? `&price=${price}` : ''}${brand ? `&brand=${brand}` : ''}`
+        const headers = {
+            Authorization: token,
+        }
+        const body = {
+            productData: products,
+        }
+        return instance.post(url + param, { ...body }, { headers })
     },
 }
 

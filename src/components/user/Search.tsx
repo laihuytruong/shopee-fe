@@ -37,16 +37,25 @@ const Search = () => {
     const debouncedSetSearchText = useCallback(
         debounce(async (text: string) => {
             const response = await productApi.search(text, token)
-            if (response.err === 0) {
+            if (
+                response.err === 0 &&
+                response.data &&
+                response.data.length > 0
+            ) {
                 if (response.data) {
                     if (isProductArray(response.data)) {
+                        setSearchCategoryItemData([])
                         setSearchProductData(response.data)
                     } else {
+                        setSearchProductData([])
                         setSearchCategoryItemData(response.data)
                     }
                 }
+            } else {
+                setSearchCategoryItemData([])
+                setSearchProductData([])
             }
-        }, 500),
+        }, 200),
         []
     )
 
@@ -68,7 +77,7 @@ const Search = () => {
 
     const handleSelectSearchItem = (item: SearchHistory, isAdd?: boolean) => {
         setSearchText(item.name)
-        if (isAdd) {
+        if (isAdd && isAdd === true) {
             dispatch(addSearchHistory(item))
         } else {
             dispatch(updateSearchHistory(item))
@@ -81,6 +90,23 @@ const Search = () => {
     const handleDeleteItemHistory = (search: SearchHistory) => {
         dispatch(deleteItem(search))
     }
+    const handleOnMouseEnter = async () => {
+        const response = await productApi.search(searchText, token)
+        if (response.err === 0 && response.data) {
+            if (isProductArray(response.data)) {
+                setSearchCategoryItemData([])
+                setSearchProductData(response.data)
+            } else {
+                setSearchProductData([])
+                setSearchCategoryItemData(response.data)
+            }
+        } else {
+            setSearchCategoryItemData([])
+            setSearchProductData([])
+        }
+    }
+
+    console.log('searchCategoryItemData: ', searchCategoryItemData)
 
     return (
         <div className="max-w-[840px] bg-white rounded">
@@ -209,7 +235,10 @@ const Search = () => {
                         className="flex-1 py-2 px-2 rounded outline-none text-primary"
                         value={searchText}
                         onChange={(e) => handleChange(e)}
-                        onMouseEnter={() => setIsShowSearchHistory(true)}
+                        onMouseEnter={() => {
+                            setIsShowSearchHistory(true)
+                            handleOnMouseEnter()
+                        }}
                     />
                 </Dropdown>
                 <button className="w-[8%] bg-main rounded hover:opacity-[0.9] flex justify-center items-center">

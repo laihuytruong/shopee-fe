@@ -100,8 +100,6 @@ export const isProductArray = (
     return (data as Product[])[0].productName !== undefined
 }
 
-export const isCategoryItemArray = (
-    data: Product[] | CategoryItem[]
-): data is CategoryItem[] => {
-    return (data as CategoryItem[])[0].categoryItemName !== undefined
+export const isProduct = (data: Product) => {
+    return data.productName !== undefined
 }

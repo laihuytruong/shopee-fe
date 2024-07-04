@@ -41,7 +41,6 @@ const Products = (props: Props) => {
             nav(`${pageShow}?${newSearch}`)
         }
     }
-    console.log('products', products)
 
     return (
         <>
@@ -153,7 +152,7 @@ const Products = (props: Props) => {
                         onChange={handleChangePage}
                         pageSize={paginationInfo.pageSize}
                         total={paginationInfo.totalCount}
-                        current={paginationInfo.page}
+                        current={+paginationInfo.page}
                         className="mt-8 custom-pagination"
                     />
                 ) : (
