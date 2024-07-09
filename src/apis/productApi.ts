@@ -118,6 +118,21 @@ const productApi = {
         }
         return instance.post(url + param, { ...body }, { headers })
     },
+    async ratingProduct(
+        token: string,
+        pid: string,
+        star: number
+    ): Promise<ProductResponse> {
+        const url = '/products/ratings'
+        const body = {
+            pid,
+            star,
+        }
+        const headers = {
+            Authorization: token,
+        }
+        return instance.put(url, { ...body }, { headers })
+    },
 }
 
 export default productApi

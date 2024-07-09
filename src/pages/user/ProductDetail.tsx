@@ -19,7 +19,7 @@ const ProductDetail = () => {
     const [listProductDetail, setListProductDetail] = useState<Configuration[]>(
         []
     )
-    const [product, setProduct] = useState<Product>()
+    const [product, setProduct] = useState<Product>({} as Product)
     const [quantity, setQuantity] = useState<number>(1)
     const [totalDetail, setTotalDetail] = useState<number>(0)
     const [detailActive, setDetailActive] = useState<number>()
@@ -218,6 +218,8 @@ const ProductDetail = () => {
                                                 : 0
                                         }
                                         color="#ee4d2d"
+                                        product={product}
+                                        setProduct={setProduct}                                        
                                     />
                                 </div>
                                 <div className="flex items-center px-[15px] border-x border-solid border-x-[rgba(0, 0, 0, .14)]">

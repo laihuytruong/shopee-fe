@@ -73,7 +73,6 @@ const Purchase = () => {
                         paginationInfo.pageSize || 5
                     )
                 }
-                console.log('response: ', response)
                 if (response.err === 0 && response.data) {
                     setOrders(
                         response.data.length === 0
@@ -88,6 +87,8 @@ const Purchase = () => {
                             totalCounts: response.totalCount || 0,
                         })
                     )
+                } else {
+                    setOrders([])
                 }
             } catch (error) {
                 console.error('Failed to fetch orders:', error)
@@ -189,7 +190,6 @@ const Purchase = () => {
                 nav(routes.CART)
             })
         } catch (error) {
-            console.error('Error adding products to cart:', error)
             Swal.fire({
                 position: 'center',
                 icon: 'error',
