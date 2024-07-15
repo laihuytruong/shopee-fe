@@ -22,7 +22,17 @@ import {
     Purchase,
 } from '~/components/user'
 
-import { AuthLayout, Public, MeLayout } from '~/layouts'
+import { AuthLayout, Public, MeLayout, AdminLayout } from '~/layouts'
+import admin_routes from './config/admin_routes'
+import {
+    AddProduct,
+    AllCategories,
+    AllOrders,
+    AllProducts,
+    AllUsers,
+    Amount,
+    Profile,
+} from './pages/admin'
 
 function App() {
     return (
@@ -62,6 +72,31 @@ function App() {
                     />
 
                     <Route path={routes.ALL} element={<Home />} />
+                </Route>
+
+                <Route path={admin_routes.ADMIN} element={<AdminLayout />}>
+                    <Route path={admin_routes.AMOUNT} element={<Amount />} />
+                    <Route
+                        path={admin_routes.ALL_PRODUCTS}
+                        element={<AllProducts />}
+                    />
+                    <Route
+                        path={admin_routes.ADD_PRODUCTS}
+                        element={<AddProduct />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_ORDERS}
+                        element={<AllOrders />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_CATEGORIES}
+                        element={<AllCategories />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_USERS}
+                        element={<AllUsers />}
+                    />
+                    <Route path={admin_routes.PROFILE} element={<Profile />} />
                 </Route>
 
                 <Route element={<AuthLayout />}>

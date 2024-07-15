@@ -9,6 +9,7 @@ import { auth } from '~/features/UserSlice'
 import { useForm } from 'react-hook-form'
 import { useCookies } from 'react-cookie'
 import Swal from 'sweetalert2'
+import admin_routes from '~/config/admin_routes'
 
 const { FcGoogle, IoCloseCircleOutline } = icons
 
@@ -46,7 +47,11 @@ const Login = () => {
                 showConfirmButton: false,
                 timer: 1500,
             }).then(() => {
-                nav(`/${routes.HOME}`)
+                if (response.data?.role.roleName === 'user') {
+                    nav(`/${routes.HOME}`)
+                } else {
+                    nav(`/${admin_routes.ADMIN}`)
+                }
             })
         } else {
             Swal.fire({
