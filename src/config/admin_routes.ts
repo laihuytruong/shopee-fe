@@ -2,11 +2,12 @@ const admin_routes = {
     ADMIN: '/admin',
     HOME: '/',
     AMOUNT: '/admin/amount',
-    ALL_PRODUCTS: '/admin/products/all',
+    ALL_PRODUCTS: '/admin/products',
     ADD_PRODUCTS: '/admin/products/add',
-    ALL_ORDERS: '/admin/orders/all',
-    ALL_CATEGORIES: '/admin/categories/all',
-    ALL_USERS: '/admin/users/all',
+    ALL_ORDERS: '/admin/orders',
+    ALL_CATEGORIES: '/admin/categories',
+    ALL_BRANDS: '/admin/brands',
+    ALL_USERS: '/admin/users',
     PROFILE: '/admin/profile',
 }
 

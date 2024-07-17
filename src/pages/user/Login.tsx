@@ -50,7 +50,7 @@ const Login = () => {
                 if (response.data?.role.roleName === 'user') {
                     nav(`/${routes.HOME}`)
                 } else {
-                    nav(`/${admin_routes.ADMIN}`)
+                    nav(`${admin_routes.ADMIN}`)
                 }
             })
         } else {

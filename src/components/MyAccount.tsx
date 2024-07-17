@@ -7,7 +7,7 @@ import { DatePicker, Space, Modal } from 'antd'
 import dayjs from 'dayjs'
 import { maskEmail, maskPhoneNumber, updateURLParams } from '~/utils/constants'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ChangeGmail, InputCustom, UploadAvatar } from '~/components/user'
+import { ChangeGmail, InputCustom, UploadAvatar } from '~/components'
 import { userApi } from '~/apis'
 import { useForm } from 'react-hook-form'
 import Swal from 'sweetalert2'
@@ -107,8 +107,6 @@ const MyAccount = () => {
         setIsModalOpen(false)
         setPhoneNumber('')
     }
-
-    console.log('phoneNumber: ', phoneNumber)
 
     const onSubmit = useCallback(() => {
         Swal.fire({

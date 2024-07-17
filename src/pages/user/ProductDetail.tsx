@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { configurationApi, userApi } from '~/apis'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
-import { StarRating } from '~/components/user'
+import { StarRating } from '~/components'
 import routes from '~/config/routes'
 import { increment } from '~/features/CounterSlice'
 import { selectAccessToken, selectUser } from '~/features/UserSlice'
@@ -219,7 +219,7 @@ const ProductDetail = () => {
                                         }
                                         color="#ee4d2d"
                                         product={product}
-                                        setProduct={setProduct}                                        
+                                        setProduct={setProduct}
                                     />
                                 </div>
                                 <div className="flex items-center px-[15px] border-x border-solid border-x-[rgba(0, 0, 0, .14)]">

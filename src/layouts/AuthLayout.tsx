@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
-import { Footer } from '~/components/user'
+import { Footer } from '~/components'
 import routes from '~/config/routes'
 import logo_login from '~/assets/image/logo_login.png'
 

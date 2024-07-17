@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
-import { Header, Footer } from '~/components/user'
+import { Header, Footer } from '~/components'
 import { increment } from '~/features/CounterSlice'
 import { selectPaginationInfo, setPaginationInfo } from '~/features/UserSlice'
 

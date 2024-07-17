@@ -20,12 +20,13 @@ import {
     MyAccount,
     Payment_Announce,
     Purchase,
-} from '~/components/user'
+} from '~/components'
 
 import { AuthLayout, Public, MeLayout, AdminLayout } from '~/layouts'
 import admin_routes from './config/admin_routes'
 import {
     AddProduct,
+    AllBrands,
     AllCategories,
     AllOrders,
     AllProducts,
@@ -91,6 +92,10 @@ function App() {
                     <Route
                         path={admin_routes.ALL_CATEGORIES}
                         element={<AllCategories />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_BRANDS}
+                        element={<AllBrands />}
                     />
                     <Route
                         path={admin_routes.ALL_USERS}

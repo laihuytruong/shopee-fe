@@ -15,6 +15,7 @@ interface Props {
     valueData?: string
     showPassword?: boolean
     setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>
+    isReset?: boolean
 }
 
 type FormValues = {
@@ -34,11 +35,13 @@ const InputCustom: React.FC<Props> = ({
     valueData,
     showPassword,
     setShowPassword,
+    isReset,
 }) => {
     const {
         register,
         formState: { errors },
         watch,
+        reset,
     } = useForm<FormValues>({ mode: 'onChange' })
 
     const value = watch(valueName, initValue ? initValue : '')
@@ -51,13 +54,21 @@ const InputCustom: React.FC<Props> = ({
         }
     }, [value, type])
 
+    useEffect(() => {
+        if (isReset) {
+            reset({
+                [valueName]: '',
+            })
+        }
+    }, [type, isReset])
+
     return (
         <div>
             {!isPassword ? (
                 <input
                     type="text"
                     placeholder={`${placeholder ? placeholder : ''}`}
-                    defaultValue={valueData ? valueData : ''}
+                    value={value}
                     className={`outline-none ${
                         shadow && shadow
                     } rounded-sm border border-solid p-[10px] w-full mb-1 ${

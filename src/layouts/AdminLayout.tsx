@@ -1,17 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { authApi } from '~/apis'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import logo_login from '~/assets/image/logo_login.png'
-import { MenuList } from '~/components/user'
+import { MenuList } from '~/components'
 import admin_routes from '~/config/admin_routes'
 import routes from '~/config/routes'
 import { selectUser, setUser } from '~/features/UserSlice'
 import { MenuItem, User } from '~/models'
 import icons from '~/utils/icons'
 
-const { MdModeEdit, FaRegUser, TiClipboard } = icons
+const {
+    FaRegUser,
+    TiClipboard,
+    IoStatsChart,
+    MdOutlineCategory,
+    MdOutlineBrandingWatermark,
+    LiaProductHunt,
+} = icons
 
 enum MenuItemEnum {
     MyAccount = 'Tài khoản của tôi',
@@ -26,6 +33,25 @@ const AdminLayout = () => {
 
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     const [isShowMenu, setIsShowMenu] = useState<boolean>(true)
+
+    useEffect(() => {
+        const refreshUser = async () => {
+            if (!cookies.user) {
+                const response = await authApi.generateNewToken()
+                console.log('response', response)
+                if (response.err === 1) {
+                    nav(routes.LOGIN)
+                } else {
+                    setCookie(
+                        'user',
+                        { user: user._id, token: response.msg },
+                        { path: '/' }
+                    )
+                }
+            }
+        }
+        refreshUser()
+    }, [])
 
     const handleSelect = async (item?: MenuItem) => {
         try {
@@ -53,8 +79,8 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="h-[1000px] z-10">
-            <div className="fixed top-0 shadow-header w-full px-10 py-2 border-b border-solid border-b-[rgba(0, 0, 0, .09)] flex items-center justify-between h-[70px]">
+        <div>
+            <div className="fixed z-30 top-0 shadow-header bg-white w-full px-10 py-2 border-b border-solid border-b-[rgba(0, 0, 0, .09)] flex items-center justify-between h-[70px]">
                 <div className="flex items-center gap-2">
                     <img src={logo_login} alt="" className="h-10" />
                     <span className="text-xl pt-3">{`>`}</span>
@@ -82,7 +108,7 @@ const AdminLayout = () => {
                 </MenuList>
             </div>
             <div className="w-full">
-                <div className="w-1/5 pl-16 fixed left-0 top-[70px] border-r border-solid border-r-[rgba(0, 0, 0, .09)] h-full">
+                <div className="w-1/5 pl-16 fixed left-0 top-[70px] border-r-2 border-solid border-r-[rgba(0, 0, 0, .09)] h-full">
                     <div className="w-full mt-4 text-sm text-[#000000DE]">
                         <div>
                             <NavLink
@@ -93,7 +119,14 @@ const AdminLayout = () => {
                                     'text-main'
                                 }`}
                             >
-                                <TiClipboard size={16} color="#175eb7" />
+                                <IoStatsChart
+                                    size={16}
+                                    color={`${
+                                        pathname.includes('amount')
+                                            ? '#ee4d2d'
+                                            : '#175eb7'
+                                    }`}
+                                />
                                 <span className="group-hover:text-main">
                                     Thống kê doanh số
                                 </span>
@@ -109,7 +142,7 @@ const AdminLayout = () => {
                                 }}
                                 className="flex items-center gap-2 group my-[15px]"
                             >
-                                <FaRegUser size={16} color="#175eb7" />
+                                <LiaProductHunt size={16} color="#175eb7" />
                                 <span className="group-hover:text-main">
                                     Quản lý sản phẩm
                                 </span>
@@ -147,7 +180,14 @@ const AdminLayout = () => {
                                     ) && 'text-main'
                                 }`}
                             >
-                                <TiClipboard size={16} color="#175eb7" />
+                                <TiClipboard
+                                    size={16}
+                                    color={`${
+                                        pathname.includes('orders')
+                                            ? '#ee4d2d'
+                                            : '#175eb7'
+                                    }`}
+                                />
                                 <span className="group-hover:text-main">
                                     Quản lý đơn hàng
                                 </span>
@@ -161,9 +201,37 @@ const AdminLayout = () => {
                                     ) && 'text-main'
                                 }`}
                             >
-                                <FaRegUser size={16} color="#175eb7" />
+                                <MdOutlineCategory
+                                    size={16}
+                                    color={`${
+                                        pathname.includes('categories')
+                                            ? '#ee4d2d'
+                                            : '#175eb7'
+                                    }`}
+                                />
                                 <span className="group-hover:text-main">
                                     Quản lý phân loại
+                                </span>
+                            </NavLink>
+                            <NavLink
+                                to={admin_routes.ALL_BRANDS}
+                                onClick={() => setIsShowMenu(false)}
+                                className={`flex items-center gap-2 group my-[15px] ${
+                                    pathname.includes(
+                                        admin_routes.ALL_BRANDS
+                                    ) && 'text-main'
+                                }`}
+                            >
+                                <MdOutlineBrandingWatermark
+                                    size={16}
+                                    color={`${
+                                        pathname.includes('brands')
+                                            ? '#ee4d2d'
+                                            : '#175eb7'
+                                    }`}
+                                />
+                                <span className="group-hover:text-main">
+                                    Quản lý thương hiệu
                                 </span>
                             </NavLink>
                             <NavLink
@@ -199,7 +267,7 @@ const AdminLayout = () => {
                         </div>
                     </div>
                 </div>
-                <div className="pl-[320px] mt-20 w-4/5">
+                <div className="pt-20 w-full pl-[340px] pr-[30px]">
                     <Outlet />
                 </div>
             </div>

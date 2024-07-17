@@ -12,7 +12,7 @@ import {
     FilterPanel,
     Products,
     ButtonControl,
-} from '~/components/user'
+} from '~/components'
 import { selectAccessToken } from '~/features/UserSlice'
 import {
     Brand,
@@ -153,7 +153,7 @@ const ProductFilter = () => {
                     if (
                         responseBrand.data &&
                         responseCategoryItem.data &&
-                        responseProductSearch.data 
+                        responseProductSearch.data
                     ) {
                         setCategoryItems(responseCategoryItem.data)
                         setBrands(responseBrand.data)
@@ -207,7 +207,7 @@ const ProductFilter = () => {
                 sort ? sort : '',
                 totalRating ? +totalRating : 0,
                 price ? price : undefined,
-                brandSearch ? brandSearch : undefined,
+                brandSearch ? brandSearch : undefined
             )
             if (filter.err === 0 && filter.data) {
                 if (searchData.length > 0) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import productApi from '~/apis/productApi'
-import ProductsHome from '~/components/user/Products'
+import ProductsHome from '~/components/Products'
 import { PaginationInfo } from '~/models/generalInterface'
 import { Product } from '~/models/productInterfaces'
 
