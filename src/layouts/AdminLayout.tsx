@@ -7,7 +7,8 @@ import logo_login from '~/assets/image/logo_login.png'
 import { MenuList } from '~/components'
 import admin_routes from '~/config/admin_routes'
 import routes from '~/config/routes'
-import { selectUser, setUser } from '~/features/UserSlice'
+import { selectCount } from '~/features/CounterSlice'
+import { selectUser, setAccessToken, setUser } from '~/features/UserSlice'
 import { MenuItem, User } from '~/models'
 import icons from '~/utils/icons'
 
@@ -27,6 +28,7 @@ enum MenuItemEnum {
 
 const AdminLayout = () => {
     const user: User = useAppSelector(selectUser)
+    const count = useAppSelector(selectCount)
     const dispatch = useAppDispatch()
     const nav = useNavigate()
     const { pathname } = useLocation()
@@ -36,22 +38,28 @@ const AdminLayout = () => {
 
     useEffect(() => {
         const refreshUser = async () => {
-            if (!cookies.user) {
+            if (
+                !cookies.user ||
+                cookies.user.expiresAt < new Date().getTime()
+            ) {
                 const response = await authApi.generateNewToken()
-                console.log('response', response)
                 if (response.err === 1) {
+                    console.log('1s')
                     nav(routes.LOGIN)
-                } else {
+                } else if (response.msg) {
+                    const expiresAt =
+                        new Date().getTime() + 7 * 24 * 3600 * 1000
+                    dispatch(setAccessToken(response.msg))
                     setCookie(
                         'user',
-                        { user: user._id, token: response.msg },
+                        { user: user._id, token: response.msg, expiresAt },
                         { path: '/' }
                     )
                 }
             }
         }
         refreshUser()
-    }, [])
+    }, [cookies])
 
     const handleSelect = async (item?: MenuItem) => {
         try {

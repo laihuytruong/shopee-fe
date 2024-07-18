@@ -54,6 +54,17 @@ const categoryApi = {
         }
         return instance.put(url, { ...data }, { headers })
     },
+    async updateCategory(
+        token: string,
+        categoryId: string,
+        formData: FormData
+    ): Promise<CategoryResponse> {
+        const url = `/categories/${categoryId}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.put(url, formData, { headers })
+    },
     async deleteCategory(
         token: string,
         categoryId: string

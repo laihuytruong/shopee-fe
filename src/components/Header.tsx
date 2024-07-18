@@ -50,9 +50,14 @@ const Header = () => {
                     setUserData(response.data)
                 }
             } else {
+                const expiresAt = new Date().getTime() + 7 * 24 * 3600 * 1000
                 const generateToken = await authApi.generateNewToken()
                 if (generateToken.err === 0 && generateToken.msg) {
-                    const data = { ...cookies.user, token: generateToken.msg }
+                    const data = {
+                        ...cookies.user,
+                        token: generateToken.msg,
+                        expiresAt,
+                    }
                     dispatch(setAccessToken(generateToken.msg))
                     setCookie('user', data, { path: '/' })
                 } else {

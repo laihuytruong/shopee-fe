@@ -20,6 +20,7 @@ import {
     MyAccount,
     Payment_Announce,
     Purchase,
+    CustomToastContainer,
 } from '~/components'
 
 import { AuthLayout, Public, MeLayout, AdminLayout } from '~/layouts'
@@ -34,6 +35,7 @@ import {
     Amount,
     Profile,
 } from './pages/admin'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
     return (
@@ -121,6 +123,8 @@ function App() {
                     />
                 </Route>
             </Routes>
+
+            <CustomToastContainer />
         </div>
     )
 }

@@ -34,10 +34,15 @@ const Login = () => {
         setIsError(false)
         const response = await authApi.login({ email, password })
         if (response.err === 0 && response.data) {
+            const expiresAt = new Date().getTime() + 2 * 24 * 3600 * 1000
             dispatch(auth(response))
             setCookie(
                 'user',
-                { userId: response.data?._id, token: response.accessToken },
+                {
+                    userId: response.data?._id,
+                    token: response.accessToken,
+                    expiresAt,
+                },
                 { path: '/' }
             )
             Swal.fire({

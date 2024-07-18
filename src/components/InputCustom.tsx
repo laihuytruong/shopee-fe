@@ -44,12 +44,12 @@ const InputCustom: React.FC<Props> = ({
         reset,
     } = useForm<FormValues>({ mode: 'onChange' })
 
-    const value = watch(valueName, initValue ? initValue : '')
+    const value = watch(valueName, initValue !== '' ? initValue : '')
     const type = errors[valueName]?.type
 
     useEffect(() => {
         setType(type)
-        if (type == undefined) {
+        if (type == undefined && value !== '') {
             setValue(value)
         }
     }, [value, type])
@@ -68,7 +68,13 @@ const InputCustom: React.FC<Props> = ({
                 <input
                     type="text"
                     placeholder={`${placeholder ? placeholder : ''}`}
-                    value={value}
+                    value={
+                        valueData !== value
+                            ? valueData
+                            : value === ''
+                            ? valueData
+                            : value
+                    }
                     className={`outline-none ${
                         shadow && shadow
                     } rounded-sm border border-solid p-[10px] w-full mb-1 ${
