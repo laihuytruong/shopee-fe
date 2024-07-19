@@ -168,3 +168,19 @@ body {
 .ant-upload-list-item:hover {
     border-color: #ee4d2d !important;
 }
+
+.ant-select-selector {
+    border-color: #ee4d2d;
+}
+
+.ant-select-selector:hover {
+    border-color: #ee4d2d !important;
+}
+
+.ant-select-selector:focus {
+    border-color: #ee4d2d !important;
+}
+
+.ant-select-selector:focus-within {
+    border-color: #ee4d2d !important;
+}

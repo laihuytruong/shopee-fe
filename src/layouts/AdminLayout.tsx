@@ -173,7 +173,7 @@ const AdminLayout = () => {
                                             pathname.includes(
                                                 admin_routes.ADD_PRODUCTS
                                             ) && 'text-main'
-                                        } `}
+                                        }`}
                                     >
                                         Thêm sản phẩm
                                     </NavLink>
@@ -202,25 +202,44 @@ const AdminLayout = () => {
                             </NavLink>
                             <NavLink
                                 to={admin_routes.ALL_CATEGORIES}
-                                onClick={() => setIsShowMenu(false)}
-                                className={`flex items-center gap-2 group my-[15px] ${
-                                    pathname.includes(
-                                        admin_routes.ALL_CATEGORIES
-                                    ) && 'text-main'
-                                }`}
+                                onClick={() => {
+                                    if (!pathname.includes('categories')) {
+                                        setIsShowMenu(true)
+                                    } else {
+                                        setIsShowMenu(!isShowMenu)
+                                    }
+                                }}
+                                className={`flex items-center gap-2 group my-[15px]`}
                             >
-                                <MdOutlineCategory
-                                    size={16}
-                                    color={`${
-                                        pathname.includes('categories')
-                                            ? '#ee4d2d'
-                                            : '#175eb7'
-                                    }`}
-                                />
+                                <MdOutlineCategory size={16} color="#175eb7" />
                                 <span className="group-hover:text-main">
                                     Quản lý phân loại
                                 </span>
                             </NavLink>
+                            {isShowMenu && pathname.includes('catego') && (
+                                <div className="pl-6 flex flex-col gap-[15px]">
+                                    <NavLink
+                                        to={admin_routes.ALL_CATEGORIES}
+                                        className={`hover:text-main ${
+                                            pathname.includes(
+                                                admin_routes.ALL_CATEGORIES
+                                            ) && 'text-main'
+                                        } `}
+                                    >
+                                        Tất cả phân loại
+                                    </NavLink>
+                                    <NavLink
+                                        to={admin_routes.ALL_CATEGORY_ITEMS}
+                                        className={`hover:text-main ${
+                                            pathname.includes(
+                                                admin_routes.ALL_CATEGORY_ITEMS
+                                            ) && 'text-main'
+                                        } `}
+                                    >
+                                        Tất cả phân loại thành phần
+                                    </NavLink>
+                                </div>
+                            )}
                             <NavLink
                                 to={admin_routes.ALL_BRANDS}
                                 onClick={() => setIsShowMenu(false)}

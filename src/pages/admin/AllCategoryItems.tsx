@@ -1,51 +1,62 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Divider, Modal, Table } from 'antd'
-import type { TableColumnsType, UploadFile } from 'antd'
+import { Button, Divider, Modal, Select, Table } from 'antd'
+import type { TableColumnsType } from 'antd'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import { increment, selectCount } from '~/features/CounterSlice'
-import { categoryApi } from '~/apis'
-import { Category, PaginationInfo } from '~/models'
+import { categoryApi, categoryItemApi } from '~/apis'
+import { Category, CategoryItem, PaginationInfo } from '~/models'
 import icons from '~/utils/icons'
-import { ConfirmToast, InputCustom, UploadImages } from '~/components'
+import { ConfirmToast, InputCustom } from '~/components'
 import { selectAccessToken } from '~/features/UserSlice'
 import { toast } from 'react-toastify'
 
 const { HiOutlinePencilSquare, MdDeleteOutline } = icons
 
-const AllCategories = () => {
+const AllCategoryItems = () => {
     const dispatch = useAppDispatch()
     const count = useAppSelector(selectCount)
     const token = useAppSelector(selectAccessToken)
     const [categories, setCategories] = useState<Category[]>([])
+    const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([])
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
         page: 1,
-        pageSize: 5,
+        pageSize: 8,
         totalCount: 0,
         totalPage: 1,
     })
     const [open, setOpen] = useState<boolean>(false)
     const [isAdd, setIsAdd] = useState<boolean>(true)
-    const [categoryName, setCategoryName] = useState<string>('')
+    const [categoryItemName, setCategoryItemName] = useState<string>('')
+    const [selectedCategory, setSelectedCategory] = useState('')
     const [type, setType] = useState<string | undefined>()
     const [isReset, setIsReset] = useState<boolean>(false)
-    const [fileList, setFileList] = useState<UploadFile[]>([])
-    const [categoryId, setCategoryId] = useState<string>('')
+    const [categoryItemId, setCategoryItemId] = useState<string>('')
 
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchCategoryItem = async () => {
             const { page, pageSize } = paginationInfo
-            const response = await categoryApi.getCategories(page, pageSize)
-            if (response.err === 0 && response.data) {
-                setCategories(response.data)
+            const response = await categoryItemApi.getCategoryItems(
+                page,
+                pageSize
+            )
+            const responseCategory = await categoryApi.getCategories(1, 100)
+            if (
+                response.err === 0 &&
+                response.data &&
+                responseCategory.err === 0 &&
+                responseCategory.data
+            ) {
+                setCategoryItems(response.data)
+                setCategories(responseCategory.data)
                 setPaginationInfo({
                     page: response.page ? response.page : 1,
-                    pageSize: response.pageSize ? response.pageSize : 5,
+                    pageSize: response.pageSize ? response.pageSize : 8,
                     totalCount: response.totalCount ? response.totalCount : 0,
                     totalPage: response.totalPage ? response.totalPage : 1,
                 })
             }
         }
-        fetchCategories()
+        fetchCategoryItem()
     }, [count, paginationInfo.page])
 
     const handleTableChange = (pagination: PaginationInfo) => {
@@ -59,41 +70,41 @@ const AllCategories = () => {
 
     const showModal = () => {
         if (isAdd) {
-            setCategoryName('')
-            setFileList([])
             setIsReset(true)
+            setCategoryItemName('')
+            setSelectedCategory('')
             setOpen(true)
         } else {
             setIsReset(false)
             setOpen(true)
         }
     }
+    console.log('type in category item: ', type)
+    console.log('isAdd: ', isAdd)
+    console.log('isReset: ', isReset)
 
     const handleOk = async () => {
         try {
-            const thumbnail = fileList && (fileList[0]?.originFileObj as File)
-            const checkExist = categories.some(
+            const checkExist = categoryItems.some(
                 (c) =>
-                    c.categoryName.toLowerCase() === categoryName.toLowerCase()
+                    c.categoryItemName.toLowerCase() ===
+                    categoryItemName.toLowerCase()
             )
-            if (fileList.length === 0) {
-                toast.error('Vui lòng chọn hình ảnh thumbnail!')
-                return
-            }
-            const formData = new FormData()
-            formData.append('categoryName', categoryName)
-            formData.append('thumbnail', thumbnail)
             if (isAdd) {
                 if (!checkExist) {
-                    const responseCreate = await categoryApi.createCategory(
-                        token,
-                        formData
-                    )
+                    const responseCreate =
+                        await categoryItemApi.createCategoryItem(
+                            token,
+                            categoryItemName,
+                            selectedCategory
+                        )
                     if (responseCreate.err === 0) {
                         setOpen(false)
                         setIsAdd(true)
                         setIsReset(true)
-                        toast.success('Phân loại đã được thêm thành công!')
+                        toast.success(
+                            'Phân loại thành phần đã được thêm thành công!'
+                        )
 
                         if (categories.length === paginationInfo.pageSize) {
                             setPaginationInfo((prev) => ({
@@ -103,25 +114,28 @@ const AllCategories = () => {
                         }
                         dispatch(increment())
                     } else {
-                        toast.error('Không thể thêm phân loại!')
+                        toast.error('Không thể thêm phân loại thành phần!')
                     }
                 } else {
-                    toast.warn('Phân loại đã tồn tại!')
+                    toast.warn('Phân loại thành phần đã tồn tại!')
                 }
-            } else if (categoryId !== '') {
-                const responseUpdate = await categoryApi.updateCategory(
+            } else if (categoryItemId !== '') {
+                const responseUpdate = await categoryItemApi.updateCategoryItem(
                     token,
-                    categoryId,
-                    formData
+                    categoryItemId,
+                    categoryItemName,
+                    selectedCategory
                 )
                 if (responseUpdate.err === 0) {
                     setOpen(false)
                     setIsAdd(true)
                     setIsReset(true)
                     dispatch(increment())
-                    toast.success('Phân loại đã được cập nhật thành công!')
+                    toast.success(
+                        'Phân loại thành phần đã được cập nhật thành công!'
+                    )
                 } else {
-                    toast.error('Không thể cập nhật phân loại!')
+                    toast.error('Không thể cập nhật phân loại thành phần!')
                 }
             }
         } catch (error) {
@@ -130,33 +144,22 @@ const AllCategories = () => {
         }
     }
 
-    const handleUpdateCategory = async (category: Category) => {
+    const handleUpdateCategoryItem = async (categoryItem: CategoryItem) => {
         try {
             setOpen(true)
             setIsAdd(false)
-            setCategoryName(category.categoryName)
-            setCategoryId(category._id)
-            setFileList(
-                category.thumbnail
-                    ? [
-                          {
-                              uid: '-1',
-                              name: 'thumbnail.png',
-                              status: 'done',
-                              url: category.thumbnail,
-                          },
-                      ]
-                    : []
-            )
+            setCategoryItemName(categoryItem.categoryItemName)
+            setCategoryItemId(categoryItem._id)
         } catch (error) {
             console.log(error)
         }
     }
+
     const handleCancel = () => {
         if (isAdd) {
             setIsReset(true)
-            setCategoryName('')
-            setFileList([])
+            setCategoryItemName('')
+            setSelectedCategory('')
             setOpen(false)
             setIsAdd(true)
         } else {
@@ -166,22 +169,25 @@ const AllCategories = () => {
         }
     }
 
-    const handleDeleteCategory = async (categoryId: string) => {
+    const handleDeleteCategoryItem = async (categoryItemId: string) => {
         toast(
             <ConfirmToast
-                message="Bạn có chắc chắn muốn xóa phân loại này?"
-                onConfirm={() => confirmDeleteCategory(categoryId)}
+                message="Bạn có chắc chắn muốn xóa phân loại thành phần này?"
+                onConfirm={() => confirmDeleteCategoryItem(categoryItemId)}
                 onCancel={() => console.log('Cancel')}
             />
         )
     }
 
-    const confirmDeleteCategory = async (categoryId: string) => {
+    const confirmDeleteCategoryItem = async (categoryItemId: string) => {
         try {
-            const response = await categoryApi.deleteCategory(token, categoryId)
+            const response = await categoryItemApi.deleteCategoryItem(
+                token,
+                categoryItemId
+            )
             if (response.err === 0) {
-                toast.success('Phân loại đã được xóa thành công!')
-                if (paginationInfo.page > 1 && categories.length === 1) {
+                toast.success('Phân loại thành phần đã được xóa thành công!')
+                if (paginationInfo.page > 1 && categoryItems.length === 1) {
                     setPaginationInfo((prev) => ({
                         ...prev,
                         page: prev.page - 1,
@@ -191,7 +197,7 @@ const AllCategories = () => {
                     dispatch(increment())
                 }
             } else {
-                toast.error('Không thể xóa phân loại này!')
+                toast.error('Không thể xóa phân loại thành phần này!')
             }
         } catch (error) {
             console.log(error)
@@ -199,45 +205,38 @@ const AllCategories = () => {
         }
     }
 
-    const columns: TableColumnsType<Category> = [
+    const columns: TableColumnsType<CategoryItem> = [
         {
-            title: 'Tên phân loại',
-            dataIndex: 'categoryName',
-            width: '50%',
+            title: 'Tên phân loại thành phần',
+            dataIndex: 'categoryItemName',
+            width: '40%',
             align: 'center',
         },
         {
-            title: 'Hình ảnh',
-            dataIndex: 'thumbnail',
-            width: '30%',
+            title: 'Phân loại',
+            dataIndex: ['category', 'categoryName'],
+            width: '40%',
             align: 'center',
-            render: (thumbnail: string) => (
-                <div className="flex items-center justify-center">
-                    <img
-                        src={thumbnail}
-                        alt="thumbnail"
-                        className="w-[56px] h-w-[56px]"
-                    />
-                </div>
-            ),
         },
         {
             title: 'Hành động',
             key: 'actions',
             width: '20%',
             align: 'center',
-            render: (category: Category) => (
+            render: (categoryItem: CategoryItem) => (
                 <span className="flex items-center justify-center">
                     <span
                         className="hover:text-main hover:cursor-pointer"
-                        onClick={() => handleUpdateCategory(category)}
+                        onClick={() => handleUpdateCategoryItem(categoryItem)}
                     >
                         <HiOutlinePencilSquare size={20} />
                     </span>
                     <Divider type="vertical" />
                     <span
                         className="hover:text-main hover:cursor-pointer"
-                        onClick={() => handleDeleteCategory(category._id)}
+                        onClick={() =>
+                            handleDeleteCategoryItem(categoryItem._id)
+                        }
                     >
                         <MdDeleteOutline size={20} />
                     </span>
@@ -249,16 +248,22 @@ const AllCategories = () => {
     return (
         <div className="pt-2">
             <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-xl font-bold">DANH SÁCH PHÂN LOẠI</h1>
+                <h1 className="text-xl font-bold">
+                    DANH SÁCH PHÂN LOẠI THÀNH PHẦN
+                </h1>
                 <button
                     className="bg-main px-4 py-2 text-white rounded hover:opacity-[0.9]"
                     onClick={showModal}
                 >
-                    Thêm phân loại
+                    Thêm phân loại thành phần
                 </button>
 
                 <Modal
-                    title={`${isAdd ? 'Thêm phân loại' : 'Cập nhật phân loại'}`}
+                    title={`${
+                        isAdd
+                            ? 'Thêm phân loại thành phần'
+                            : 'Cập nhật phân loại thành phần'
+                    }`}
                     open={open}
                     onOk={handleOk}
                     onCancel={handleCancel}
@@ -283,23 +288,35 @@ const AllCategories = () => {
                 >
                     <InputCustom
                         setType={setType}
-                        setValue={setCategoryName}
-                        valueData={categoryName}
-                        initValue={`${isAdd ? '' : categoryName}`}
-                        valueName="categoryName"
-                        placeholder="Nhập tên phân loại"
+                        setValue={setCategoryItemName}
+                        valueData={categoryItemName}
+                        initValue={`${isAdd ? '' : categoryItemName}`}
+                        valueName="categoryItemName"
+                        placeholder="Nhập tên phân loại thành phần"
                         isReset={isReset}
                     />
-                    <UploadImages
-                        fileList={fileList}
-                        setFileList={setFileList}
-                        limitImage={1}
-                    />
+                    <Select
+                        placeholder="-- Chọn phân loại --"
+                        onChange={(value) => setSelectedCategory(value)}
+                        value={selectedCategory}
+                        className="w-full mt-2"
+                    >
+                        <Select.Option value="">{`-- Chọn phân loại --`}</Select.Option>
+                        {categories.map((category) => (
+                            <Select.Option
+                                value={category._id}
+                                key={category._id}
+                                c
+                            >
+                                {category.categoryName}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Modal>
             </div>
             <Table
                 columns={columns}
-                dataSource={categories}
+                dataSource={categoryItems}
                 size="large"
                 pagination={{
                     current: paginationInfo.page,
@@ -318,4 +335,4 @@ const AllCategories = () => {
     )
 }
 
-export default AllCategories
+export default AllCategoryItems

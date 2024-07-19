@@ -29,6 +29,7 @@ import {
     AddProduct,
     AllBrands,
     AllCategories,
+    AllCategoryItems,
     AllOrders,
     AllProducts,
     AllUsers,
@@ -94,6 +95,10 @@ function App() {
                     <Route
                         path={admin_routes.ALL_CATEGORIES}
                         element={<AllCategories />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_CATEGORY_ITEMS}
+                        element={<AllCategoryItems />}
                     />
                     <Route
                         path={admin_routes.ALL_BRANDS}

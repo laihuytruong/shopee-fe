@@ -46,6 +46,10 @@ const InputCustom: React.FC<Props> = ({
 
     const value = watch(valueName, initValue !== '' ? initValue : '')
     const type = errors[valueName]?.type
+    console.log('value: ', value)
+    console.log('valueData: ', valueData)
+    console.log('type: ', type)
+    console.log('valueName: ', valueName)
 
     useEffect(() => {
         setType(type)
@@ -55,7 +59,7 @@ const InputCustom: React.FC<Props> = ({
     }, [value, type])
 
     useEffect(() => {
-        if (isReset) {
+        if (isReset && isReset === true) {
             reset({
                 [valueName]: '',
             })
@@ -69,9 +73,13 @@ const InputCustom: React.FC<Props> = ({
                     type="text"
                     placeholder={`${placeholder ? placeholder : ''}`}
                     value={
-                        valueData !== value
+                        valueData === ''
+                            ? ''
+                            : valueData !== '' && value === ''
                             ? valueData
-                            : value === ''
+                            : valueData !== '' &&
+                              value !== '' &&
+                              valueData !== value
                             ? valueData
                             : value
                     }
