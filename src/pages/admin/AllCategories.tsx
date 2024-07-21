@@ -92,7 +92,7 @@ const AllCategories = () => {
                     if (responseCreate.err === 0) {
                         setOpen(false)
                         setIsAdd(true)
-                        setIsReset(true)
+                        setIsReset(false)
                         toast.success('Phân loại đã được thêm thành công!')
 
                         if (categories.length === paginationInfo.pageSize) {
@@ -100,8 +100,9 @@ const AllCategories = () => {
                                 ...prev,
                                 page: prev.page + 1,
                             }))
+                        } else {
+                            dispatch(increment())
                         }
-                        dispatch(increment())
                     } else {
                         toast.error('Không thể thêm phân loại!')
                     }
@@ -117,7 +118,7 @@ const AllCategories = () => {
                 if (responseUpdate.err === 0) {
                     setOpen(false)
                     setIsAdd(true)
-                    setIsReset(true)
+                    setIsReset(false)
                     dispatch(increment())
                     toast.success('Phân loại đã được cập nhật thành công!')
                 } else {
@@ -130,10 +131,11 @@ const AllCategories = () => {
         }
     }
 
-    const handleUpdateCategory = async (category: Category) => {
+    const handleUpdateCategory = (category: Category) => {
         try {
-            setOpen(true)
+            console.log('category: ', category)
             setIsAdd(false)
+            setOpen(true)
             setCategoryName(category.categoryName)
             setCategoryId(category._id)
             setFileList(
@@ -186,7 +188,6 @@ const AllCategories = () => {
                         ...prev,
                         page: prev.page - 1,
                     }))
-                    dispatch(increment())
                 } else {
                     dispatch(increment())
                 }
@@ -285,7 +286,6 @@ const AllCategories = () => {
                         setType={setType}
                         setValue={setCategoryName}
                         valueData={categoryName}
-                        initValue={`${isAdd ? '' : categoryName}`}
                         valueName="categoryName"
                         placeholder="Nhập tên phân loại"
                         isReset={isReset}

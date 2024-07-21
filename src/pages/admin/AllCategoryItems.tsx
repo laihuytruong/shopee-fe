@@ -20,7 +20,7 @@ const AllCategoryItems = () => {
     const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([])
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
         page: 1,
-        pageSize: 8,
+        pageSize: 7,
         totalCount: 0,
         totalPage: 1,
     })
@@ -79,9 +79,6 @@ const AllCategoryItems = () => {
             setOpen(true)
         }
     }
-    console.log('type in category item: ', type)
-    console.log('isAdd: ', isAdd)
-    console.log('isReset: ', isReset)
 
     const handleOk = async () => {
         try {
@@ -101,18 +98,19 @@ const AllCategoryItems = () => {
                     if (responseCreate.err === 0) {
                         setOpen(false)
                         setIsAdd(true)
-                        setIsReset(true)
+                        setIsReset(false)
                         toast.success(
                             'Phân loại thành phần đã được thêm thành công!'
                         )
 
-                        if (categories.length === paginationInfo.pageSize) {
+                        if (categoryItems.length === paginationInfo.pageSize) {
                             setPaginationInfo((prev) => ({
                                 ...prev,
                                 page: prev.page + 1,
                             }))
+                        } else {
+                            dispatch(increment())
                         }
-                        dispatch(increment())
                     } else {
                         toast.error('Không thể thêm phân loại thành phần!')
                     }
@@ -129,7 +127,7 @@ const AllCategoryItems = () => {
                 if (responseUpdate.err === 0) {
                     setOpen(false)
                     setIsAdd(true)
-                    setIsReset(true)
+                    setIsReset(false)
                     dispatch(increment())
                     toast.success(
                         'Phân loại thành phần đã được cập nhật thành công!'
@@ -150,6 +148,9 @@ const AllCategoryItems = () => {
             setIsAdd(false)
             setCategoryItemName(categoryItem.categoryItemName)
             setCategoryItemId(categoryItem._id)
+            setSelectedCategory(
+                categoryItem.category ? categoryItem.category._id : ''
+            )
         } catch (error) {
             console.log(error)
         }
@@ -192,7 +193,6 @@ const AllCategoryItems = () => {
                         ...prev,
                         page: prev.page - 1,
                     }))
-                    dispatch(increment())
                 } else {
                     dispatch(increment())
                 }
@@ -290,7 +290,6 @@ const AllCategoryItems = () => {
                         setType={setType}
                         setValue={setCategoryItemName}
                         valueData={categoryItemName}
-                        initValue={`${isAdd ? '' : categoryItemName}`}
                         valueName="categoryItemName"
                         placeholder="Nhập tên phân loại thành phần"
                         isReset={isReset}

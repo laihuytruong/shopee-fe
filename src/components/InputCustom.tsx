@@ -7,7 +7,6 @@ interface Props {
     setType: React.Dispatch<React.SetStateAction<string | undefined>>
     shadow?: string
     valueName: string
-    initValue?: string
     isPhone?: boolean
     isEmail?: boolean
     isPassword?: boolean
@@ -27,7 +26,6 @@ const InputCustom: React.FC<Props> = ({
     setType,
     shadow,
     valueName,
-    initValue,
     isPhone,
     isEmail,
     isPassword,
@@ -42,69 +40,64 @@ const InputCustom: React.FC<Props> = ({
         formState: { errors },
         watch,
         reset,
+        clearErrors,
+        setValue: setFormValue,
     } = useForm<FormValues>({ mode: 'onChange' })
 
-    const value = watch(valueName, initValue !== '' ? initValue : '')
+    const watchedValue = watch(valueName, valueData)
     const type = errors[valueName]?.type
-    console.log('value: ', value)
-    console.log('valueData: ', valueData)
-    console.log('type: ', type)
-    console.log('valueName: ', valueName)
 
     useEffect(() => {
         setType(type)
-        if (type == undefined && value !== '') {
-            setValue(value)
+        if (type === undefined && watchedValue !== '') {
+            setValue(watchedValue)
         }
-    }, [value, type])
+    }, [watchedValue, type])
 
     useEffect(() => {
-        if (isReset && isReset === true) {
-            reset({
-                [valueName]: '',
-            })
+        if (valueData !== undefined && valueData !== watchedValue) {
+            setFormValue(valueName, valueData)
         }
-    }, [type, isReset])
+    }, [valueData])
+
+    useEffect(() => {
+        if (isReset !== undefined && isReset === true) {
+            clearErrors(valueName)
+            reset({ [valueName]: '' })
+        }
+    }, [isReset])
+
+    const validationRules = {
+        required: 'Vui lòng điền trường này',
+        ...(isPhone && {
+            pattern: {
+                value: /^[0-9]{10}$/,
+                message: 'Số điện thoại chỉ chứa số',
+            },
+        }),
+        ...(isEmail && {
+            pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/,
+                message: 'Email không đúng định dạng',
+            },
+        }),
+    }
 
     return (
         <div>
             {!isPassword ? (
                 <input
                     type="text"
-                    placeholder={`${placeholder ? placeholder : ''}`}
-                    value={
-                        valueData === ''
-                            ? ''
-                            : valueData !== '' && value === ''
-                            ? valueData
-                            : valueData !== '' &&
-                              value !== '' &&
-                              valueData !== value
-                            ? valueData
-                            : value
-                    }
+                    placeholder={placeholder || ''}
+                    defaultValue={valueData}
                     className={`outline-none ${
-                        shadow && shadow
+                        shadow || ''
                     } rounded-sm border border-solid p-[10px] w-full mb-1 ${
                         errors[valueName]
                             ? 'bg-[#fff6f7] border-[#ff424f] focus:border-[#ff424f]'
                             : 'border-[rgba(0, 0, 0, .14)] focus:border-black'
                     }`}
-                    {...register(valueName, {
-                        required: 'Vui lòng điền trường này',
-                        ...(isPhone && {
-                            pattern: {
-                                value: /^[0-9]{10}$/,
-                                message: 'Số điện thoại chỉ chứa số',
-                            },
-                        }),
-                        ...(isEmail && {
-                            pattern: {
-                                value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/,
-                                message: 'Email không đúng định dạng',
-                            },
-                        }),
-                    })}
+                    {...register(valueName, validationRules)}
                 />
             ) : (
                 <div
@@ -116,8 +109,9 @@ const InputCustom: React.FC<Props> = ({
                 >
                     <input
                         type={showPassword ? 'text' : 'password'}
-                        placeholder={placeholder ? placeholder : ''}
-                        className=" p-[10px] w-full outline-none"
+                        placeholder={placeholder || ''}
+                        defaultValue={valueData}
+                        className="p-[10px] w-full outline-none"
                         {...register(valueName, {
                             required: 'Vui lòng điền trường này',
                             pattern: {
@@ -129,11 +123,9 @@ const InputCustom: React.FC<Props> = ({
                     />
                     <button
                         type="button"
-                        onClick={() => {
-                            if (setShowPassword) {
-                                setShowPassword(!showPassword)
-                            }
-                        }}
+                        onClick={() =>
+                            setShowPassword && setShowPassword(!showPassword)
+                        }
                         className="pl-3 pr-4 bg-transparent outline-none border-none"
                     >
                         {showPassword ? <HidePassword /> : <ShowPassword />}
