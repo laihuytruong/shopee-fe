@@ -44,7 +44,6 @@ const AdminLayout = () => {
             ) {
                 const response = await authApi.generateNewToken()
                 if (response.err === 1) {
-                    console.log('1s')
                     nav(routes.LOGIN)
                 } else if (response.msg) {
                     const expiresAt =
@@ -261,6 +260,46 @@ const AdminLayout = () => {
                                     Quản lý thương hiệu
                                 </span>
                             </NavLink>
+                            <NavLink
+                                to={admin_routes.ALL_VARIATIONS}
+                                onClick={() => {
+                                    if (!pathname.includes('variations')) {
+                                        setIsShowMenu(true)
+                                    } else {
+                                        setIsShowMenu(!isShowMenu)
+                                    }
+                                }}
+                                className="flex items-center gap-2 group my-[15px]"
+                            >
+                                <FaRegUser size={16} color="#175eb7" />
+                                <span className="group-hover:text-main">
+                                    Quản lý biến thể
+                                </span>
+                            </NavLink>
+                            {isShowMenu && pathname.includes('variation') && (
+                                <div className="pl-6 flex flex-col gap-[15px]">
+                                    <NavLink
+                                        to={admin_routes.ALL_VARIATIONS}
+                                        className={`hover:text-main ${
+                                            pathname.includes(
+                                                admin_routes.ALL_VARIATIONS
+                                            ) && 'text-main'
+                                        } `}
+                                    >
+                                        Tất cả biến thể
+                                    </NavLink>
+                                    <NavLink
+                                        to={admin_routes.ALL_VARIATION_OPTIONS}
+                                        className={`hover:text-main ${
+                                            pathname.includes(
+                                                admin_routes.ALL_VARIATION_OPTIONS
+                                            ) && 'text-main'
+                                        } `}
+                                    >
+                                        Tất cả tùy chọn biến thể
+                                    </NavLink>
+                                </div>
+                            )}
                             <NavLink
                                 to={admin_routes.PROFILE}
                                 onClick={() => {

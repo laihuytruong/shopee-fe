@@ -1,12 +1,15 @@
+import { Category } from './categoryInterfaces'
 import { Product } from './productInterfaces'
+
+export interface Variation {
+    _id: string
+    categoryId: Category
+    name: string
+}
 
 export interface VariationOption {
     _id: string
-    variationId: {
-        _id: string
-        category: string
-        name: string
-    }
+    variationId: Variation
     value: string
 }
 

@@ -184,3 +184,11 @@ body {
 .ant-select-selector:focus-within {
     border-color: #ee4d2d !important;
 }
+
+.ant-btn.custom-bg {
+    background-color: #ee4d2d !important;
+}
+
+.ant-btn.custom-bg:hover {
+    opacity: 0.9;
+}

@@ -1,6 +1,17 @@
 import instance from '~/apiService'
 import { Configuration } from '~/models'
 
+interface ConfigurationsResponse {
+    err: number
+    msg?: string
+    accessToken?: string
+    page?: number
+    pageSize?: number
+    totalCount?: number
+    totalPage?: number
+    data?: Configuration[]
+}
+
 interface ConfigurationResponse {
     err: number
     msg?: string
@@ -15,6 +26,18 @@ interface ConfigurationResponse {
 }
 
 const configurationApi = {
+    async getAllConfigurations(
+        token: string,
+        page: number,
+        pageSize?: number
+    ): Promise<ConfigurationsResponse> {
+        const url = '/product-configuration'
+        const param = `?page${page}&pageSize=${pageSize ? pageSize : 10}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + param, { headers })
+    },
     async getConfigurationByDetail(data: {
         slug: string
         token: string

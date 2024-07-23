@@ -12,4 +12,5 @@ export interface Order {
     ]
     status: string
     orderBy: User
+    createdAt: Date
 }

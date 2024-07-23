@@ -12,6 +12,18 @@ interface Response {
 }
 
 const orderApi = {
+    async getAllUserOrder(
+        token: string,
+        page?: number,
+        pageSize?: number
+    ): Promise<Response> {
+        const url = '/order/all'
+        const params = `?page=${page || 1}&pageSize=${pageSize || 10}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + params, { headers })
+    },
     async getAllOrder(
         token: string,
         page?: number,

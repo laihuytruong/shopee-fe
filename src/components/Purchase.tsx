@@ -54,6 +54,7 @@ const Purchase = () => {
     const [orderTotal, setOrderTotal] = useState<{ [key: string]: number }>({})
 
     const currentLocation = useRef<HTMLDivElement>(null)
+    console.log('orders: ', orders)
 
     useEffect(() => {
         const fetchOrders = async () => {

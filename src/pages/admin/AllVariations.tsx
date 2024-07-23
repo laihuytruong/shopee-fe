@@ -3,8 +3,8 @@ import { Button, Divider, Modal, Select, Table } from 'antd'
 import type { TableColumnsType } from 'antd'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import { increment, selectCount } from '~/features/CounterSlice'
-import { brandApi, categoryApi } from '~/apis'
-import { Brand, Category, PaginationInfo } from '~/models'
+import { brandApi, categoryApi, variationApi } from '~/apis'
+import { Category, PaginationInfo, Variation } from '~/models'
 import icons from '~/utils/icons'
 import { ConfirmToast, InputCustom } from '~/components'
 import { selectAccessToken } from '~/features/UserSlice'
@@ -12,30 +12,34 @@ import { toast } from 'react-toastify'
 
 const { HiOutlinePencilSquare, MdDeleteOutline } = icons
 
-const AllBrands = () => {
+const AllVariations = () => {
     const dispatch = useAppDispatch()
     const count = useAppSelector(selectCount)
     const token = useAppSelector(selectAccessToken)
     const [categories, setCategories] = useState<Category[]>([])
-    const [brands, setBrands] = useState<Brand[]>([])
+    const [variations, setVariations] = useState<Variation[]>([])
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
         page: 1,
-        pageSize: 8,
+        pageSize: 3,
         totalCount: 0,
         totalPage: 1,
     })
     const [open, setOpen] = useState<boolean>(false)
     const [isAdd, setIsAdd] = useState<boolean>(true)
-    const [brandName, setBrandName] = useState<string>('')
+    const [name, setName] = useState<string>('')
     const [selectedCategory, setSelectedCategory] = useState('')
     const [type, setType] = useState<string | undefined>()
     const [isReset, setIsReset] = useState<boolean>(false)
-    const [brandId, setBrandId] = useState<string>('')
+    const [variationId, setVariationId] = useState<string>('')
 
     useEffect(() => {
-        const fetchBrands = async () => {
+        const fetchVariations = async () => {
             const { page, pageSize } = paginationInfo
-            const response = await brandApi.getBrands(page, pageSize)
+            const response = await variationApi.getVariations(
+                token,
+                page,
+                pageSize
+            )
             const responseCategory = await categoryApi.getCategories(1, 100)
             if (
                 response.err === 0 &&
@@ -43,7 +47,7 @@ const AllBrands = () => {
                 responseCategory.err === 0 &&
                 responseCategory.data
             ) {
-                setBrands(response.data)
+                setVariations(response.data)
                 setCategories(responseCategory.data)
                 setPaginationInfo({
                     page: response.page ? response.page : 1,
@@ -53,7 +57,7 @@ const AllBrands = () => {
                 })
             }
         }
-        fetchBrands()
+        fetchVariations()
     }, [count, paginationInfo.page])
 
     const handleTableChange = (pagination: PaginationInfo) => {
@@ -68,7 +72,7 @@ const AllBrands = () => {
     const showModal = () => {
         if (isAdd) {
             setIsReset(true)
-            setBrandName('')
+            setName('')
             setSelectedCategory('')
             setOpen(true)
         } else {
@@ -79,23 +83,23 @@ const AllBrands = () => {
 
     const handleOk = async () => {
         try {
-            const checkExist = brands.some(
-                (b) => b.brandName.toLowerCase() === brandName.toLowerCase()
+            const checkExist = variations.some(
+                (v) => v.name.toLowerCase() === name.toLowerCase()
             )
             if (isAdd) {
                 if (!checkExist) {
-                    const responseCreate = await brandApi.createBrand(
+                    const responseCreate = await variationApi.createVariation(
                         token,
-                        brandName,
+                        name,
                         selectedCategory
                     )
                     if (responseCreate.err === 0) {
                         setOpen(false)
                         setIsAdd(true)
                         setIsReset(false)
-                        toast.success('Thương hiệu đã được thêm thành công!')
+                        toast.success('Biến thể đã được thêm thành công!')
 
-                        if (brands.length === paginationInfo.pageSize) {
+                        if (variations.length === paginationInfo.pageSize) {
                             setPaginationInfo({
                                 ...paginationInfo,
                                 page: paginationInfo.totalPage + 1,
@@ -104,16 +108,16 @@ const AllBrands = () => {
                             dispatch(increment())
                         }
                     } else {
-                        toast.error('Không thể thêm thương hiệu!')
+                        toast.error('Không thể thêm biến thể!')
                     }
                 } else {
-                    toast.warn('Thương hiệu đã tồn tại!')
+                    toast.warn('Biến thể đã tồn tại!')
                 }
-            } else if (brandId !== '') {
-                const responseUpdate = await brandApi.updateBrand(
+            } else if (variationId !== '') {
+                const responseUpdate = await variationApi.updateVariation(
                     token,
-                    brandId,
-                    brandName,
+                    variationId,
+                    name,
                     selectedCategory
                 )
                 if (responseUpdate.err === 0) {
@@ -121,9 +125,9 @@ const AllBrands = () => {
                     setIsAdd(true)
                     setIsReset(false)
                     dispatch(increment())
-                    toast.success('Thương hiệu đã được cập nhật thành công!')
+                    toast.success('Biến thể đã được cập nhật thành công!')
                 } else {
-                    toast.error('Không thể cập nhật thương hiệu!')
+                    toast.error('Không thể cập nhật biến thể!')
                 }
             }
         } catch (error) {
@@ -132,13 +136,15 @@ const AllBrands = () => {
         }
     }
 
-    const handleUpdateBrand = async (brand: Brand) => {
+    const handleUpdateVariation = async (variation: Variation) => {
         try {
             setOpen(true)
             setIsAdd(false)
-            setBrandName(brand.brandName)
-            setBrandId(brand._id)
-            setSelectedCategory(brand.category ? brand.category._id : '')
+            setName(variation.name)
+            setVariationId(variation._id)
+            setSelectedCategory(
+                variation.categoryId ? variation.categoryId._id : ''
+            )
         } catch (error) {
             console.log(error)
         }
@@ -147,7 +153,7 @@ const AllBrands = () => {
     const handleCancel = () => {
         if (isAdd) {
             setIsReset(true)
-            setBrandName('')
+            setName('')
             setSelectedCategory('')
             setOpen(false)
             setIsAdd(true)
@@ -158,22 +164,26 @@ const AllBrands = () => {
         }
     }
 
-    const handleDeleteBrand = async (brandId: string) => {
+    const handleDeleteVariation = async (variationId: string) => {
         toast(
             <ConfirmToast
-                message="Bạn có chắc chắn muốn xóa thương hiệu này?"
-                onConfirm={() => confirmDeleteBrand(brandId)}
+                message="Bạn có chắc chắn muốn xóa biến thể này?"
+                onConfirm={() => confirmDeleteVariation(variationId)}
                 onCancel={() => console.log('Cancel')}
             />
         )
     }
+    console.log('pagination.page: ', paginationInfo.page)
 
-    const confirmDeleteBrand = async (brandId: string) => {
+    const confirmDeleteVariation = async (variationId: string) => {
         try {
-            const response = await brandApi.deleteBand(token, brandId)
+            const response = await variationApi.deleteVariation(
+                token,
+                variationId
+            )
             if (response.err === 0) {
-                toast.success('Thương hiệu đã được xóa thành công!')
-                if (paginationInfo.page > 1 && brands.length === 1) {
+                toast.success('Biến thể đã được xóa thành công!')
+                if (paginationInfo.page > 1 && variations.length === 1) {
                     setPaginationInfo((prev) => ({
                         ...prev,
                         page: prev.page - 1,
@@ -182,24 +192,25 @@ const AllBrands = () => {
                     dispatch(increment())
                 }
             } else {
-                toast.error('Không thể xóa thương hiệu này!')
+                toast.error('Không thể xóa biến thể này!')
             }
         } catch (error) {
             console.log(error)
             toast.error('Có lỗi xảy ra!')
         }
     }
+    console.log('categories: ', categories)
 
-    const columns: TableColumnsType<Brand> = [
+    const columns: TableColumnsType<Variation> = [
         {
-            title: 'Tên thương hiệu',
-            dataIndex: 'brandName',
+            title: 'Tên',
+            dataIndex: 'name',
             width: '40%',
             align: 'center',
         },
         {
             title: 'Phân loại',
-            dataIndex: ['category', 'categoryName'],
+            dataIndex: ['categoryId', 'categoryName'],
             width: '40%',
             align: 'center',
         },
@@ -208,18 +219,18 @@ const AllBrands = () => {
             key: 'actions',
             width: '20%',
             align: 'center',
-            render: (brand: Brand) => (
+            render: (variation: Variation) => (
                 <span className="flex items-center justify-center">
                     <span
                         className="hover:text-main hover:cursor-pointer"
-                        onClick={() => handleUpdateBrand(brand)}
+                        onClick={() => handleUpdateVariation(variation)}
                     >
                         <HiOutlinePencilSquare size={20} />
                     </span>
                     <Divider type="vertical" />
                     <span
                         className="hover:text-main hover:cursor-pointer"
-                        onClick={() => handleDeleteBrand(brand._id)}
+                        onClick={() => handleDeleteVariation(variation._id)}
                     >
                         <MdDeleteOutline size={20} />
                     </span>
@@ -231,18 +242,16 @@ const AllBrands = () => {
     return (
         <div className="pt-2">
             <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-xl font-bold">DANH SÁCH THƯƠNG HIỆU</h1>
+                <h1 className="text-xl font-bold">DANH SÁCH BIẾN THỂ</h1>
                 <button
                     className="bg-main px-4 py-2 text-white rounded hover:opacity-[0.9]"
                     onClick={showModal}
                 >
-                    Thêm thương hiệu
+                    Thêm biến thể
                 </button>
 
                 <Modal
-                    title={`${
-                        isAdd ? 'Thêm thương hiệu' : 'Cập nhật thương hiệu'
-                    }`}
+                    title={`${isAdd ? 'Thêm biến thể' : 'Cập nhật biến thể'}`}
                     open={open}
                     onOk={handleOk}
                     onCancel={handleCancel}
@@ -267,10 +276,10 @@ const AllBrands = () => {
                 >
                     <InputCustom
                         setType={setType}
-                        setValue={setBrandName}
-                        valueData={brandName}
-                        valueName="brandName"
-                        placeholder="Nhập tên thương hiệu"
+                        setValue={setName}
+                        valueData={name}
+                        valueName="name"
+                        placeholder="Nhập tên biến thể"
                         isReset={isReset}
                     />
                     <Select
@@ -294,7 +303,7 @@ const AllBrands = () => {
             </div>
             <Table
                 columns={columns}
-                dataSource={brands}
+                dataSource={variations}
                 size="large"
                 pagination={{
                     current: paginationInfo.page,
@@ -313,4 +322,4 @@ const AllBrands = () => {
     )
 }
 
-export default AllBrands
+export default AllVariations

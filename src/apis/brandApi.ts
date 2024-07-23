@@ -18,6 +18,11 @@ const brandApi = {
         const param = `?page=${page}&pageSize=${pageSize ? pageSize : 10}`
         return instance.get(url + param)
     },
+    async getBrandsBySlug(slug: string): Promise<BrandResponse> {
+        const url = '/brand/filter'
+        const param = `/${slug}`
+        return instance.get(url + param)
+    },
     async getBrand(slug: string | undefined): Promise<BrandResponse> {
         const url = '/brand/filter'
         const param = `/${slug}`
@@ -49,10 +54,7 @@ const brandApi = {
         }
         return instance.put(url + param, data, { headers })
     },
-    async deleteBand(
-        token: string,
-        brandId: string
-    ): Promise<BrandResponse> {
+    async deleteBand(token: string, brandId: string): Promise<BrandResponse> {
         const url = '/brand'
         const param = `/${brandId}`
         const headers = {

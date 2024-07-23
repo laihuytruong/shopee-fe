@@ -69,6 +69,23 @@ const productApi = {
         }
         return instance.get(url + param, { headers })
     },
+    async createProduct(
+        token: string,
+        productName: string,
+        brand: string,
+        categoryItem: string
+    ): Promise<ProductResponse> {
+        const url = '/products'
+        const headers = {
+            Authorization: token,
+        }
+        const data = {
+            productName,
+            brand,
+            categoryItem,
+        }
+        return instance.post(url, data, { headers })
+    },
     async updateQuantity(
         cart: Cart[],
         token: string

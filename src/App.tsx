@@ -27,12 +27,15 @@ import { AuthLayout, Public, MeLayout, AdminLayout } from '~/layouts'
 import admin_routes from './config/admin_routes'
 import {
     AddProduct,
+    AddProductDetail,
     AllBrands,
     AllCategories,
     AllCategoryItems,
     AllOrders,
     AllProducts,
     AllUsers,
+    AllVariationOptions,
+    AllVariations,
     Amount,
     Profile,
 } from './pages/admin'
@@ -89,6 +92,10 @@ function App() {
                         element={<AddProduct />}
                     />
                     <Route
+                        path={admin_routes.ADD_PRODUCT_DETAIL}
+                        element={<AddProductDetail />}
+                    />
+                    <Route
                         path={admin_routes.ALL_ORDERS}
                         element={<AllOrders />}
                     />
@@ -103,6 +110,14 @@ function App() {
                     <Route
                         path={admin_routes.ALL_BRANDS}
                         element={<AllBrands />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_VARIATIONS}
+                        element={<AllVariations />}
+                    />
+                    <Route
+                        path={admin_routes.ALL_VARIATION_OPTIONS}
+                        element={<AllVariationOptions />}
                     />
                     <Route
                         path={admin_routes.ALL_USERS}
