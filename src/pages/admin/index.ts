@@ -1,6 +1,6 @@
 export { default as AllProducts } from './AllProducts'
 export { default as Amount } from './Amount'
-export { default as AddProduct } from './AddProduct'
+export { default as HandleProduct } from './HandleProduct'
 export { default as AllOrders } from './AllOrders'
 export { default as AllCategories } from './AllCategories'
 export { default as AllCategoryItems } from './AllCategoryItems'

@@ -26,7 +26,7 @@ import {
 import { AuthLayout, Public, MeLayout, AdminLayout } from '~/layouts'
 import admin_routes from './config/admin_routes'
 import {
-    AddProduct,
+    HandleProduct,
     AddProductDetail,
     AllBrands,
     AllCategories,
@@ -89,7 +89,11 @@ function App() {
                     />
                     <Route
                         path={admin_routes.ADD_PRODUCTS}
-                        element={<AddProduct />}
+                        element={<HandleProduct />}
+                    />
+                    <Route
+                        path={admin_routes.UPDATE_PRODUCT}
+                        element={<HandleProduct />}
                     />
                     <Route
                         path={admin_routes.ADD_PRODUCT_DETAIL}

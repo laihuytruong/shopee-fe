@@ -64,11 +64,7 @@ const Products = (props: Props) => {
                                 <div className="relative w-full h-[186px]">
                                     <img
                                         className="w-full h-full object-cover"
-                                        src={`${
-                                            product.image.length > 1
-                                                ? `${product.image[1]}`
-                                                : `${product.image[0]}`
-                                        }`}
+                                        src={product.image[0]}
                                         alt="thumbnail"
                                     />
                                     <div

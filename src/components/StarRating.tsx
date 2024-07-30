@@ -10,8 +10,8 @@ const { MdOutlineStar, IoMdStarOutline } = icons
 interface Props {
     rating: number
     color: string
-    product: Product
-    setProduct: React.Dispatch<React.SetStateAction<Product>>
+    product?: Product
+    setProduct?: React.Dispatch<React.SetStateAction<Product>>
 }
 
 const StarRating: React.FC<Props> = ({
@@ -31,7 +31,7 @@ const StarRating: React.FC<Props> = ({
         if (product?._id !== undefined) {
             const pid = product?._id
             const response = await productApi.ratingProduct(token, pid, star)
-            if (response.err === 0 && response.data) {
+            if (response.err === 0 && response.data && setProduct) {
                 setRatingStar(response.data.totalRating)
                 setProduct(response.data)
             }

@@ -58,7 +58,7 @@ const AdminLayout = () => {
             }
         }
         refreshUser()
-    }, [cookies])
+    }, [cookies, count])
 
     const handleSelect = async (item?: MenuItem) => {
         try {
@@ -140,44 +140,25 @@ const AdminLayout = () => {
                             </NavLink>
                             <NavLink
                                 to={admin_routes.ALL_PRODUCTS}
-                                onClick={() => {
-                                    if (!pathname.includes('products')) {
-                                        setIsShowMenu(true)
-                                    } else {
-                                        setIsShowMenu(!isShowMenu)
-                                    }
-                                }}
-                                className="flex items-center gap-2 group my-[15px]"
+                                onClick={() => setIsShowMenu(false)}
+                                className={`flex items-center gap-2 group my-[15px] ${
+                                    pathname.includes(
+                                        admin_routes.ALL_PRODUCTS
+                                    ) && 'text-main'
+                                }`}
                             >
-                                <LiaProductHunt size={16} color="#175eb7" />
+                                <LiaProductHunt
+                                    size={16}
+                                    color={`${
+                                        pathname.includes('products')
+                                            ? '#ee4d2d'
+                                            : '#175eb7'
+                                    }`}
+                                />
                                 <span className="group-hover:text-main">
                                     Quản lý sản phẩm
                                 </span>
                             </NavLink>
-                            {isShowMenu && pathname.includes('products') && (
-                                <div className="pl-6 flex flex-col gap-[15px]">
-                                    <NavLink
-                                        to={admin_routes.ALL_PRODUCTS}
-                                        className={`hover:text-main ${
-                                            pathname.includes(
-                                                admin_routes.ALL_PRODUCTS
-                                            ) && 'text-main'
-                                        } `}
-                                    >
-                                        Tất cả sản phẩm
-                                    </NavLink>
-                                    <NavLink
-                                        to={admin_routes.ADD_PRODUCTS}
-                                        className={`hover:text-main ${
-                                            pathname.includes(
-                                                admin_routes.ADD_PRODUCTS
-                                            ) && 'text-main'
-                                        }`}
-                                    >
-                                        Thêm sản phẩm
-                                    </NavLink>
-                                </div>
-                            )}
                             <NavLink
                                 to={admin_routes.ALL_ORDERS}
                                 onClick={() => setIsShowMenu(!isShowMenu)}

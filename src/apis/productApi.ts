@@ -49,8 +49,13 @@ const productApi = {
     async getProduct(
         productName: string | undefined
     ): Promise<ProductResponse> {
-        const url = '/products'
+        const url = '/products/product'
         const param = `/${productName}`
+        return instance.get(url + param)
+    },
+    async getProductById(productId: string): Promise<ProductResponse> {
+        const url = '/products'
+        const param = `/${productId}`
         return instance.get(url + param)
     },
 
@@ -69,33 +74,7 @@ const productApi = {
         }
         return instance.get(url + param, { headers })
     },
-    async createProduct(
-        token: string,
-        productName: string,
-        brand: string,
-        categoryItem: string
-    ): Promise<ProductResponse> {
-        const url = '/products'
-        const headers = {
-            Authorization: token,
-        }
-        const data = {
-            productName,
-            brand,
-            categoryItem,
-        }
-        return instance.post(url, data, { headers })
-    },
-    async updateQuantity(
-        cart: Cart[],
-        token: string
-    ): Promise<ProductsResponse> {
-        const url = '/products/update-quantity'
-        const headers = {
-            Authorization: token,
-        }
-        return instance.put(url, { cart }, { headers })
-    },
+
     async search(
         keyword: string,
         token: string,
@@ -149,6 +128,49 @@ const productApi = {
             Authorization: token,
         }
         return instance.put(url, { ...body }, { headers })
+    },
+    async createProduct(
+        token: string,
+        formData: FormData
+    ): Promise<ProductResponse> {
+        const url = '/products'
+        const headers = {
+            Authorization: token,
+        }
+        return instance.post(url, formData, { headers })
+    },
+    async updateProduct(
+        token: string,
+        productId: string,
+        formData: FormData
+    ): Promise<ProductResponse> {
+        const url = '/products'
+        const param = `/${productId}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.put(url + param, formData, { headers })
+    },
+    async updateQuantity(
+        cart: Cart[],
+        token: string
+    ): Promise<ProductsResponse> {
+        const url = '/products/update-quantity'
+        const headers = {
+            Authorization: token,
+        }
+        return instance.put(url, { cart }, { headers })
+    },
+    async deleteProduct(
+        token: string,
+        productId: string
+    ): Promise<ProductsResponse> {
+        const url = '/products'
+        const params = `/${productId}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.delete(url + params, { headers })
     },
 }
 

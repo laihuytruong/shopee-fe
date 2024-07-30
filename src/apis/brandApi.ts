@@ -18,7 +18,7 @@ const brandApi = {
         const param = `?page=${page}&pageSize=${pageSize ? pageSize : 10}`
         return instance.get(url + param)
     },
-    async getBrandsBySlug(slug: string): Promise<BrandResponse> {
+    async getBrandsBySlug(slug: string | undefined): Promise<BrandResponse> {
         const url = '/brand/filter'
         const param = `/${slug}`
         return instance.get(url + param)

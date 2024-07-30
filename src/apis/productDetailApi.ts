@@ -1,21 +1,21 @@
 import instance from '~/apiService'
-import { Product, ProductDetailData } from '~/models'
+import { ProductDetailData } from '~/models'
 import { Cart } from '~/models/cartInterface'
 
-interface ProductResponse {
+interface ProductDetailResponse {
     err: number
     msg?: string
     count?: number
     accessToken?: string
-    data?: Product
+    data?: ProductDetailData
 }
 
 const productDetailApi = {
-    async getProductList(): Promise<ProductResponse> {
+    async getProductList(): Promise<ProductDetailResponse> {
         const url = '/product-detail'
         return instance.get(url)
     },
-    async getProductDetail(slug: string): Promise<ProductResponse> {
+    async getProductDetail(slug: string): Promise<ProductDetailResponse> {
         const url = '/product-detail'
         const param = `/${slug}`
         return instance.get(url + param)
@@ -23,12 +23,22 @@ const productDetailApi = {
     async updateInventory(
         cart: Cart[],
         token: string
-    ): Promise<ProductResponse> {
+    ): Promise<ProductDetailResponse> {
         const url = '/product-detail/update-inventory'
         const headers = {
             Authorization: token,
         }
         return instance.put(url, { cart }, { headers })
+    },
+    async create(
+        token: string,
+        formData: FormData
+    ): Promise<ProductDetailResponse> {
+        const url = '/product-detail'
+        const headers = {
+            Authorization: token,
+        }
+        return instance.post(url, formData, { headers })
     },
 }
 
