@@ -187,6 +187,9 @@ const AllProducts = () => {
                             totalPage: paginationInfo.totalPage,
                         }),
                 }}
+                onRow={(record) => ({
+                    onClick: () => nav(`/admin/product-detail/${record.slug}`),
+                })}
             />
         </div>
     )

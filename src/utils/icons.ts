@@ -12,6 +12,7 @@ import {
     IoLogoInstagram,
     IoCloseCircleOutline,
     IoStatsChart,
+    IoReturnUpBack,
 } from 'react-icons/io5'
 import { FiShoppingCart } from 'react-icons/fi'
 import {
@@ -42,7 +43,7 @@ import { GrInfo } from 'react-icons/gr'
 import { FcGoogle } from 'react-icons/fc'
 import { TiClipboard } from 'react-icons/ti'
 import { LiaProductHunt } from 'react-icons/lia'
-import { HiOutlinePencilSquare } from "react-icons/hi2"
+import { HiOutlinePencilSquare } from 'react-icons/hi2'
 
 const icons = {
     IoIosNotificationsOutline,
@@ -79,7 +80,8 @@ const icons = {
     MdOutlineBrandingWatermark,
     LiaProductHunt,
     MdDeleteOutline,
-    HiOutlinePencilSquare
+    HiOutlinePencilSquare,
+    IoReturnUpBack,
 }
 
 export default icons

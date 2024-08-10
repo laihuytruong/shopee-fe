@@ -99,7 +99,7 @@ const ProductDetail = () => {
     const handleCart = async (isBuy: boolean) => {
         try {
             if (detailActive === undefined) {
-                setErrMsg('Vui lòng chọn Phân loại hàng')
+                setErrMsg('Vui lòng chọn phân loại hàng')
             } else {
                 const response = await userApi.updateCart({
                     token,
@@ -345,7 +345,7 @@ const ProductDetail = () => {
                                         {listProductDetail.length > 0 &&
                                             listProductDetail[0]
                                                 .variationOptionId.variationId
-                                                .name}
+                                                .name}  
                                     </span>
                                     <div className="flex-1 flex">
                                         {listProductDetail.length > 0 &&

@@ -92,7 +92,7 @@ const InputCustom: React.FC<Props> = ({
                     defaultValue={valueData}
                     className={`outline-none ${
                         shadow || ''
-                    } rounded-sm border border-solid p-[10px] w-full mb-1 ${
+                    } rounded-sm border border-solid p-[10px] mb-2 w-full mb-1 ${
                         errors[valueName]
                             ? 'bg-[#fff6f7] border-[#ff424f] focus:border-[#ff424f]'
                             : 'border-[rgba(0, 0, 0, .14)] focus:border-black'

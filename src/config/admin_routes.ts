@@ -5,7 +5,7 @@ const admin_routes = {
     ALL_PRODUCTS: '/admin/products',
     ADD_PRODUCTS: '/admin/products/add',
     UPDATE_PRODUCT: '/admin/products/update/:pId',
-    ADD_PRODUCT_DETAIL: '/admin/products/add/:productId',
+    ALL_PRODUCT_DETAIL: '/admin/product-detail/:slug',
     ALL_ORDERS: '/admin/orders',
     ALL_CATEGORIES: '/admin/categories',
     ALL_CATEGORY_ITEMS: '/admin/category-items',

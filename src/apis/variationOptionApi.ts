@@ -14,20 +14,35 @@ interface VariationResponse {
 
 const variationOptionApi = {
     async getVariationOptions(
+        token: string,
         page: number,
         pageSize?: number
     ): Promise<VariationResponse> {
         const url = '/variation-option'
         const param = `?page=${page}&pageSize=${pageSize ? pageSize : 10}`
-        return instance.get(url + param)
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + param, { headers })
+    },
+    async getVariationOptionsByVariation(
+        token: string,
+        variation: string
+    ): Promise<VariationResponse> {
+        const url = '/variation-option'
+        const param = `/${variation}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + param, { headers })
     },
     async createVariationOption(
         token: string,
-        name: string,
+        value: string,
         variationId: string
     ): Promise<VariationResponse> {
         const url = '/variation-option'
-        const data = { name, variationId }
+        const data = { value, variationId }
         const headers = {
             Authorization: token,
         }
@@ -36,12 +51,12 @@ const variationOptionApi = {
     async updateVariationOption(
         token: string,
         variationOptionId: string,
-        name: string,
+        value: string,
         variationId: string
     ): Promise<VariationResponse> {
         const url = '/variation-option'
         const param = `/${variationOptionId}`
-        const data = { name, variationId }
+        const data = { value, variationId }
         const headers = {
             Authorization: token,
         }

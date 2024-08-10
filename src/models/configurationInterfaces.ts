@@ -22,5 +22,5 @@ export interface Configuration {
         inventory: number
         product: Product
     }
-    variationOptionId: VariationOption
+    variationOptionId: VariationOption[]
 }

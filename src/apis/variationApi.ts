@@ -25,6 +25,17 @@ const variationApi = {
         }
         return instance.get(url + param, { headers })
     },
+    async getVariationsByCategory(
+        token: string,
+        categoryId: string | undefined
+    ): Promise<VariationResponse> {
+        const url = '/variation'
+        const param = `/${categoryId}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + param, { headers })
+    },
     async createVariation(
         token: string,
         name: string,
