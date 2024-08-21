@@ -34,16 +34,9 @@ const reverseStatusMapping = Object.fromEntries(
     Object.entries(statusMapping).map(([key, value]) => [value, key])
 )
 
-interface PaginationInfo {
-    page: number
-    pageSize: number
-    totalPage: number
-    totalCounts: number
-}
-
 const Purchase = () => {
     const token = useAppSelector(selectAccessToken)
-    const paginationInfo: PaginationInfo = useAppSelector(selectPaginationInfo)
+    const paginationInfo = useAppSelector(selectPaginationInfo)
     const count = useAppSelector(selectCount)
     const nav = useNavigate()
     const dispatch = useAppDispatch()
@@ -54,7 +47,6 @@ const Purchase = () => {
     const [orderTotal, setOrderTotal] = useState<{ [key: string]: number }>({})
 
     const currentLocation = useRef<HTMLDivElement>(null)
-    console.log('orders: ', orders)
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -63,23 +55,29 @@ const Purchase = () => {
                 if (status === statusMapping[Status.All]) {
                     response = await orderApi.getAllOrder(
                         token,
-                        paginationInfo.page || 1,
-                        paginationInfo.pageSize || 5
+                        paginationInfo !== undefined ? paginationInfo.page : 1,
+                        paginationInfo !== undefined
+                            ? paginationInfo.pageSize
+                            : 1
                     )
                 } else {
                     response = await orderApi.getOrderByStatus(
                         token,
                         status,
-                        paginationInfo.page || 1,
-                        paginationInfo.pageSize || 5
+                        paginationInfo.page,
+                        paginationInfo.pageSize
                     )
                 }
                 if (response.err === 0 && response.data) {
-                    setOrders(
-                        response.data.length === 0
-                            ? response.data
-                            : [...orders, ...response.data]
-                    )
+                    if (status === statusMapping[Status.All]) {
+                        setOrders(
+                            response.data.length === 0
+                                ? response.data
+                                : [...orders, ...response.data]
+                        )
+                    } else {
+                        setOrders(response.data)
+                    }
                     dispatch(
                         setPaginationInfo({
                             page: response.page || 1,
@@ -136,27 +134,29 @@ const Purchase = () => {
         setOrderTotal(orderTotals)
     }, [orders, status])
 
-    const handleScroll = () => {
-        if (currentLocation.current) {
-            const { clientHeight, scrollHeight, scrollTop } =
-                currentLocation.current
-            if (Math.round(scrollTop) + clientHeight === scrollHeight) {
-                if (paginationInfo.page < paginationInfo.totalPage) {
-                    dispatch(
-                        setPaginationInfo({
-                            ...paginationInfo,
-                            page: paginationInfo.page + 1,
-                        })
-                    )
-                }
-            }
-        }
-    }
+    // const handleScroll = () => {
+    //     if (currentLocation.current) {
+    //         const { clientHeight, scrollHeight, scrollTop } =
+    //             currentLocation.current
+    //         if (Math.round(scrollTop) + clientHeight === scrollHeight) {
+    //             if (paginationInfo.page < paginationInfo.totalPage) {
+    //                 dispatch(
+    //                     setPaginationInfo({
+    //                         ...paginationInfo,
+    //                         page: paginationInfo.page + 1,
+    //                     })
+    //                 )
+    //             }
+    //         }
+    //     }
+    // }
 
     const handleChangeStatus = (status: string) => {
         setStatus(statusMapping[status])
         setActive(status)
     }
+
+    console.log('paginationInfo: ', paginationInfo)
 
     const handleReBuy = async (products: Cart[]) => {
         try {
@@ -164,7 +164,7 @@ const Purchase = () => {
                 const response = await userApi.updateCart({
                     token,
                     pdId: product.productDetail._id,
-                    variationOption: product.variationOption._id,
+                    variationOption: product.variationOption,
                     quantity: product.quantity,
                 })
 
@@ -201,22 +201,29 @@ const Purchase = () => {
         }
     }
 
-    const handleCancelOrder = async (_id: string) => {
+    const handleOrder = async (_id: string, isCancel: boolean) => {
         const response = await orderApi.updateStatus(
             token,
-            statusMapping[Status.CANCEL],
+            isCancel
+                ? statusMapping[Status.CANCEL]
+                : statusMapping[Status.DONE],
             _id
         )
         if (response.err === 0) {
-            setStatus(statusMapping[Status.CANCEL])
-            setActive(Status.CANCEL)
+            if (isCancel) {
+                setStatus(statusMapping[Status.CANCEL])
+                setActive(Status.CANCEL)
+            } else {
+                setStatus(statusMapping[Status.DONE])
+                setActive(Status.DONE)
+            }
         }
     }
 
     return (
         <div
             ref={currentLocation}
-            onScroll={handleScroll}
+            // onScroll={handleScroll}
             className="h-full overflow-y-auto"
         >
             <div className="bg-white flex mb-3 sticky top-0 w-full z-10 rounded-tl-sm rounded-tr-sm">
@@ -277,11 +284,24 @@ const Purchase = () => {
                                                         Phân Loại Hàng:
                                                     </span>
                                                     <span>
-                                                        {
-                                                            product
-                                                                .variationOption
-                                                                .value
-                                                        }
+                                                        {product.variationOption.map(
+                                                            (item, index) => {
+                                                                if (
+                                                                    index ===
+                                                                    product
+                                                                        .variationOption
+                                                                        .length -
+                                                                        1
+                                                                ) {
+                                                                    return item.value
+                                                                } else {
+                                                                    return (
+                                                                        item.value +
+                                                                        ', '
+                                                                    )
+                                                                }
+                                                            }
+                                                        )}
                                                     </span>
                                                 </div>
                                                 <span className="text-sm">
@@ -347,6 +367,17 @@ const Purchase = () => {
                                     </div>
                                 </div>
                                 <div className="flex justify-end items-center gap-3 mt-4">
+                                    {status ===
+                                        statusMapping[Status.DELIVERING] && (
+                                        <button
+                                            onClick={() =>
+                                                handleOrder(order._id, false)
+                                            }
+                                            className="py-3 px-6 text-black bg-[#ccc] rounded hover:opacity-[0.9]"
+                                        >
+                                            Xác nhận đã nhận hàng
+                                        </button>
+                                    )}
                                     <button
                                         onClick={() =>
                                             handleReBuy(order.products)
@@ -365,7 +396,7 @@ const Purchase = () => {
                                             ]) && (
                                         <button
                                             onClick={() =>
-                                                handleCancelOrder(order._id)
+                                                handleOrder(order._id, true)
                                             }
                                             className="py-3 px-6 text-[#555] bg-white rounded border border-solid border-rgba(0, 0, 0, .09) hover:bg-[#00000005]"
                                         >

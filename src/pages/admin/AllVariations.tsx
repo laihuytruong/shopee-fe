@@ -20,7 +20,7 @@ const AllVariations = () => {
     const [variations, setVariations] = useState<Variation[]>([])
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
         page: 1,
-        pageSize: 3,
+        pageSize: 8,
         totalCount: 0,
         totalPage: 1,
     })
@@ -84,7 +84,9 @@ const AllVariations = () => {
     const handleOk = async () => {
         try {
             const checkExist = variations.some(
-                (v) => v.name.toLowerCase() === name.toLowerCase()
+                (v) =>
+                    v.name.toLowerCase() === name.toLowerCase() &&
+                    v.categoryId._id === selectedCategory
             )
             if (isAdd) {
                 if (!checkExist) {

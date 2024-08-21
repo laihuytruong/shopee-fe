@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import { increment, selectCount } from '~/features/CounterSlice'
 import {
     configurationApi,
+    productApi,
     productDetailApi,
     variationApi,
     variationOptionApi,
@@ -12,7 +13,7 @@ import {
 import {
     Configuration,
     PaginationInfo,
-    ProductDetailData,
+    Product,
     Variation,
     VariationOption,
 } from '~/models'
@@ -60,9 +61,7 @@ const AllProductDetailProduct = () => {
     const [productDetailId, setProductDetailId] = useState<string>('')
     const [configurationId, setConfigurationId] = useState<string>('')
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [productDetailData, setProductDetailData] = useState<
-        ProductDetailData[]
-    >([])
+    const [product, setProduct] = useState<Product>({} as Product)
 
     const { slug } = useParams()
 
@@ -76,17 +75,16 @@ const AllProductDetailProduct = () => {
                         pageSize: paginationInfo.pageSize,
                         token,
                     })
-                console.log('responseConfigurations: ', responseConfigurations)
-                const getProductDetail =
-                    await productDetailApi.getProductDetail(
-                        slug ? slug : '',
-                        1,
-                        100
-                    )
+                const getProduct = await productApi.getProductBySlug(
+                    slug ? slug : ''
+                )
                 if (
                     responseConfigurations.err === 0 &&
-                    responseConfigurations.data
+                    responseConfigurations.data &&
+                    getProduct.err === 0 &&
+                    getProduct.data
                 ) {
+                    setProduct(getProduct.data)
                     const responseVariations =
                         await variationApi.getVariationsByCategory(
                             token,
@@ -117,17 +115,13 @@ const AllProductDetailProduct = () => {
                         })
                         setVariation(responseVariations.data)
                     }
-                } else if (
-                    getProductDetail.err === 0 &&
-                    getProductDetail.data
-                ) {
+                } else if (getProduct.err === 0 && getProduct.data) {
                     setProductDetails([])
-                    setProductDetailData(getProductDetail.data)
+                    setProduct(getProduct.data)
                     const responseVariations =
                         await variationApi.getVariationsByCategory(
                             token,
-                            getProductDetail.data[0].product.categoryItem
-                                .category?._id
+                            getProduct.data.categoryItem.category?._id
                         )
                     if (
                         responseVariations.err === 0 &&
@@ -208,11 +202,11 @@ const AllProductDetailProduct = () => {
             const variationOptionId = Object.values(selectVariationOption).join(
                 ', '
             )
-
+            console.log('product._id: ', product._id)
             const formData = new FormData()
             formData.append('price', price.toString())
             formData.append('inventory', inventory.toString())
-            formData.append('product', productDetailData[0].product._id)
+            formData.append('product', product._id)
             formData.append('image', thumbnail)
             setIsLoading(true)
             if (isAdd) {
@@ -220,6 +214,7 @@ const AllProductDetailProduct = () => {
                     token,
                     formData
                 )
+                console.log('responseCreate: ', responseCreate)
                 if (
                     responseCreate.err === 0 &&
                     responseCreate.data &&

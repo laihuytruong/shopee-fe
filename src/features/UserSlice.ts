@@ -43,7 +43,7 @@ const initialState: UserState = {
     isRegistered: true,
     paginationInfo: {
         page: 1,
-        pageSize: 5,
+        pageSize: 1,
         totalPage: 1,
         totalCounts: 0,
     },

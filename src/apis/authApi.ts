@@ -23,14 +23,13 @@ interface DataAuth {
 
 const authApi = {
     async verify(data: { email: string }): Promise<VerifyResponse> {
-        console.log('data: ', data)
         const url = '/auth/register/verify'
         return instance.post(url, data)
     },
 
     async register(data: DataAuth): Promise<AuthResponse> {
         const url = '/auth/register'
-        console.log()
+        console.log(data)
         return instance.post(url, data)
     },
 

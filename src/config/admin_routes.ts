@@ -13,7 +13,6 @@ const admin_routes = {
     ALL_VARIATION_OPTIONS: '/admin/variation-options',
     ALL_BRANDS: '/admin/brands',
     ALL_USERS: '/admin/users',
-    PROFILE: '/admin/profile',
 }
 
 export default admin_routes

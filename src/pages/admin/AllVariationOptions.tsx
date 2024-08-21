@@ -22,7 +22,7 @@ const AllVariationOptions = () => {
     )
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
         page: 1,
-        pageSize: 5,
+        pageSize: 8,
         totalCount: 0,
         totalPage: 1,
     })
@@ -33,6 +33,7 @@ const AllVariationOptions = () => {
     const [type, setType] = useState<string | undefined>()
     const [isReset, setIsReset] = useState<boolean>(false)
     const [variationOptionId, setVariationOptionId] = useState<string>('')
+
 
     useEffect(() => {
         const fetchVariationOptions = async () => {

@@ -21,6 +21,13 @@ const stripeApi = {
         }
         return instance.post(url, { ...body }, { headers })
     },
+    async getAll(token: string): Promise<Response> {
+        const url = '/stripe/amount'
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url, { headers })
+    },
 }
 
 export default stripeApi

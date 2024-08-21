@@ -7,7 +7,7 @@ export interface Order {
             _id: string
             productDetail: ProductDetailData
             quantity: number
-            variationOption: VariationOption
+            variationOption: VariationOption[]
         }
     ]
     status: string

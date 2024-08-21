@@ -22,7 +22,6 @@ const {
 } = icons
 
 enum MenuItemEnum {
-    MyAccount = 'Tài khoản của tôi',
     Logout = 'Đăng xuất',
 }
 
@@ -73,9 +72,6 @@ const AdminLayout = () => {
                         removeCookie('user', { path: '/' })
                         nav(routes.LOGIN)
                         break
-                    case MenuItemEnum.MyAccount:
-                        nav(admin_routes.PROFILE)
-                        break
                     default:
                         break
                 }
@@ -94,10 +90,7 @@ const AdminLayout = () => {
                     <span className="text-2xl pt-2">Admin</span>
                 </div>
                 <MenuList
-                    menuList={[
-                        { children: MenuItemEnum.MyAccount },
-                        { children: MenuItemEnum.Logout },
-                    ]}
+                    menuList={[{ children: MenuItemEnum.Logout }]}
                     handleSelect={handleSelect}
                 >
                     <div className="flex items-center gap-[6px] hover:cursor-pointer text-[16px]">
@@ -118,26 +111,75 @@ const AdminLayout = () => {
                 <div className="w-1/5 pl-16 fixed left-0 top-[70px] border-r-2 border-solid border-r-[rgba(0, 0, 0, .09)] h-full">
                     <div className="w-full mt-4 text-sm text-[#000000DE]">
                         <div>
-                            <NavLink
-                                to={admin_routes.AMOUNT}
-                                onClick={() => setIsShowMenu(false)}
-                                className={`flex items-center gap-2 group mt-[15px] ${
-                                    pathname.includes(admin_routes.AMOUNT) &&
-                                    'text-main'
-                                }`}
-                            >
-                                <IoStatsChart
-                                    size={16}
-                                    color={`${
-                                        pathname.includes('amount')
-                                            ? '#ee4d2d'
-                                            : '#175eb7'
-                                    }`}
-                                />
-                                <span className="group-hover:text-main">
-                                    Thống kê doanh số
-                                </span>
-                            </NavLink>
+                            {user.role.roleName === 'root' && (
+                                <>
+                                    <NavLink
+                                        to={admin_routes.AMOUNT}
+                                        onClick={() => setIsShowMenu(false)}
+                                        className={`flex items-center gap-2 group mt-[15px] ${
+                                            pathname.includes(
+                                                admin_routes.AMOUNT
+                                            ) && 'text-main'
+                                        }`}
+                                    >
+                                        <IoStatsChart
+                                            size={16}
+                                            color={`${
+                                                pathname.includes('amount')
+                                                    ? '#ee4d2d'
+                                                    : '#175eb7'
+                                            }`}
+                                        />
+                                        <span className="group-hover:text-main">
+                                            Thống kê doanh số
+                                        </span>
+                                    </NavLink>
+                                    <NavLink
+                                        to={admin_routes.ALL_ORDERS}
+                                        onClick={() =>
+                                            setIsShowMenu(!isShowMenu)
+                                        }
+                                        className={`flex items-center gap-2 group my-[15px] ${
+                                            pathname.includes(
+                                                admin_routes.ALL_ORDERS
+                                            ) && 'text-main'
+                                        }`}
+                                    >
+                                        <TiClipboard
+                                            size={16}
+                                            color={`${
+                                                pathname.includes('orders')
+                                                    ? '#ee4d2d'
+                                                    : '#175eb7'
+                                            }`}
+                                        />
+                                        <span className="group-hover:text-main">
+                                            Quản lý đơn hàng
+                                        </span>
+                                    </NavLink>
+                                    <NavLink
+                                        to={admin_routes.ALL_USERS}
+                                        onClick={() => setIsShowMenu(false)}
+                                        className={`flex items-center gap-2 group my-[15px] ${
+                                            pathname.includes(
+                                                admin_routes.ALL_USERS
+                                            ) && 'text-main'
+                                        }`}
+                                    >
+                                        <FaRegUser
+                                            size={16}
+                                            color={`${
+                                                pathname.includes('users')
+                                                    ? '#ee4d2d'
+                                                    : '#175eb7'
+                                            }`}
+                                        />
+                                        <span className="group-hover:text-main">
+                                            Quản lý người dùng
+                                        </span>
+                                    </NavLink>
+                                </>
+                            )}
                             <NavLink
                                 to={admin_routes.ALL_PRODUCTS}
                                 onClick={() => setIsShowMenu(false)}
@@ -157,27 +199,6 @@ const AdminLayout = () => {
                                 />
                                 <span className="group-hover:text-main">
                                     Quản lý sản phẩm
-                                </span>
-                            </NavLink>
-                            <NavLink
-                                to={admin_routes.ALL_ORDERS}
-                                onClick={() => setIsShowMenu(!isShowMenu)}
-                                className={`flex items-center gap-2 group my-[15px] ${
-                                    pathname.includes(
-                                        admin_routes.ALL_ORDERS
-                                    ) && 'text-main'
-                                }`}
-                            >
-                                <TiClipboard
-                                    size={16}
-                                    color={`${
-                                        pathname.includes('orders')
-                                            ? '#ee4d2d'
-                                            : '#175eb7'
-                                    }`}
-                                />
-                                <span className="group-hover:text-main">
-                                    Quản lý đơn hàng
                                 </span>
                             </NavLink>
                             <NavLink
@@ -278,36 +299,6 @@ const AdminLayout = () => {
                                         } `}
                                     >
                                         Tất cả tùy chọn biến thể
-                                    </NavLink>
-                                </div>
-                            )}
-                            <NavLink
-                                to={admin_routes.PROFILE}
-                                onClick={() => {
-                                    if (!pathname.includes('profile')) {
-                                        setIsShowMenu(true)
-                                    } else {
-                                        setIsShowMenu(!isShowMenu)
-                                    }
-                                }}
-                                className="flex items-center gap-2 group my-[15px]"
-                            >
-                                <FaRegUser size={16} color="#175eb7" />
-                                <span className="group-hover:text-main">
-                                    Quản lý hồ sơ
-                                </span>
-                            </NavLink>
-                            {isShowMenu && pathname.includes('profile') && (
-                                <div className="pl-6 flex flex-col gap-[15px]">
-                                    <NavLink
-                                        to={admin_routes.PROFILE}
-                                        className={`hover:text-main ${
-                                            pathname.includes(
-                                                admin_routes.PROFILE
-                                            ) && 'text-main'
-                                        } `}
-                                    >
-                                        Trang cá nhân
                                     </NavLink>
                                 </div>
                             )}

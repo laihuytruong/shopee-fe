@@ -37,7 +37,6 @@ import {
     AllVariationOptions,
     AllVariations,
     Amount,
-    Profile,
 } from './pages/admin'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -127,7 +126,6 @@ function App() {
                         path={admin_routes.ALL_USERS}
                         element={<AllUsers />}
                     />
-                    <Route path={admin_routes.PROFILE} element={<Profile />} />
                 </Route>
 
                 <Route element={<AuthLayout />}>

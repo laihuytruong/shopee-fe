@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import { Header, Footer } from '~/components'
@@ -39,6 +39,14 @@ const Public = () => {
     }
 
     useEffect(() => {
+        dispatch(
+            setPaginationInfo({
+                page: 1,
+                pageSize: 5,
+                totalPage: 1,
+                totalCounts: 0,
+            })
+        )
         dispatch(increment())
         const currentLocationElement = currentLocation.current
         if (currentLocationElement) {

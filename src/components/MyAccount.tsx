@@ -196,7 +196,7 @@ const MyAccount = () => {
                                     setValue={setPhoneNumber}
                                     setType={setType}
                                     valueName="phoneNumber"
-                                    initValue={user.phoneNumber}
+                                    // initValue={user.phoneNumber}
                                     isPhone={true}
                                     placeholder="Nhập số điện thoại"
                                     valueData={phoneNumber}
@@ -213,7 +213,7 @@ const MyAccount = () => {
                                                 setValue={setUsername}
                                                 setType={setType}
                                                 valueName="username"
-                                                initValue={user.username}
+                                                // initValue={user.username}
                                                 valueData={user.username}
                                             />
                                         </td>
@@ -227,7 +227,7 @@ const MyAccount = () => {
                                                 setValue={setName}
                                                 setType={setType}
                                                 valueName="name"
-                                                initValue={user.name}
+                                                // initValue={user.name}
                                                 valueData={user.name}
                                             />
                                         </td>
@@ -241,7 +241,7 @@ const MyAccount = () => {
                                                 setValue={setAddress}
                                                 setType={setType}
                                                 valueName="name"
-                                                initValue={user.address}
+                                                // initValue={user.address}
                                                 valueData={user.address}
                                             />
                                         </td>

@@ -1,5 +1,5 @@
 import instance from '~/apiService'
-import { User } from '~/models'
+import { User, VariationOption } from '~/models'
 
 interface Response {
     err: number
@@ -7,7 +7,29 @@ interface Response {
     data?: User
 }
 
+interface ResponseUsers {
+    err: number
+    msg?: string
+    page?: number
+    pageSize?: number
+    totalCount?: number
+    totalPage?: number
+    data?: User[]
+}
+
 const userApi = {
+    async getAllUsers(
+        token: string,
+        page: number,
+        pageSize?: number
+    ): Promise<ResponseUsers> {
+        const url = '/users'
+        const params = `?page=${page}&pageSize=${pageSize ? pageSize : 10}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.get(url + params, { headers })
+    },
     async getUser(data: { userId: string; token: string }): Promise<Response> {
         const url = '/users/current'
         const headers = {
@@ -38,7 +60,7 @@ const userApi = {
         token: string
         pdId: string
         quantity: number
-        variationOption: string
+        variationOption: VariationOption[]
     }): Promise<Response> {
         const url = '/users/cart'
         const { token, ...rest } = data
@@ -47,10 +69,27 @@ const userApi = {
         }
         return instance.put(url, { ...rest }, { headers })
     },
+    async updateUserByAdmin(
+        token: string,
+        ids: React.Key[],
+        role: string | undefined
+    ): Promise<Response> {
+        console.log({ ids, role })
+        const url = '/users/update-role'
+        const headers = {
+            Authorization: token,
+        }
+        const data = {
+            ids,
+            role,
+            isBlocked: false,
+        }
+        return instance.put(url, data, { headers })
+    },
     async deleteItemCart(data: {
         token: string
         pdId: string
-        variationOption: string
+        variationOption: VariationOption[]
     }): Promise<Response> {
         const url = '/users/delete-item'
         const headers = {
@@ -67,7 +106,10 @@ const userApi = {
     async deleteAllItemCart(data: {
         token: string
         checkAll: boolean
-        items: Array<{ pdId: string; variationOption: string }> | null
+        items: Array<{
+            pdId: string
+            variationOption: VariationOption[]
+        }> | null
     }): Promise<Response> {
         const url = '/users/delete-all'
         const headers = {
@@ -80,6 +122,13 @@ const userApi = {
                 checkAll: data.checkAll,
             },
         })
+    },
+    async deleteUser(token: string, userId: string): Promise<Response> {
+        const url = `/users/${userId}`
+        const headers = {
+            Authorization: token,
+        }
+        return instance.delete(url, { headers })
     },
 }
 

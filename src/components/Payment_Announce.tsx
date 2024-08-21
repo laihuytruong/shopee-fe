@@ -25,7 +25,7 @@ const Payment_Announce = () => {
                 await userApi.deleteAllItemCart({
                     items: cartBuyList.map((item) => ({
                         pdId: item.productDetail._id,
-                        variationOption: item.variationOption._id,
+                        variationOption: item.variationOption,
                     })),
                     token,
                     checkAll: false,

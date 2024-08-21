@@ -13,7 +13,7 @@ const ListCategory = () => {
         page: 1,
         pageSize: 10,
         totalCount: 0,
-        totalPage: 0,
+        totalPage: 1,
     })
     const [count, setCount] = useState<number>(0)
 
@@ -26,13 +26,16 @@ const ListCategory = () => {
                     paginationInfo.page,
                     paginationInfo.pageSize
                 )
+                console.log('response: ', response)
                 if (response.data && response.err === 0) {
-                    setCategories(response.data.data)
+                    setCategories(response.data)
                     setPaginationInfo({
-                        page: +response.data.page,
-                        pageSize: +response.data.pageSize,
-                        totalCount: response.count ? +response.count : 0,
-                        totalPage: +response.data.totalPage,
+                        page: response.page ? +response.page : 1,
+                        pageSize: response.pageSize ? +response.pageSize : 10,
+                        totalCount: response.totalCount
+                            ? +response.totalCount
+                            : 0,
+                        totalPage: response.totalPage ? +response.totalPage : 1,
                     })
                 }
             } catch (error) {

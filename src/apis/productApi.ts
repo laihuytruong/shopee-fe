@@ -58,7 +58,11 @@ const productApi = {
         const param = `/${productId}`
         return instance.get(url + param)
     },
-
+    async getProductBySlug(slug: string | undefined): Promise<ProductResponse> {
+        const url = '/products/slug'
+        const param = `/${slug}`
+        return instance.get(url + param)
+    },
     async filterProduct(
         slug: string | undefined,
         token: string,

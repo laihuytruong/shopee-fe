@@ -22,7 +22,6 @@ const ProductDetail = () => {
     const [product, setProduct] = useState<Product>({} as Product)
     const [quantity, setQuantity] = useState<number>(1)
     const [totalDetail, setTotalDetail] = useState<number>(0)
-    const [detailActive, setDetailActive] = useState<number>()
     const [imageShow, setImageShow] = useState<string>('')
     const [errMsg, setErrMsg] = useState<string>('')
     const [priceRange, setPriceRange] = useState<{
@@ -32,6 +31,16 @@ const ProductDetail = () => {
         minPrice: 0,
         maxPrice: 0,
     })
+    const [originalPriceRange, setOriginalPriceRange] = useState<{
+        minPrice: number
+        maxPrice: number
+    }>({
+        minPrice: 0,
+        maxPrice: 0,
+    })
+    const [selectedValue, setSelectedValue] = useState<{
+        [key: string]: string
+    }>({})
     const { slugProduct } = useParams()
     const nav = useNavigate()
     const dispatch = useAppDispatch()
@@ -53,6 +62,10 @@ const ProductDetail = () => {
                         minPrice: response.data.minPrice,
                         maxPrice: response.data.maxPrice,
                     })
+                    setOriginalPriceRange({
+                        minPrice: response.data.minPrice,
+                        maxPrice: response.data.maxPrice,
+                    })
                     const total = response.data.configurations.reduce(
                         (accumulator, currentValue) =>
                             accumulator +
@@ -62,7 +75,7 @@ const ProductDetail = () => {
                     setTotalDetail(total)
                     setImageShow(
                         response.data.configurations[0].productDetailId.product
-                            .image[1]
+                            .image[0]
                     )
                 }
             } catch (error) {
@@ -85,55 +98,113 @@ const ProductDetail = () => {
         })
     }
 
-    const handleClickDetail = (detail: Configuration, index: number) => {
-        if (index !== undefined && index === detailActive) {
-            setDetailActive(undefined)
-            setImageShow(listProductDetail[0].productDetailId.product.image[1])
-        } else {
-            setDetailActive(index)
-            setTotalDetail(detail.productDetailId.inventory)
-            setImageShow(detail.productDetailId.image)
-        }
+    const handleClickDetail = (
+        detail: Configuration,
+        variationName: string,
+        value: string
+    ) => {
+        setSelectedValue((prev) => {
+            const newSelectedValue = { ...prev }
+            const isSelected = newSelectedValue[variationName] === value
+            if (isSelected) {
+                delete newSelectedValue[variationName]
+            } else {
+                newSelectedValue[variationName] = value
+            }
+
+            const selectedVariation = Object.entries(newSelectedValue).reduce(
+                (acc, [key, val]) => {
+                    if (val) acc[key] = val
+                    return acc
+                },
+                {} as { [key: string]: string }
+            )
+
+            const matchDetail = listProductDetail.find((detail) => {
+                return Object.entries(selectedVariation).every(([key, val]) =>
+                    detail.variationOptionId.some(
+                        (option) =>
+                            option.variationId.name === key &&
+                            option.value === val
+                    )
+                )
+            })
+
+            if (matchDetail) {
+                setTotalDetail(matchDetail.productDetailId.inventory)
+                setImageShow(matchDetail.productDetailId.image)
+                setPriceRange({
+                    minPrice: matchDetail.productDetailId.price,
+                    maxPrice: matchDetail.productDetailId.price,
+                })
+            } else {
+                setImageShow(
+                    listProductDetail[0].productDetailId.product.image[0]
+                )
+                setPriceRange({
+                    minPrice: originalPriceRange.minPrice,
+                    maxPrice: originalPriceRange.maxPrice,
+                })
+            }
+
+            return newSelectedValue
+        })
     }
 
     const handleCart = async (isBuy: boolean) => {
         try {
-            if (detailActive === undefined) {
-                setErrMsg('Vui lòng chọn phân loại hàng')
-            } else {
-                const response = await userApi.updateCart({
-                    token,
-                    pdId: listProductDetail[detailActive].productDetailId._id,
-                    variationOption:
-                        listProductDetail[detailActive].variationOptionId._id,
-                    quantity: quantity,
+            const detailIndex = listProductDetail.findIndex((detail) => {
+                return detail.variationOptionId.every((option) => {
+                    const variationName = option.variationId.name
+                    const selectedOptionValue = selectedValue[variationName]
+                    return (
+                        selectedOptionValue &&
+                        option.value === selectedOptionValue
+                    )
                 })
-                if (isBuy === true) {
-                    if (response.err === 0) {
-                        setErrMsg('')
-                        dispatch(increment())
-                        nav(routes.CART)
-                    }
+            })
+
+            if (detailIndex === -1) {
+                setErrMsg('Vui lòng chọn phân loại hàng hợp lệ')
+                return
+            }
+
+            const detailActive = detailIndex
+
+            const response = await userApi.updateCart({
+                token,
+                pdId: listProductDetail[detailActive].productDetailId._id,
+                variationOption: listProductDetail[
+                    detailActive
+                ].variationOptionId.map((item) => item._id),
+                quantity: quantity,
+            })
+
+            if (isBuy === true) {
+                if (response.err === 0) {
+                    setErrMsg('')
+                    dispatch(increment())
+                    nav(routes.CART)
+                }
+            } else {
+                if (response.err === 0) {
+                    setErrMsg('')
+                    dispatch(increment())
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Sản phẩm đã được thêm vào giỏ hàng',
+                        showConfirmButton: false,
+                        timer: 1000,
+                    })
                 } else {
-                    if (response.err === 0) {
-                        setErrMsg('')
-                        dispatch(increment())
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: 'Sản phẩm đã được thêm vào giỏ hàng',
-                            showConfirmButton: false,
-                            timer: 1000,
-                        })
-                    } else {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: 'Thêm vào giỏ hàng thất bại',
-                            showConfirmButton: false,
-                            timer: 1000,
-                        })
-                    }
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Thêm vào giỏ hàng thất bại',
+                        showConfirmButton: false,
+                        timer: 1000,
+                    })
                 }
             }
         } catch (error) {
@@ -186,7 +257,7 @@ const ProductDetail = () => {
                                                     setImageShow(
                                                         listProductDetail[0]
                                                             .productDetailId
-                                                            .product.image[1]
+                                                            .product.image[0]
                                                     )
                                                 }
                                                 className={`hover:cursor-pointer hover:border-main border-2 border-solid w-[18%]`}
@@ -340,70 +411,135 @@ const ProductDetail = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center w-full mt-[25px] mb-10">
-                                    <span className="w-[15%] text-[#757575] font-normal capitalize">
-                                        {listProductDetail.length > 0 &&
-                                            listProductDetail[0]
-                                                .variationOptionId.variationId
-                                                .name}  
-                                    </span>
-                                    <div className="flex-1 flex">
-                                        {listProductDetail.length > 0 &&
-                                            listProductDetail.map(
-                                                (detail, index) => (
+                                <div className="w-full mt-[25px] mb-10">
+                                    {listProductDetail.length > 0 &&
+                                        listProductDetail[0].variationOptionId.map(
+                                            (variationOption, i) => {
+                                                const displayedValues =
+                                                    new Set<string>()
+
+                                                return (
                                                     <div
-                                                        key={detail._id}
-                                                        className={`hover:border-[#ee4d2d] hover:text-main hover:cursor-pointer flex items-center mr-3 gap-2 bg-white rounded-sm p-2 border border-solid ${
-                                                            detailActive !==
-                                                                undefined &&
-                                                            detailActive ===
-                                                                index
-                                                                ? 'border-main text-main'
-                                                                : 'border-[rgba(0, 0, 0, .09)]'
-                                                        }`}
-                                                        onClick={() =>
-                                                            handleClickDetail(
-                                                                detail,
-                                                                index
-                                                            )
-                                                        }
-                                                        onMouseEnter={() =>
-                                                            setImageShow(
-                                                                detail
-                                                                    .productDetailId
-                                                                    .image
-                                                            )
-                                                        }
-                                                        onMouseLeave={() =>
-                                                            setImageShow(
-                                                                listProductDetail[0]
-                                                                    .productDetailId
-                                                                    .product
-                                                                    .image[1]
-                                                            )
-                                                        }
+                                                        key={i}
+                                                        className="flex items-center mb-4"
                                                     >
-                                                        <img
-                                                            src={
-                                                                detail
-                                                                    .productDetailId
-                                                                    .image
-                                                            }
-                                                            alt="image"
-                                                            className="w-6 h-6"
-                                                        />
-                                                        <span>
+                                                        <span className="w-[15%] text-[#757575] font-normal capitalize">
                                                             {
-                                                                detail
-                                                                    .variationOptionId
-                                                                    .value
+                                                                variationOption
+                                                                    .variationId
+                                                                    .name
                                                             }
                                                         </span>
+                                                        <div className="flex-1 flex">
+                                                            {listProductDetail.map(
+                                                                (detail) => {
+                                                                    const option =
+                                                                        detail.variationOptionId.find(
+                                                                            (
+                                                                                item
+                                                                            ) =>
+                                                                                item
+                                                                                    .variationId
+                                                                                    .name ===
+                                                                                variationOption
+                                                                                    .variationId
+                                                                                    .name
+                                                                        )
+                                                                    if (
+                                                                        !option ||
+                                                                        displayedValues.has(
+                                                                            option.value
+                                                                        )
+                                                                    )
+                                                                        return null
+
+                                                                    displayedValues.add(
+                                                                        option.value
+                                                                    )
+
+                                                                    const showImage =
+                                                                        [
+                                                                            'màu sắc',
+                                                                            'color',
+                                                                        ].includes(
+                                                                            option.variationId.name.toLowerCase()
+                                                                        )
+
+                                                                    return (
+                                                                        <div
+                                                                            key={
+                                                                                detail._id
+                                                                            }
+                                                                            className={`hover:border-[#ee4d2d] hover:text-main hover:cursor-pointer flex items-center mr-3 gap-2 bg-white rounded-sm p-2 border border-solid ${
+                                                                                selectedValue[
+                                                                                    variationOption
+                                                                                        .variationId
+                                                                                        .name
+                                                                                ] ===
+                                                                                option.value
+                                                                                    ? 'border-main text-main'
+                                                                                    : 'border-[rgba(0, 0, 0, .09)]'
+                                                                            }`}
+                                                                            onClick={() =>
+                                                                                handleClickDetail(
+                                                                                    detail,
+                                                                                    variationOption
+                                                                                        .variationId
+                                                                                        .name,
+                                                                                    option.value
+                                                                                )
+                                                                            }
+                                                                            onMouseEnter={() =>
+                                                                                showImage &&
+                                                                                setImageShow(
+                                                                                    detail
+                                                                                        .productDetailId
+                                                                                        .image
+                                                                                )
+                                                                            }
+                                                                            onMouseLeave={() => {
+                                                                                if (
+                                                                                    !Object.values(
+                                                                                        selectedValue
+                                                                                    )
+                                                                                        .length
+                                                                                ) {
+                                                                                    setImageShow(
+                                                                                        listProductDetail[0]
+                                                                                            .productDetailId
+                                                                                            .product
+                                                                                            .image[0]
+                                                                                    )
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            {showImage && (
+                                                                                <img
+                                                                                    src={
+                                                                                        detail
+                                                                                            .productDetailId
+                                                                                            .image
+                                                                                    }
+                                                                                    alt="image"
+                                                                                    className="w-6 h-6"
+                                                                                />
+                                                                            )}
+                                                                            <span className="ml-1">
+                                                                                {
+                                                                                    option.value
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 )
-                                            )}
-                                    </div>
+                                            }
+                                        )}
                                 </div>
+
                                 <div className="flex items-start">
                                     <span className="w-[15%] text-[#757575] font-normal capitalize">
                                         Số lượng

@@ -45,6 +45,8 @@ const CartList = () => {
         }
     }, [user.cart, checkItem])
 
+    console.log('user.cart: ', user.cart)
+
     useEffect(() => {
         let selectedItems = user.cart.filter((cart) => checkedItems[cart._id])
         selectedItems = selectedItems.map((cart) => {
@@ -111,7 +113,7 @@ const CartList = () => {
             const response = await userApi.deleteItemCart({
                 pdId: cart.productDetail._id,
                 token,
-                variationOption: cart.variationOption._id,
+                variationOption: cart.variationOption,
             })
             if (response.err === 0) {
                 Swal.fire({
@@ -167,15 +169,23 @@ const CartList = () => {
                             ? null
                             : itemsToDelete.map((item) => ({
                                   pdId: item.productDetail._id,
-                                  variationOption: item.variationOption._id,
+                                  variationOption: item.variationOption,
                               })),
                     })
                     if (response.err === 0) {
-                        setTotalProductPay({
-                            count: 0,
-                            price: 0,
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Xóa sản phẩm thành công',
+                            showConfirmButton: false,
+                            timer: 1000,
+                        }).then(() => {
+                            setTotalProductPay({
+                                count: 0,
+                                price: 0,
+                            })
+                            dispatch(increment())
                         })
-                        dispatch(increment())
                     }
                 }
             } else {
@@ -295,18 +305,14 @@ const CartList = () => {
                                     {cart.productDetail.product.productName}
                                 </NavLink>
                                 <div className="flex-1 text-center">
-                                    <div>
-                                        <span>
-                                            {
-                                                cart.variationOption.variationId
-                                                    .name
-                                            }
-                                            :{' '}
-                                        </span>
-                                        <span>
-                                            {cart.variationOption.value}
-                                        </span>
-                                    </div>
+                                    {cart.variationOption.map((item) => (
+                                        <div key={item._id}>
+                                            <span>
+                                                {item.variationId.name}:{' '}
+                                            </span>
+                                            <span>{item.value}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                             <span className="w-[12%] text-center">

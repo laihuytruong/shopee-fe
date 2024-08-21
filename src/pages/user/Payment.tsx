@@ -99,17 +99,26 @@ const Payment = () => {
                                                     .productName
                                             }
                                         </p>
-                                        <div className="flex text-center items-center text-sm text-[#929292]">
-                                            <span>
-                                                {
-                                                    cart.variationOption
-                                                        .variationId.name
-                                                }
-                                                :{' '}
-                                            </span>
-                                            <span>
-                                                {cart.variationOption.value}
-                                            </span>
+                                        <div className="flex flex-col text-center items-center text-sm text-[#929292]">
+                                            {cart.variationOption.map(
+                                                (item, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex items-center"
+                                                    >
+                                                        <span>
+                                                            {
+                                                                item.variationId
+                                                                    .name
+                                                            }
+                                                            :
+                                                        </span>
+                                                        <span className="ml-1">
+                                                            {item.value}
+                                                        </span>
+                                                    </div>
+                                                )
+                                            )}
                                         </div>
                                     </div>
                                     <div className="w-[15%] text-center">

@@ -103,6 +103,7 @@ const Header = () => {
             console.log(error)
         }
     }
+    console.log('cart: ', userData)
 
     return (
         <div className="flex items-center flex-col text-[14px] w-full bg-main">
@@ -283,7 +284,11 @@ const Header = () => {
                                                                         <span className="underline text-[10px]">
                                                                             đ
                                                                         </span>
-                                                                        {item.productDetail.price.toLocaleString()}
+                                                                        {
+                                                                            item
+                                                                                .productDetail
+                                                                                .price
+                                                                        }
                                                                     </span>
                                                                 </div>
                                                             </>
