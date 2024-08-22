@@ -106,7 +106,6 @@ const Search = () => {
         }
     }
 
-    console.log('searchCategoryItemData: ', searchCategoryItemData)
 
     return (
         <div className="max-w-[840px] bg-white rounded">

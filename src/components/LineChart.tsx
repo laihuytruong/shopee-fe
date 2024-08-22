@@ -48,8 +48,8 @@ const LineChart: React.FC<Props> = ({ sales, label, text }) => {
                 label,
                 data: sales,
                 fill: false,
-                backgroundColor: 'rgb(75, 192, 192)',
-                borderColor: 'rgba(75, 192, 192, 0.2)',
+                backgroundColor: '#ee4d2d',
+                borderColor: '#fed8d0',
             },
         ],
     }

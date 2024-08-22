@@ -23,13 +23,20 @@ export const cartSlice = createSlice({
                 state.cart = action.payload
             } else {
                 action.payload.forEach((newItem) => {
-                    const existingItem = state.cart.find(
-                        (cartItem) =>
+                    const existingItem = state.cart.find((cartItem) => {
+                        return (
                             cartItem.productDetail._id ===
                                 newItem.productDetail._id &&
-                            cartItem.variationOption._id ===
-                                newItem.variationOption._id
-                    )
+                            cartItem.variationOption.length ===
+                                newItem.variationOption.length &&
+                            newItem.variationOption.every((newOption) =>
+                                cartItem.variationOption.some(
+                                    (existingOption) =>
+                                        existingOption._id === newOption._id
+                                )
+                            )
+                        )
+                    })
                     if (existingItem) {
                         if (existingItem.quantity !== newItem.quantity) {
                             existingItem.quantity += newItem.quantity

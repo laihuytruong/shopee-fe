@@ -10,7 +10,6 @@ interface UserState {
     email: string
     resetToken: string
     isRegistered: boolean
-    paginationInfo: PaginationInfo
 }
 
 interface UserResponse {
@@ -26,13 +25,6 @@ interface ActionCode {
     email: string
 }
 
-interface PaginationInfo {
-    page: number
-    pageSize: number
-    totalPage: number
-    totalCounts: number
-}
-
 const initialState: UserState = {
     user: {} as User,
     token: '',
@@ -41,12 +33,6 @@ const initialState: UserState = {
     email: '',
     resetToken: '',
     isRegistered: true,
-    paginationInfo: {
-        page: 1,
-        pageSize: 1,
-        totalPage: 1,
-        totalCounts: 0,
-    },
 }
 
 export const userSlice = createSlice({
@@ -90,9 +76,6 @@ export const userSlice = createSlice({
         ) => {
             state.isRegistered = action.payload.isRegistered
         },
-        setPaginationInfo: (state, action: PayloadAction<PaginationInfo>) => {
-            state.paginationInfo = action.payload
-        },
     },
 })
 
@@ -104,7 +87,6 @@ export const {
     setResetToken,
     setEmail,
     setIsRegistered,
-    setPaginationInfo,
 } = userSlice.actions
 
 export const selectAccessToken = (state: RootState) => state.user.token
@@ -114,7 +96,5 @@ export const selectCodeTimeRegister = (state: RootState) => state.user.time
 export const selectEmailRegister = (state: RootState) => state.user.email
 export const selectResetToken = (state: RootState) => state.user.resetToken
 export const selectIsRegistered = (state: RootState) => state.user.isRegistered
-export const selectPaginationInfo = (state: RootState) =>
-    state.user.paginationInfo
 
 export default userSlice.reducer

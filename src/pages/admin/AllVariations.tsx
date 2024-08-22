@@ -175,7 +175,6 @@ const AllVariations = () => {
             />
         )
     }
-    console.log('pagination.page: ', paginationInfo.page)
 
     const confirmDeleteVariation = async (variationId: string) => {
         try {
@@ -201,7 +200,6 @@ const AllVariations = () => {
             toast.error('Có lỗi xảy ra!')
         }
     }
-    console.log('categories: ', categories)
 
     const columns: TableColumnsType<Variation> = [
         {

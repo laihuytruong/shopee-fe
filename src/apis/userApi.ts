@@ -74,7 +74,6 @@ const userApi = {
         ids: React.Key[],
         role: string | undefined
     ): Promise<Response> {
-        console.log({ ids, role })
         const url = '/users/update-role'
         const headers = {
             Authorization: token,

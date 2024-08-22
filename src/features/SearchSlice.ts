@@ -29,7 +29,6 @@ export const searchSlice = createSlice({
         },
         sortSearchHistory: (state) => {
             state.searchHistory.sort((a, b) => {
-                console.log(b.clickAt - a.clickAt)
                 return b.clickAt - a.clickAt
             })
         },

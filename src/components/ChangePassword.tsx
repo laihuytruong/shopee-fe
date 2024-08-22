@@ -45,7 +45,6 @@ const ChangePassword = () => {
 
     const onSubmit = useCallback(async () => {
         try {
-            console.log({ newPassword, confirmPassword })
             const userData = {
                 ...user,
                 oldPassword,

@@ -34,14 +34,12 @@ const ForgotPassword = () => {
             nav(`${routes.LOGIN}`)
         } else {
             const response = await authApi.forgotPassword({ email })
-            console.log(response)
             if (response.err === 0) {
                 dispatch(
                     setResetToken({
                         resetToken: response.msg ? response.msg : '',
                     })
                 )
-                console.log('response.msg: ', response.msg)
                 setIsError(false)
                 setIsLoading(false)
                 setIsClickButton(true) 

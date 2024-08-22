@@ -35,7 +35,6 @@ const orderApi = {
         page?: number,
         pageSize?: number
     ): Promise<Response> {
-        console.log({ page, pageSize })
         const url = '/order'
         const params = `?page=${page || 1}&pageSize=${pageSize || 10}`
         const headers = {

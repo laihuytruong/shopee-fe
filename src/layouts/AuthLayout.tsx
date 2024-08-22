@@ -1,11 +1,16 @@
 import { NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
+import { useAppSelector } from '~/app/hooks'
 import { Footer } from '~/components'
 import routes from '~/config/routes'
-import logo_login from '~/assets/image/logo_login.png'
+import { selectIsRegistered } from '~/features/UserSlice'
+import icons from '~/utils/icons'
+
+const { FcShop } = icons
 
 const AuthLayout = () => {
     const params = useParams()
     const { pathname } = useLocation()
+    const isRegistered = useAppSelector(selectIsRegistered)
 
     return (
         <div className="w-full flex flex-col items-center">
@@ -22,15 +27,18 @@ const AuthLayout = () => {
                                     className="w-[18%]"
                                     to={`${routes.HOME}`}
                                 >
-                                    <img
-                                        src={logo_login}
-                                        alt="Logo_login"
-                                        className="w-40 h-auto cursor-pointer"
-                                    />
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-bold text-3xl text-main">
+                                            TSHOP
+                                        </span>
+                                        <FcShop size={36} />
+                                    </div>
                                 </NavLink>
                             </div>
-                            <h1 className="text-3xl text-[#222222] pt-4 ml-4">
-                                {pathname.includes('register')
+                            <h1 className="text-3xl text-[#222222] ml-4">
+                                {isRegistered === false
+                                    ? 'Thay đổi gmail'
+                                    : pathname.includes('register')
                                     ? 'Đăng ký'
                                     : pathname.includes('login')
                                     ? 'Đăng nhập'

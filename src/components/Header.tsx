@@ -1,6 +1,4 @@
 import icons from '~/utils/icons'
-import logo from '~/assets/image/logo.png'
-import logo_login from '~/assets/image/logo_login.png'
 import { MenuList, Search } from '~/components'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import routes from '~/config/routes'
@@ -21,6 +19,7 @@ const {
     IoLogoFacebook,
     IoLogoInstagram,
     FiShoppingCart,
+    FcShop,
 } = icons
 
 enum MenuItemEnum {
@@ -103,7 +102,6 @@ const Header = () => {
             console.log(error)
         }
     }
-    console.log('cart: ', userData)
 
     return (
         <div className="flex items-center flex-col text-[14px] w-full bg-main">
@@ -210,11 +208,12 @@ const Header = () => {
                         {pathname.includes('/cart') ||
                         pathname.includes('/payment') ? (
                             <div className="flex items-end w-full">
-                                <img
-                                    src={logo_login}
-                                    alt="Logo"
-                                    className="w-40 h-auto cursor-pointer"
-                                />
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold text-3xl text-main">
+                                        TSHOP
+                                    </span>
+                                    <FcShop size={36} />
+                                </div>
                                 <div className="h-10 leading-10 text-main text-xl pl-5 ml-5 border-l border-solid border-l-[#ee4d2d]">
                                     <span>
                                         {pathname.includes('/cart')
@@ -224,11 +223,12 @@ const Header = () => {
                                 </div>
                             </div>
                         ) : (
-                            <img
-                                src={logo}
-                                alt="Logo"
-                                className="w-40 h-auto cursor-pointer"
-                            />
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-3xl text-white">
+                                    TSHOP
+                                </span>
+                                <FcShop size={36} />
+                            </div>
                         )}
                     </Link>
                     {pathname.includes('/cart') ||
@@ -284,11 +284,17 @@ const Header = () => {
                                                                         <span className="underline text-[10px]">
                                                                             đ
                                                                         </span>
-                                                                        {
+                                                                        {(
                                                                             item
                                                                                 .productDetail
-                                                                                .price
-                                                                        }
+                                                                                .price *
+                                                                            (1 -
+                                                                                +item
+                                                                                    .productDetail
+                                                                                    .product
+                                                                                    .discount /
+                                                                                    100)
+                                                                        ).toLocaleString()}
                                                                     </span>
                                                                 </div>
                                                             </>

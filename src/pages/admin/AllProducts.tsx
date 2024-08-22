@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Divider, Table } from 'antd'
-import type { TableColumnsType, UploadFile } from 'antd'
+import type { TableColumnsType } from 'antd'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
 import { increment, selectCount } from '~/features/CounterSlice'
 import { PaginationInfo, Product } from '~/models'
@@ -144,14 +144,20 @@ const AllProducts = () => {
                 <span className="flex items-center justify-center">
                     <span
                         className="hover:text-main hover:cursor-pointer"
-                        onClick={() => handleUpdateProduct(product._id)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleUpdateProduct(product._id)
+                        }}
                     >
                         <HiOutlinePencilSquare size={20} />
                     </span>
                     <Divider type="vertical" />
                     <span
                         className="hover:text-main hover:cursor-pointer"
-                        onClick={() => handleDeleteProduct(product._id)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteProduct(product._id)
+                        }}
                     >
                         <MdDeleteOutline size={20} />
                     </span>

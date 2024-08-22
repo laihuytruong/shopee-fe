@@ -3,7 +3,6 @@ import { useCookies } from 'react-cookie'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { authApi } from '~/apis'
 import { useAppDispatch, useAppSelector } from '~/app/hooks'
-import logo_login from '~/assets/image/logo_login.png'
 import { MenuList } from '~/components'
 import admin_routes from '~/config/admin_routes'
 import routes from '~/config/routes'
@@ -85,9 +84,9 @@ const AdminLayout = () => {
         <div>
             <div className="fixed z-30 top-0 shadow-header bg-white w-full px-10 py-2 border-b border-solid border-b-[rgba(0, 0, 0, .09)] flex items-center justify-between h-[70px]">
                 <div className="flex items-center gap-2">
-                    <img src={logo_login} alt="" className="h-10" />
-                    <span className="text-xl pt-3">{`>`}</span>
-                    <span className="text-2xl pt-2">Admin</span>
+                    <span className="font-bold text-3xl text-main">TSHOP</span>
+                    <span className="text-xl">{`>`}</span>
+                    <span className="text-2xl">Admin</span>
                 </div>
                 <MenuList
                     menuList={[{ children: MenuItemEnum.Logout }]}

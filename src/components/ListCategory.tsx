@@ -26,7 +26,6 @@ const ListCategory = () => {
                     paginationInfo.page,
                     paginationInfo.pageSize
                 )
-                console.log('response: ', response)
                 if (response.data && response.err === 0) {
                     setCategories(response.data)
                     setPaginationInfo({

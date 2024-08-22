@@ -45,7 +45,6 @@ const CartList = () => {
         }
     }, [user.cart, checkItem])
 
-    console.log('user.cart: ', user.cart)
 
     useEffect(() => {
         let selectedItems = user.cart.filter((cart) => checkedItems[cart._id])

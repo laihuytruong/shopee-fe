@@ -34,7 +34,6 @@ const ResetPassword = () => {
                     resetToken,
                     password,
                 })
-                console.log(response)
                 if (response.err === 0) {
                     Swal.fire({
                         position: 'center',

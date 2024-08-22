@@ -9,6 +9,8 @@ import icons from '~/utils/icons'
 import { ConfirmToast, InputCustom, UploadImages } from '~/components'
 import { selectAccessToken } from '~/features/UserSlice'
 import { toast } from 'react-toastify'
+import { LoadingOutlined } from '@ant-design/icons'
+import { Spin } from 'antd'
 
 const { HiOutlinePencilSquare, MdDeleteOutline } = icons
 
@@ -30,6 +32,7 @@ const AllCategories = () => {
     const [isReset, setIsReset] = useState<boolean>(false)
     const [fileList, setFileList] = useState<UploadFile[]>([])
     const [categoryId, setCategoryId] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -83,6 +86,7 @@ const AllCategories = () => {
             const formData = new FormData()
             formData.append('categoryName', categoryName)
             formData.append('thumbnail', thumbnail)
+            setIsLoading(true)
             if (isAdd) {
                 if (!checkExist) {
                     const responseCreate = await categoryApi.createCategory(
@@ -90,6 +94,7 @@ const AllCategories = () => {
                         formData
                     )
                     if (responseCreate.err === 0) {
+                        setIsLoading(false)
                         setOpen(false)
                         setIsAdd(true)
                         setIsReset(false)
@@ -116,6 +121,7 @@ const AllCategories = () => {
                     formData
                 )
                 if (responseUpdate.err === 0) {
+                    setIsLoading(false)
                     setOpen(false)
                     setIsAdd(true)
                     setIsReset(false)
@@ -133,7 +139,6 @@ const AllCategories = () => {
 
     const handleUpdateCategory = (category: Category) => {
         try {
-            console.log('category: ', category)
             setIsAdd(false)
             setOpen(true)
             setCategoryName(category.categoryName)
@@ -278,7 +283,20 @@ const AllCategories = () => {
                             disabled={type == undefined ? false : true}
                             className={`modal-ok-button`}
                         >
-                            {isAdd ? 'Thêm' : 'Cập nhật'}
+                            {isLoading ? (
+                                <Spin
+                                    indicator={
+                                        <LoadingOutlined
+                                            style={{ fontSize: 24 }}
+                                            spin
+                                        />
+                                    }
+                                />
+                            ) : isAdd ? (
+                                'Thêm'
+                            ) : (
+                                'Cập nhật'
+                            )}
                         </Button>,
                     ]}
                 >

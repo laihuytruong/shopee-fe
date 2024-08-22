@@ -52,7 +52,6 @@ const categoryItemApi = {
         categoryItemName: string,
         category: string
     ): Promise<CategoryResponse> {
-        console.log('category: ', category)
         const url = '/category-item'
         const param = `/${categoryItemId}`
         const data = { categoryItemName, category }

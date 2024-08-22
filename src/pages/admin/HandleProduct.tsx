@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Select, Input, Typography, Card, Form, Button, UploadFile } from 'antd'
-import { brandApi, categoryApi, categoryItemApi, productApi } from '~/apis'
+import {
+    brandApi,
+    categoryApi,
+    categoryItemApi,
+    productApi,
+    productDetailApi,
+} from '~/apis'
 import { Brand, Category, CategoryItem, Product } from '~/models'
 import { useAppSelector } from '~/app/hooks'
 import { selectAccessToken } from '~/features/UserSlice'
@@ -9,6 +15,8 @@ import admin_routes from '~/config/admin_routes'
 import { useNavigate, useParams } from 'react-router-dom'
 import { UploadImages } from '~/components'
 import Swal from 'sweetalert2'
+import { LoadingOutlined } from '@ant-design/icons'
+import { Spin } from 'antd'
 
 const { TextArea } = Input
 const { Title } = Typography
@@ -30,13 +38,12 @@ const HandleProduct = () => {
     const [price, setPrice] = useState<number>(0)
     const [singleFile, setSingleFile] = useState<UploadFile[]>([])
     const [multipleFile, setMultipleFile] = useState<UploadFile[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
     const token = useAppSelector(selectAccessToken)
     const nav = useNavigate()
 
     const { pId } = useParams()
-    console.log('categories: ', categories)
-    console.log('selectCategory: ', selectCategory)
-    console.log('brands: ', brands)
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -47,35 +54,55 @@ const HandleProduct = () => {
                     response.data &&
                     response.data.categoryItem.category
                 ) {
-                    setProduct(response.data)
-                    setProductName(response.data.productName)
-                    setPrice(response.data.price)
-                    setSelectCategory(response.data.categoryItem.category?.slug)
-                    setSelectedItem({
-                        brand: response.data.brand._id,
-                        categoryItem: response.data.categoryItem._id,
-                    })
-                    setSingleFile(
-                        response.data.image
-                            ? [
-                                  {
-                                      uid: '-1',
-                                      name: 'thumbnail.png',
-                                      status: 'done',
-                                      url: response.data.image[0],
-                                  },
-                              ]
-                            : []
-                    )
-                    if (response.data.image && response.data.image.length > 1) {
-                        setMultipleFile(
-                            response.data.image.slice(1).map((url, index) => ({
-                                uid: `-${index + 2}`,
-                                name: `image${index + 1}.png`,
-                                status: 'done',
-                                url,
-                            }))
+                    const responseDetail =
+                        await productDetailApi.getProductDetail(
+                            response.data.slug,
+                            1,
+                            100
                         )
+                    if (responseDetail.err === 0 && responseDetail.data) {
+                        const productImages = response.data.image || []
+                        const productDetailImages = responseDetail.data.map(
+                            (item) => item.image
+                        )
+
+                        const filteredImages = productImages.filter(
+                            (image) => !productDetailImages.includes(image)
+                        )
+
+                        setProduct(response.data)
+                        setProductName(response.data.productName)
+                        setPrice(response.data.price)
+                        setSelectCategory(
+                            response.data.categoryItem.category?.slug
+                        )
+                        setSelectedItem({
+                            brand: response.data.brand._id,
+                            categoryItem: response.data.categoryItem._id,
+                        })
+                        setSingleFile(
+                            productImages.length > 0
+                                ? [
+                                      {
+                                          uid: '-1',
+                                          name: 'thumbnail.png',
+                                          status: 'done',
+                                          url: productImages[0],
+                                      },
+                                  ]
+                                : []
+                        )
+
+                        if (filteredImages.length > 1) {
+                            setMultipleFile(
+                                filteredImages.slice(1).map((url, index) => ({
+                                    uid: `-${index + 2}`,
+                                    name: `image${index + 1}.png`,
+                                    status: 'done',
+                                    url,
+                                }))
+                            )
+                        }
                     }
                 }
             }
@@ -155,10 +182,11 @@ const HandleProduct = () => {
         formData.append('price', price.toString())
         formData.append('brand', selectedItem.brand)
         formData.append('categoryItem', selectedItem.categoryItem)
-
+        setIsLoading(true)
         if (pId === undefined) {
             const response = await productApi.createProduct(token, formData)
             if (response.err === 0 && response.data) {
+                setIsLoading(false)
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -182,8 +210,8 @@ const HandleProduct = () => {
                 pId,
                 formData
             )
-            console.log('response', response)
             if (response.err === 0) {
+                setIsLoading(false)
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -314,7 +342,20 @@ const HandleProduct = () => {
                         }
                         className="custom-bg"
                     >
-                        {pId !== undefined ? 'Cập nhật' : 'Thêm'}
+                        {isLoading ? (
+                            <Spin
+                                indicator={
+                                    <LoadingOutlined
+                                        style={{ fontSize: 24 }}
+                                        spin
+                                    />
+                                }
+                            />
+                        ) : pId === undefined ? (
+                            'Thêm'
+                        ) : (
+                            'Cập nhật'
+                        )}
                     </Button>
                 </Form.Item>
             </Form>

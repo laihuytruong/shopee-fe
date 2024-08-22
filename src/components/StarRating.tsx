@@ -27,7 +27,6 @@ const StarRating: React.FC<Props> = ({
     const stars = []
 
     const handleRatingStar = async (star: number) => {
-        console.log('star: ', star)
         if (product?._id !== undefined) {
             const pid = product?._id
             const response = await productApi.ratingProduct(token, pid, star)

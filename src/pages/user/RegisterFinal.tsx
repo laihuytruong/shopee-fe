@@ -123,7 +123,6 @@ const RegisterFinal = () => {
     const onSubmitCreatePassword = useCallback(async () => {
         try {
             const response = await authApi.register({ email, password })
-            console.log('response', response)
             if (response.err === 0) {
                 if (response.data && response.accessToken) {
                     const user = {

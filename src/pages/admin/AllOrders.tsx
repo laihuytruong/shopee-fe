@@ -116,7 +116,6 @@ const AllOrders = () => {
                     paginationInfo.pageSize,
                     text
                 )
-                console.log('response', response)
                 if (response.err === 0 && response.data) {
                     setOrders(response.data)
                     setPaginationInfo({
@@ -170,7 +169,7 @@ const AllOrders = () => {
             align: 'center',
         },
         {
-            title: 'Địa chỉ',
+            title: 'Địa chỉ',   
             dataIndex: ['orderBy', 'address'],
             width: '20%',
             align: 'center',

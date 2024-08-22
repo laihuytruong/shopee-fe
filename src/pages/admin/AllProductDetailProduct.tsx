@@ -202,7 +202,6 @@ const AllProductDetailProduct = () => {
             const variationOptionId = Object.values(selectVariationOption).join(
                 ', '
             )
-            console.log('product._id: ', product._id)
             const formData = new FormData()
             formData.append('price', price.toString())
             formData.append('inventory', inventory.toString())
@@ -214,7 +213,6 @@ const AllProductDetailProduct = () => {
                     token,
                     formData
                 )
-                console.log('responseCreate: ', responseCreate)
                 if (
                     responseCreate.err === 0 &&
                     responseCreate.data &&
@@ -575,7 +573,6 @@ const AllProductDetailProduct = () => {
                             className="w-full mb-2"
                             value={selectVariationOption[key]}
                             onChange={(value) => {
-                                console.log(`Selected ${value} for ${key}`)
                                 setSelectVariationOption((prev) => ({
                                     ...prev,
                                     [key]: value,

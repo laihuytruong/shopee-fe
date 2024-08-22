@@ -40,7 +40,7 @@ import {
     FaLocationDot,
 } from 'react-icons/fa6'
 import { GrInfo } from 'react-icons/gr'
-import { FcGoogle } from 'react-icons/fc'
+import { FcGoogle, FcShop } from 'react-icons/fc'
 import { TiClipboard } from 'react-icons/ti'
 import { LiaProductHunt } from 'react-icons/lia'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
@@ -82,6 +82,7 @@ const icons = {
     MdDeleteOutline,
     HiOutlinePencilSquare,
     IoReturnUpBack,
+    FcShop,
 }
 
 export default icons

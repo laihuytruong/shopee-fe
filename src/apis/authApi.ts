@@ -29,7 +29,6 @@ const authApi = {
 
     async register(data: DataAuth): Promise<AuthResponse> {
         const url = '/auth/register'
-        console.log(data)
         return instance.post(url, data)
     },
 

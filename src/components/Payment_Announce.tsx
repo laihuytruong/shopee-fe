@@ -21,17 +21,17 @@ const Payment_Announce = () => {
             if (type_payment === 'success') {
                 dispatch(setCheckItem({}))
                 dispatch(deleteCart())
-                dispatch(increment())
                 await userApi.deleteAllItemCart({
+                    token,
+                    checkAll: false,
                     items: cartBuyList.map((item) => ({
                         pdId: item.productDetail._id,
                         variationOption: item.variationOption,
                     })),
-                    token,
-                    checkAll: false,
                 })
                 await productApi.updateQuantity(cartBuyList, token)
                 await productDetailApi.updateInventory(cartBuyList, token)
+                dispatch(increment())
             }
         }
         updateData()
