@@ -45,7 +45,6 @@ const CartList = () => {
         }
     }, [user.cart, checkItem])
 
-
     useEffect(() => {
         let selectedItems = user.cart.filter((cart) => checkedItems[cart._id])
         selectedItems = selectedItems.map((cart) => {
@@ -224,19 +223,22 @@ const CartList = () => {
             (cartItem) => checkedItems[cartItem._id]
         )
         if (filterItem.length > 0) {
-            const itemsBuy = filterItem.map((cartItem: Cart) => ({
-                ...cartItem,
-                productDetail: {
-                    ...cartItem.productDetail,
-                    price:
-                        cartItem.productDetail.price *
-                        (1 - cartItem.productDetail.product.discount / 100),
-                },
-                quantity: quantities[cartItem._id],
-            }))
-            dispatch(setCheckItem(checkedItems))
+            const itemsBuy = filterItem.map((cartItem: Cart) => {
+                return {
+                    ...cartItem,
+                    productDetail: {
+                        ...cartItem.productDetail,
+                        price:
+                            cartItem.productDetail.price *
+                            (1 - cartItem.productDetail.product.discount / 100),
+                    },
+                    quantity: quantities[cartItem._id],
+                }
+            })
+            console.log('itemsBuy: ', itemsBuy)
+            // dispatch(setCheckItem(checkedItems))
             dispatch(cartBuy(itemsBuy))
-            nav(routes.PAYMENT)
+            // nav(routes.PAYMENT)
         } else {
             Swal.fire({
                 position: 'center',

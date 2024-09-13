@@ -84,7 +84,12 @@ const AdminLayout = () => {
         <div>
             <div className="fixed z-30 top-0 shadow-header bg-white w-full px-10 py-2 border-b border-solid border-b-[rgba(0, 0, 0, .09)] flex items-center justify-between h-[70px]">
                 <div className="flex items-center gap-2">
-                    <span className="font-bold text-3xl text-main">TSHOP</span>
+                    <span
+                        className="font-bold text-3xl text-main hover:cursor-pointer"
+                        onClick={() => nav(routes.PUBLIC)}
+                    >
+                        TSHOP
+                    </span>
                     <span className="text-xl">{`>`}</span>
                     <span className="text-2xl">Admin</span>
                 </div>
@@ -96,9 +101,10 @@ const AdminLayout = () => {
                         <img
                             className="w-[25px] h-[25px] rounded-full"
                             src={
-                                user.avatar
+                                user.avatar &&
+                                user.avatar !== 'https://bit.ly/3ycA2mE'
                                     ? user.avatar
-                                    : 'https://bit.ly/3ycA2mE'
+                                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIwRBD9gNuA2GjcOf6mpL-WuBhJADTWC3QVQ&s'
                             }
                             alt="avatar"
                         />

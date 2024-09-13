@@ -159,9 +159,11 @@ const Header = () => {
                                 <img
                                     className="w-[22px] h-[22px] rounded-full"
                                     src={
-                                        userData
+                                        userData &&
+                                        userData.avatar !==
+                                            'https://bit.ly/3ycA2mE'
                                             ? userData.avatar
-                                            : 'https://bit.ly/3ycA2mE'
+                                            : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIwRBD9gNuA2GjcOf6mpL-WuBhJADTWC3QVQ&s'
                                     }
                                     alt="avatar"
                                 />

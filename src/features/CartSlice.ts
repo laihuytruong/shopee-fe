@@ -19,8 +19,9 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         cartBuy: (state, action: PayloadAction<Cart[]>) => {
+            console.log(action.payload)
             if (state.cart.length === 0) {
-                state.cart = action.payload
+                state.cart = [...action.payload]
             } else {
                 action.payload.forEach((newItem) => {
                     const existingItem = state.cart.find((cartItem) => {

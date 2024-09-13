@@ -23,7 +23,11 @@ const MeLayout = () => {
                         className="hover:cursor-pointer bg-[#f5f5f5] rounded-full w-10 h-10 border border-solid border-[rgba(0, 0, 0, .09)]"
                     >
                         <img
-                            src={user.avatar}
+                            src={
+                                user.avatar !== 'https://bit.ly/3ycA2mE'
+                                    ? user.avatar
+                                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIwRBD9gNuA2GjcOf6mpL-WuBhJADTWC3QVQ&s'
+                            }
                             alt="avatar"
                             className="w-full h-full rounded-full"
                         />

@@ -41,7 +41,17 @@ const MyAccount = () => {
     const [type, setType] = useState<string | undefined>()
 
     const initialFileList: UploadFile[] = user.avatar
-        ? [{ uid: '-1', name: 'avatar.png', status: 'done', url: user.avatar }]
+        ? [
+              {
+                  uid: '-1',
+                  name: 'avatar.png',
+                  status: 'done',
+                  url:
+                      user.avatar === 'https://bit.ly/3ycA2mE'
+                          ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIwRBD9gNuA2GjcOf6mpL-WuBhJADTWC3QVQ&s'
+                          : user.avatar,
+              },
+          ]
         : []
 
     const [fileList, setFileList] = useState<UploadFile[]>(initialFileList)
